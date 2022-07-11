@@ -1,3 +1,9 @@
+# optional
+# for knitted html
+*.html
+# R project settings
+*.Rproj
+
 # History files
 .Rhistory
 .Rapp.history
