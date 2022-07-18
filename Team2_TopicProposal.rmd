@@ -1,8 +1,3 @@
----
-output:
-  word_document: default
-  html_document: default
----
 # Team 2 - Topic Proposal
 **Hovhannes Arestakesyan, Zhe Yu, Chenxu Wang, Karina Martinez, Timberley Thompson**  
 Date: 18-Jul-2022
