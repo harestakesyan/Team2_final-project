@@ -1,0 +1,13 @@
+Team 2
+Hovhannes Arestakesyan, Zhe Yu, Chenxu Wang, Karina Martinez, Timberley Thompson
+
+1. Research Topic
+
+2. SMART question(s)
+
+3. Source of your data set and how many (roughly) observations
+- Cardiovascular Disease dataset on Kaggle (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset)
+- There are 70000 total values (observations) in this data set
+
+4. Link to GitHub repo
+- https://github.com/harestakesyan/Team2_final-project
