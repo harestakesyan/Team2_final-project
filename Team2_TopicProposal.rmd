@@ -15,5 +15,4 @@ The topic of our research is cardiovascular disease. According to the American H
 The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in this data set.  
 
 **4. Link to GitHub repo:**  
-hello
 https://github.com/harestakesyan/Team2_final-project  
