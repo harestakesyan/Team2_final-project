@@ -1,8 +1,3 @@
----
-output:
-  word_document: default
-  html_document: default
----
 # Team 2 - Topic Proposal
 **Hovhannes Arestakesyan, Zhe Yu, Chenxu Wang, Karina Martinez, Timberley Thompson**  
 Date: 18-Jul-2022
@@ -11,13 +6,12 @@ Date: 18-Jul-2022
 The topic of our research is cardiovascular disease. According to the American Heart Association, cardiovascular disease can refer to a number of conditions, including heart disease, heart attack, stroke, heart failure, arrhythmia, and heart valve problems. Heart disease and stroke are the leading causes of death worldwide, ranked first and second respectively. The World Heath Organization cites unhealthy diet, physical inactivity, tobacco and alcohol use as the most important behavioral risk factors of heart disease and stroke risk. As a result, patients with cardiovascular disease often present with raised blood pressure, raised blood glucose, raised blood lipids, and BMI in the overweight or obese range.
 
 **2. SMART question(s):**  
-
-* Which factors are associated with cardiovascular disease? Does this agree with the risk factors observed by the World Health Organization?  
-* What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
-* Can the model predict the probability that a patient has cardiovascular disease?
+- The top three factors are associated with cardiovascular disease? Does this agree with the risk factors observed by the World Health Organization?  
+- What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
+- Can the model predict the probability that a patient has cardiovascular disease?  
 
 **3. Source of your data set and how many (roughly) observations:**  
-The Cardiovascular Disease dataset was obtained from Kaggle (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in this data set.
+The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in this data set.  
 
 **4. Link to GitHub repo:**  
-https://github.com/harestakesyan/Team2_final-project
+https://github.com/harestakesyan/Team2_final-project  
