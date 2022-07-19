@@ -10,9 +10,11 @@ The topic of our research is cardiovascular disease. According to the American H
 * What are the top three factors associated with cardiovascular disease? Does this agree with the risk factors observed by the World Health Organization?  
 * What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
 * Can the model predict the probability that a patient has cardiovascular disease?  
+* Is there any association between an individual's sex and whether they has the cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to women?
+
 
 **3. Source of your data set and how many (roughly) observations:**  
-The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in this data set.  
+The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in 11 features, such as age, gender, systolic blood pressure, diastolic blood pressure, and etc. The target class “cardio” equals to 1, when patient has cardiovascular disease, and it’s 0, if patient is healthy.
 
 **4. Link to GitHub repo:**  
 https://github.com/harestakesyan/Team2_final-project  
