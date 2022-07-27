@@ -44,9 +44,9 @@ feature selection, the Leaps package or the Bestglm package?
 **Question 3:**. How accurately can the model predict:  
 which model should we choose? Or choose multiple models and compare their accuracy?  
   
-Linear Regression:can do correlation but y must be continuous variable, can answer the question like whether body weight is correlated with cholesterol?    
-Logistic Regression: perdition?   
-KNN:perdition?  
+**Linear Regression**:can do correlation but y must be continuous variable, can answer the question like whether body weight is correlated with cholesterol?    
+**Logistic Regression**: perdition?   
+**KNN**:perdition?  
   
 How to compare the accuracy: Confusion matrix and ROC curve of the models?
   
