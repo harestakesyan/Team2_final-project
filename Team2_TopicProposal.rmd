@@ -16,3 +16,35 @@ The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggl
 
 **4. Link to GitHub repo:**  
 https://github.com/harestakesyan/Team2_final-project  
+
+
+# **Professor comments**   
+1. Top 3 factors. Do you mean according to a particular model? And you are looking at feature importance? Just something to think about.
+
+2. Again, be a little more specific. Do you mean recommendations like "screen early", "eat healthy", "do exercise". Are these the kind of recommendations you have in mind? Are they supported in your dataset?
+
+3. Instead of "Can the model predict", it's probably more like "How accurately can the model predict"
+
+
+# **Plan:**  
+## EDA  
+1. Dataframe structure, variable types, summary...
+2. Check the missing values
+3. Outlier: box graph
+4. Whether the data is normally distributed?
+5. Normalization?
+6. General information we can get from each variable
+
+## Modeling  
+**Question 1:** Top 3 factors: feature importance?  
+feature selection, the Leaps package or the Bestglm package?  
+  
+**Question 3:**. How accurately can the model predict:  
+which model should we choose? Or choose multiple models and compare their accuracy?  
+  
+Linear Regression:can do correlation but y must be continuous variable, can answer the question like whether body weight is correlated with cholesterol?    
+Logistic Regression: perdition?   
+KNN:perdition?  
+  
+How to compare the accuracy: Confusion matrix and ROC curve of the models?
+  
