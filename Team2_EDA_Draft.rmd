@@ -57,7 +57,7 @@ Remove the `id` column . The new data frame is saved as `cardio_final`.
 #names = c('gender','cholesterol','gluc','smoke','alco','active','cardio')
 #cardio_final[,names] <- lapply(cardio[,names] , factor)
 cardio_final <- cardio[-c(1)]
-str(cardio_final)
+#str(cardio_final)
 ```  
 
 We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi` and `ap_lo`.  Let's look into these variables.  
@@ -80,20 +80,6 @@ hist_weight = ggplot(cardio_final, aes(weight)) +
   labs(x="Weight (kg)", y="Frequency") +
   labs(title="Weight Histogram") 
 
-box_height = ggplot(cardio_final, aes(y=height)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
-  labs(title="Height Boxplot",x="", y = "Height (cm)")
-
-box_weight = ggplot(cardio_final, aes(y=weight)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
-  labs(title="Weight Boxplot",x="", y = "Weight (kg)")
-
-grid.arrange(hist_height, hist_weight, box_height, box_weight, ncol=2, nrow=2)
-```  
-
-```{r}
 hist_hi = ggplot(cardio_final, aes(ap_hi)) + 
   geom_histogram(col="#f67e7d", 
                  fill="#ffb997", 
@@ -106,19 +92,9 @@ hist_lo = ggplot(cardio_final, aes(ap_lo)) +
                  fill="purple", 
                  alpha = .4) + # opacity
   labs(x="Diastolic blood pressure", y="Frequency") +
-  labs(title="Diastolic blood pressure Histogram") 
+  labs(title="Diastolic blood pressure Histogram")
 
-box_hi = ggplot(cardio_final, aes(y=ap_hi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
-  labs(title="Systolic blood pressure Boxplot",x="", y = "Systolic blood pressure")
-
-box_lo = ggplot(cardio_final, aes(y=ap_lo)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4, outlier.colour="red", outlier.size=2) +
-  labs(title="Diastolic blood pressure Boxplot",x="", y = "Diastolic blood pressure")
-
-grid.arrange(hist_hi, hist_lo, box_hi, box_lo, ncol=2, nrow=2)
+grid.arrange(hist_height, hist_weight, hist_hi, hist_lo, ncol=2, nrow=2)
 ```  
 
 ```{r}
@@ -168,7 +144,7 @@ We remove the NA rows with the `na.omit()` function and save over the `cardio_cl
 
 **Scatterplots**
 
-```{r scatterplot_brand}
+```{r}
 ggplot(subset(cardio_clean_final, cardio_clean_final$gender == 1), aes(x=weight, y=height, col=cardio)) + 
   geom_point() + 
   labs(title="Scatter Plot of Height vs Weight in Women",x="Weight (kg)", y = "Height (cm)", col="Cardiovascular Disease Status")
@@ -207,6 +183,20 @@ ttest_height
 ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
 ttest_weight
 ```
+```{r}
+
+box_weight_pos = ggplot(cardio_pos, aes(y=weight)) + 
+  geom_boxplot() + 
+  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
+  labs(title="Weight Boxplot (Cardiovascular \nDisease Present)",x="", y = "Weight (kg)")
+
+box_weight_neg = ggplot(cardio_neg, aes(y=weight)) + 
+  geom_boxplot() + 
+  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
+  labs(title="Weight Boxplot (Cardiovascular \nDisease Absent)",x="", y = "Weight (kg)")
+
+grid.arrange(box_weight_pos, box_weight_neg, ncol=2, nrow=1)
+```
 
 ```{r, results='markup'}
 ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
@@ -215,17 +205,17 @@ ttest_hi
 ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
 ttest_lo
 ```
-```{r}
+```{r, results='markup'}
 anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
 xkabledply(anovaRes, title = "ANOVA result summary")
 ```
 
-```{r}
+```{r, results='markup'}
 anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
 xkabledply(anovaRes, title = "ANOVA result summary")
 ```
 
-```{r}
+```{r, results='markup'}
 contable = table(cardio_clean_final$gender, cardio_clean_final$cardio)
 rownames(contable) = c("Female", "Male")
 colnames(contable) = c("Absent","Present")
@@ -233,8 +223,10 @@ colnames(contable) = c("Absent","Present")
 xkabledply(contable, title="Contingency table for Gender vs Cardiovascular Disease Status")
 ```
 
-```{r}
+```{r, results='markup'}
 chitest = chisq.test(contable, correct=FALSE)
 chitest
 ```  
 In this data set, men are not more likely than women to have cardiovascular disease.
+
+  
