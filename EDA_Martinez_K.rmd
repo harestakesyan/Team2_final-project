@@ -52,11 +52,11 @@ str(cardio)
 ```  
 There are `r nrow(cardio)` observations in the dataset.  
  
-Remove the `id` column and change the following variables to categorical (factors): `gender`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `cardio`. The new data frame is saved as `cardio_final`.  
+Remove the `id` column . The new data frame is saved as `cardio_final`.  
 ```{r, results='markup'}
-names = c('gender','cholesterol','gluc','smoke','alco','active','cardio')
+#names = c('gender','cholesterol','gluc','smoke','alco','active','cardio')
+#cardio_final[,names] <- lapply(cardio[,names] , factor)
 cardio_final <- cardio[-c(1)]
-cardio_final[,names] <- lapply(cardio[,names] , factor)
 str(cardio_final)
 ```  
 
@@ -87,7 +87,7 @@ box_height = ggplot(cardio_final, aes(y=height)) +
 
 box_weight = ggplot(cardio_final, aes(y=weight)) + 
   geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4, outlier.colour="red", outlier.size=2) +
+  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
   labs(title="Weight Boxplot",x="", y = "Weight (kg)")
 
 grid.arrange(hist_height, hist_weight, box_height, box_weight, ncol=2, nrow=2)
@@ -116,12 +116,125 @@ box_hi = ggplot(cardio_final, aes(y=ap_hi)) +
 box_lo = ggplot(cardio_final, aes(y=ap_lo)) + 
   geom_boxplot() + 
   geom_boxplot(colour="blue", fill="purple", alpha = .4, outlier.colour="red", outlier.size=2) +
-  labs(title="Diastolic blood pressure Boxplot",x="", y = "Systolic blood pressure")
+  labs(title="Diastolic blood pressure Boxplot",x="", y = "Diastolic blood pressure")
 
 grid.arrange(hist_hi, hist_lo, box_hi, box_lo, ncol=2, nrow=2)
 ```  
 
-**Remove outliers**
+```{r}
+qqnorm(cardio_final$height, main="Q-Q Plot of Height")
+qqline(cardio_final$height)
 
-There are outliers above and below the medians for `height` and `weight`.  This is also the case for `ap_hi` and `ap_lo`, but the extremely high outliers are clearly impacting the distribution of these variables.
+qqnorm(cardio_final$weight, main="Q-Q Plot of Weight")
+qqline(cardio_final$weight)
 
+qqnorm(cardio_final$ap_hi, main="Q-Q Plot of Systolic blood pressure")
+qqline(cardio_final$ap_hi)
+
+qqnorm(cardio_final$ap_lo, main="Q-Q Plot of Diastolic blood pressure")
+qqline(cardio_final$ap_lo)
+```  
+
+## Remove outliers
+
+There are outliers above and below the medians for `height` and `weight`.  This is also the case for `ap_hi` and `ap_lo`, but the extremely high outliers are clearly impacting the distribution of these variables. We use the `outlierKD2()` function to remove the outliers.
+
+**Height and Weight**
+
+```{r}
+cardio_clean = outlierKD2(cardio_final, height, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, weight, TRUE, TRUE, TRUE, TRUE)
+```  
+
+**Systolic and Diastolic blood pressure**
+```{r}
+cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+``` 
+
+After the outliers were dropped, the QQ-plots for height, weight, and blood pressure improved, indicating the distribution is closer to normal. The "stair-case" pattern on the blood pressure QQ-plots is due to discrete or rounded values. We can also see the more normal distribution in the histograms and box plots for all four variables.  
+
+```{r, results='markup'}
+xkablesummary(cardio_clean, title = "Clean Cardio Data Frame Summary" )
+cardio_clean = na.omit(cardio_clean) #clean dataframe with numeric variable
+
+#change variables to factor
+names <- c('gender','cholesterol','gluc','smoke','alco','active','cardio')
+cardio_clean_final <- cardio_clean
+cardio_clean_final[,names] <- lapply(cardio_clean[,names] , factor)
+```  
+
+We remove the NA rows with the `na.omit()` function and save over the `cardio_clean` data frame. We changed the following variables to categorical (factors): `gender`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `cardio` and saved the data frame as `cardio_clean_final`. There are now `r nrow(cardio_clean_final)` observations in the clean data frame.
+
+**Scatterplots**
+
+```{r scatterplot_brand}
+ggplot(subset(cardio_clean_final, cardio_clean_final$gender == 1), aes(x=weight, y=height, col=cardio)) + 
+  geom_point() + 
+  labs(title="Scatter Plot of Height vs Weight in Women",x="Weight (kg)", y = "Height (cm)", col="Cardiovascular Disease Status")
+
+ggplot(subset(cardio_clean_final, cardio_clean_final$gender == 2), aes(x=weight, y=height, col=cardio)) + 
+  geom_point() + 
+  labs(title="Scatter Plot of Height vs Weight in Men",x="Weight (kg)", y = "Height (cm)", col="Cardiovascular Disease Status")
+
+ggplot(subset(cardio_clean_final, cardio_clean_final$gender == 1), aes(x=ap_lo, y=ap_hi, col=cardio)) + 
+  geom_point() + 
+  labs(title="Scatter Plot of Systolic vs Diastolic Blood Pressure in Women",x="Diastolic blood pressure", y = "Systolic blood pressure", col="Cardiovascular Disease Status")
+
+ggplot(subset(cardio_clean_final, cardio_clean_final$gender == 2), aes(x=ap_lo, y=ap_hi, col=cardio)) + 
+  geom_point() + 
+  labs(title="Scatter Plot of Systolic vs Diastolic Blood Pressure in Men",x="Diastolic blood pressure", y = "Systolic blood pressure", col="Cardiovascular Disease Status")
+```  
+
+## Basic Statistics
+
+```{r, results='markup'}
+
+loadPkg("corrplot")
+cardio_cor = cor(cardio_clean) # get the correlation matrix  
+corrplot.mixed(cardio_cor) 
+```  
+
+**T-tests**
+
+```{r, results='markup'}
+cardio_pos = subset(cardio_clean_final, cardio_clean_final$cardio == 1)
+cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
+
+ttest_height = t.test(cardio_pos$height, cardio_neg$height)
+ttest_height
+
+ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
+ttest_weight
+```
+
+```{r, results='markup'}
+ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
+ttest_hi
+
+ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
+ttest_lo
+```
+```{r}
+anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
+xkabledply(anovaRes, title = "ANOVA result summary")
+```
+
+```{r}
+anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
+xkabledply(anovaRes, title = "ANOVA result summary")
+```
+
+```{r}
+contable = table(cardio_clean_final$gender, cardio_clean_final$cardio)
+rownames(contable) = c("Female", "Male")
+colnames(contable) = c("Absent","Present")
+
+xkabledply(contable, title="Contingency table for Gender vs Cardiovascular Disease Status")
+```
+
+```{r}
+chitest = chisq.test(contable, correct=FALSE)
+chitest
+```  
+In this data set, men are not more likely than women to have cardiovascular disease.
