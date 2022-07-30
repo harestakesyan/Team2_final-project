@@ -183,7 +183,7 @@ age_kdeplot <- ggplot(cardio, aes(x = age, fill= cardio)) +
   ggtitle(expression(atop("Age Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(0, 100)
+  xlim(20, 70)
 age_kdeplot
 
 ```
@@ -199,7 +199,7 @@ height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) +
   ggtitle(expression(atop("Height Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(130, 210)
+  xlim(10, 200)
 
 height_kdeplot
 ```
