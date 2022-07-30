@@ -1,0 +1,182 @@
+---
+title: "EDA"
+author: "Chenxu Wang"
+#date: "today"
+date: "`r Sys.Date()`"
+# this style requires installing rmdformats package 
+output:  
+    rmdformats::readthedown:
+      toc_float: true
+      toc_depth: 3
+      number_sections: true
+      code_folding: hide
+      includes:
+        before_body: header.html
+---
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+library(ggplot2)
+library(ggpubr)
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F, echo = T)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+
+# Chapter 1: Description of Dataset
+## About Dataset
+
+
+## Variables
+```{r import, results='markup'}
+cardio_orig<-read.csv("cardio_train.csv", header = TRUE, sep = ";")
+str(cardio_orig)
+#head(customer)
+```
+
+```{r asfactor, results='markup'}
+
+cardio_orig$age=cardio_orig$age/365 # transfer days to years
+
+cardio <- transform(cardio_orig,gender=as.factor(gender),
+                      alco = as.factor(alco),
+                      smoke = as.factor(smoke), 
+                      active = as.factor(active), 
+                      cholesterol=as.factor(cholesterol), 
+                      gluc= as.factor(gluc), 
+                      cardio=as.factor(cardio))
+str(cardio)
+```
+
+```{r cleanNA, include=FALSE}
+na_cardio<- sum(is.na(cardio))
+na_cardio # there are 0 NA in cardio
+cardio <- na.omit(cardio)
+sum(is.na(cardio))
+```
+
+```{r results=TRUE}
+str(cardio)
+```
+
+# Chapter 2: Categorical Variables EDA  
+
+A brief overview of the dataset tells that 
+
+## Present disease vs Absent disease
+### What are churned customers look like?
+
+
+
+### Contrast present  with absent
+
+```{r, results='markup'}
+
+gender_1 <- ggplot(cardio, aes(x=gender, fill=cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "Male", "2" = "Female")) +
+                   labs(title="gender", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+cholesterol_1 <- ggplot(cardio, aes(x=cholesterol, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+                   labs(title="cholesterol", x="", y="Percentage") +
+                   theme(legend.position="top")
+gluc_1<- ggplot(cardio, aes(x=gluc, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+                   labs(title="gluc", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+smoke_1<- ggplot(cardio, aes(x=smoke, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No smoking", "1" = "Smoking")) +
+                   labs(title="smoke", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+alco_1<- ggplot(cardio, aes(x=alco, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No alcohol intake", "1" = "Alcohol intake")) +
+                   labs(title="alco", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+active_1<- ggplot(cardio, aes(x=active, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No physical activity", "1" = "Physical activity" )) +
+                   labs(title="active", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
+
+```
+```{r kdePlot}
+age_kdeplot <- ggplot(cardio, aes(x = age, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(age)), color="black", linetype="dashed", size=1) +
+  xlab("Age ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Age Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(0, 100)
+
+
+height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(height)), color="black", linetype="dashed", size=1) +
+  xlab("Height(in cm) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Height Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(110, 230)
+
+  
+  
+
+weight_kdeplot<- ggplot(cardio, aes(x = weight, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(weight)), color="black", linetype="dashed", size=1) +
+  xlab("Weight ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Weight Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(0, 300)
+
+ap_hi_kdeplot<- ggplot(cardio, aes(x = ap_hi, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(ap_hi)), color="black", linetype="dashed", size=1) +
+  xlab("Systolic blood pressure(ap_hi) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Systolic blood pressure Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(50, 250)
+
+
+ap_lo_kdeplot<-ggplot(cardio, aes(x = ap_lo, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(ap_lo)), color="black", linetype="dashed", size=1) +
+  xlab("Diastolic blood pressure(ap_lo)) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Diastolic blood pressure Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(50, 150)
+
+age_kdeplot
+height_kdeplot
+weight_kdeplot
+ap_hi_kdeplot
+ap_lo_kdeplot
+
+
+```
