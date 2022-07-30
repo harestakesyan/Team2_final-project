@@ -230,10 +230,14 @@ chitest
 In this data set, men are not more likely than women to have cardiovascular disease.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< Updated upstream
   
 =======
+>>>>>>> main
+=======
+
 >>>>>>> main
 # Team 2 Final Project - Categorical variables EDA - Zhe  
 
@@ -241,7 +245,6 @@ In this data set, men are not more likely than women to have cardiovascular dise
 ```{r}
 str(cardio_clean_final)
 ```  
-
 
 
 **Chi-square test was used to test whether the categorical variables and presence of cardiovascular disease are independent.**  
@@ -312,6 +315,7 @@ The p-value from the Chi-square test is less then 2e-16, which is smaller than 0
 **Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
 >>>>>>> main
 
+<<<<<<< HEAD
 
 
 
@@ -319,4 +323,6 @@ The p-value from the Chi-square test is less then 2e-16, which is smaller than 0
 <<<<<<< HEAD
 =======
 >>>>>>> Stashed changes
+>>>>>>> main
+=======
 >>>>>>> main
