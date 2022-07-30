@@ -229,4 +229,14 @@ chitest
 ```  
 In this data set, men are not more likely than women to have cardiovascular disease.
 
-  
+# Team 2 Final Project - Categorical variables EDA - Zhe  
+Look at the structure of the dataframe `cardio_clean_final`.
+```{r}
+str(cardio_clean_final)
+```
+check whether these categorical variables have outliers.
+
+
+
+
+
