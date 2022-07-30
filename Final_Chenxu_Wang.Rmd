@@ -4,14 +4,16 @@ author: "Chenxu Wang"
 #date: "today"
 date: "`r Sys.Date()`"
 # this style requires installing rmdformats package 
-output:  
-    rmdformats::readthedown:
-      toc_float: true
-      toc_depth: 3
-      number_sections: true
-      code_folding: hide
-      includes:
-        before_body: header.html
+output:
+  html_document:
+    code_folding: hide
+    number_sections: true
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
 ```{r init, include=FALSE}
 # some of common options (and the defaults) are: 
@@ -27,19 +29,61 @@ options(scientific=T, digits = 3)
 # use scipen=999 to prevent scientific notation at all times
 ```
 
+# Chapter 1: Introudction of cardiovascular disease
 
-# Chapter 1: Description of Dataset
+## 1.1 Basic Information
+
+According to the American Heart Association, cardiovascular disease can refer to a number of conditions, including heart disease, heart attack, stroke, heart failure, arrhythmia, and heart valve problems. Heart disease and stroke are the leading causes of death worldwide, ranked first and second respectively. The World Heath Organization cites unhealthy diet, physical inactivity, tobacco and alcohol use as the most important behavioral risk factors of heart disease and stroke risk. As a result, patients with cardiovascular disease often present with raised blood pressure, raised blood glucose, raised blood lipids, and BMI in the overweight or obese range.
+
+## 1.2 The purpose of project 
+
+Based on a report published by Centers for Disease Control and Prevention, about 610,000 people die of heart disease in the United States every year: that is 1 in every 4 deaths. 
+So, in this project we aim to answer below questions by exploring data: (The smart question)
+
+# Chapter 2: Description of Dataset
 ## About Dataset
+The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in 11 features, such as age, gender, systolic blood pressure, diastolic blood pressure, and etc. The target class “cardio” equals to 1, when patient has cardiovascular disease, and it’s 0, if patient is healthy.In this data, number of people people with cardiovascular disease are 34,979 and without are 35,021. 
+
+There are 3 types of input features:
+
+Objective: factual information
+Examination: results of medical examination
+Subjective: information given by the patient.
+
 
 
 ## Variables
 ```{r import, results='markup'}
 cardio_orig<-read.csv("cardio_train.csv", header = TRUE, sep = ";")
 str(cardio_orig)
-#head(customer)
 ```
+* `id `: ID number
+* `age`: Age (in days and we will transfer to years)
+* `gender`: Women(1) or Men(2)
+* `height`: Height(cm)
+* `weight`: Weight(kg)
+* `ap_hi`: Systolic blood pressure
+* `ap_lo`: Astolic blood pressure
+* `cholesterol`: Cholesterol(1: normal, 2: above normal, 3: well above normal)
+* `gluc`: Glucose(1: normal, 2: above normal, 3: well above normal)
+* `smoke`: whether patient smokes or not(0:NO,1:Yes)
+* `alco`: Alcohol intake (0:NO,1:Yes)
+* `active`: Physical activity (0:NO,1:Yes)
+* `cardio`:  The target class “cardio” equals to 1, when patient has cardiovascular disease, and it’s 0, if patient is healthy.
 
-```{r asfactor, results='markup'}
+## Remove outliers
+```{r removeoutliers}
+cardio_remove = outlierKD2(cardio_orig, ap_hi, TRUE, TRUE, TRUE, TRUE) 
+cardio_orig = outlierKD2(cardio_remove, ap_lo, TRUE, TRUE, TRUE, TRUE)
+```
+With minimum as low as -150 and maximum as high as 16020
+Blood pressure outside the range 0-400 means person is either dead or just about to die
+We have removed records with these outliers from the data
+
+
+ 
+
+```{r asfactor}
 
 cardio_orig$age=cardio_orig$age/365 # transfer days to years
 
@@ -63,24 +107,25 @@ sum(is.na(cardio))
 ```{r results=TRUE}
 str(cardio)
 ```
+For our exploratory data analysis, we did some preprocessing including cleaning up and converting.First of all, we remove the outliers in both blood pressure columns. Then we transfer days to years for age.We dropped “NA” values from the dataset to simplify our analysis; we converted some variables into factor variables except `id`, `age`, `height`, `weight`, `ap_hi`,`ap_lo`
 
-# Chapter 2: Categorical Variables EDA  
+# Chapter 3: Categorical Variables EDA  
 
 A brief overview of the dataset tells that 
 
 ## Present disease vs Absent disease
-### What are churned customers look like?
+### What are cardiovascular disease patient look like?
 
 
 
-### Contrast present  with absent
+### Contrast present with absent
 
 ```{r, results='markup'}
 
 gender_1 <- ggplot(cardio, aes(x=gender, fill=cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "Male", "2" = "Female")) +
+                   scale_x_discrete(labels=c("1" = "Women", "2" = "Man")) +
                    labs(title="gender", x="", y="Percentage") +
                    theme(legend.position="top")
 
@@ -121,17 +166,32 @@ active_1<- ggplot(cardio, aes(x=active, fill= cardio)) +
 ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
 
 ```
-```{r kdePlot}
+According to the plot above, we can draw the conclusion that 
+*It's close to half the female and male population have cardiovascular disease.
+*The higher the degree of cholesterol and glucose ， more population have this disease.
+*It is surprised that whether patient smokes or not and consumes alcohol or not, Almost half of them have this disease.
+* Do physical exercise can slighlt help us decrease the probability of cardiovascular disease.
+
+# Chapter 4: Continuous Variables EDA
+##4.1 KDE plot of continuous variables
+The following plots are stacked for better visualization of the distribution.
+```{r,results='markup'}
 age_kdeplot <- ggplot(cardio, aes(x = age, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(age)), color="black", linetype="dashed", size=1) +
-  xlab("Age ") + ylab("Proportion") + 
+  xlab("Age ") + ylab("Percentage") + 
   ggtitle(expression(atop("Age Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
   xlim(0, 100)
+age_kdeplot
+
+```
+Above plot is stacked for better visualization of the distribution.
+The percentage of disease shows that the age of patients with disease mainly concentrate on around 50.
 
 
+```{r,results='markup'}
 height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(height)), color="black", linetype="dashed", size=1) +
@@ -139,20 +199,28 @@ height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) +
   ggtitle(expression(atop("Height Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(110, 230)
+  xlim(130, 210)
+
+height_kdeplot
+```
 
   
-  
-
+```{r,results='markup'}
 weight_kdeplot<- ggplot(cardio, aes(x = weight, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(weight)), color="black", linetype="dashed", size=1) +
-  xlab("Weight ") + ylab("Proportion") + 
+  xlab("Weight(in kg) ") + ylab("Proportion") + 
   ggtitle(expression(atop("Weight Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(0, 300)
+  xlim(0, 200)
 
+weight_kdeplot
+```
+
+
+
+```{r,results='markup'}
 ap_hi_kdeplot<- ggplot(cardio, aes(x = ap_hi, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(ap_hi)), color="black", linetype="dashed", size=1) +
@@ -162,7 +230,11 @@ ap_hi_kdeplot<- ggplot(cardio, aes(x = ap_hi, fill= cardio)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
   xlim(50, 250)
 
+ap_hi_kdeplot
+```
 
+
+```{r,results='markup'}
 ap_lo_kdeplot<-ggplot(cardio, aes(x = ap_lo, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(ap_lo)), color="black", linetype="dashed", size=1) +
@@ -172,11 +244,9 @@ ap_lo_kdeplot<-ggplot(cardio, aes(x = ap_lo, fill= cardio)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
   xlim(50, 150)
 
-age_kdeplot
-height_kdeplot
-weight_kdeplot
-ap_hi_kdeplot
 ap_lo_kdeplot
-
-
 ```
+
+
+
+
