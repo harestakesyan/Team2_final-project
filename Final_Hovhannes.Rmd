@@ -335,6 +335,22 @@ ap_lo_kdeplot
 As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular diseas`e. From the `heigh`t and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
 
 ## Logistical Regression
+TODO- DEFINITIONS HERE: WRITE SOMETHING HERE
 
+ANOVA test results:
+```{r LogisticRegression,results = TRUE}
+lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = cardio)
+lm2 <- glm(cardio~age + height, family = binomial(link = "logit"), data = cardio)
+lm3 <- glm(cardio~age + height + weight, family = binomial(link = "logit"), data = cardio)
+lm4 <- glm(cardio~age + height + weight + ap_hi, family = binomial(link = "logit"), data = cardio)
+lm5 <- glm(cardio~age + height + weight + ap_hi + ap_lo, family = binomial(link = "logit"), data = cardio)
+anovat <- anova(lm1,lm2,lm3, lm4, lm5, test="LRT")
+anovat
+```
+
+
+TODO- ANALYSIS
+
+## AUC And ROC Curve
 
 
