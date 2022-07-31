@@ -1,0 +1,356 @@
+---
+title: "Team 2 - EDA"
+author: "Hovhannes Arestakesyan"
+#date: "today"
+date: "`r Sys.Date()`"
+# this style requires installing rmdformats package 
+output:
+  html_document:
+    code_folding: hide
+    number_sections: true
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+library(ggplot2)
+library(ggpubr)
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F, echo = T)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+# Chapter 1: Introudction of cardiovascular disease
+
+## Basic Information
+
+According to the American Heart Association, cardiovascular disease can refer to a number of conditions, including heart disease, heart attack, stroke, heart failure, arrhythmia, and heart valve problems. Heart disease and stroke are the leading causes of death worldwide, ranked first and second respectively. The World Heath Organization cites unhealthy diet, physical inactivity, tobacco and alcohol use as the most important behavioral risk factors of heart disease and stroke risk. As a result, patients with cardiovascular disease often present with raised blood pressure, raised blood glucose, raised blood lipids, and BMI in the overweight or obese range.
+
+## The purpose of project 
+
+Based on a report published by Centers for Disease Control and Prevention, about 610,000 people die of heart disease in the United States every year: that is 1 in every 4 deaths. 
+So, in this project we aim to answer below questions by exploring data: (The smart question)
+
+# Chapter 2: Description of Dataset
+## About Dataset
+The Cardiovascular Disease dataset was obtained from Kaggle   (https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). There are 70000 total values (observations) in 11 features, such as age, gender, systolic blood pressure, diastolic blood pressure, and etc. The target class “cardio” equals to 1, when patient has cardiovascular disease, and it’s 0, if patient is healthy.In this data, number of people people with cardiovascular disease are 34,979 and without are 35,021. 
+
+There are 3 types of input features:
+
+Objective: factual information
+Examination: results of medical examination
+Subjective: information given by the patient.
+
+
+
+## Variables
+```{r import, results='markup'}
+cardio_orig<-read.csv("cardio_train.csv", header = TRUE, sep = ";")
+str(cardio_orig)
+```
+* `id `: ID number
+* `age`: Age (in days and we will transfer to years)
+* `gender`: Women(1) or Men(2)
+* `height`: Height(cm)
+* `weight`: Weight(kg)
+* `ap_hi`: Systolic blood pressure
+* `ap_lo`: Diastolic blood pressure
+* `cholesterol`: Cholesterol(1: normal, 2: above normal, 3: well above normal)
+* `gluc`: Glucose(1: normal, 2: above normal, 3: well above normal)
+* `smoke`: whether patient smokes or not(0:NO,1:Yes)
+* `alco`: Alcohol intake (0:NO,1:Yes)
+* `active`: Physical activity (0:NO,1:Yes)
+* `cardio`:  The target class “cardio” equals to 1, when patient has cardiovascular disease, and it’s 0, if patient is healthy.
+
+## Remove outliers
+```{r removeoutliers}
+cardio_remove = outlierKD2(cardio_orig, ap_hi, TRUE, TRUE, TRUE, TRUE) 
+cardio_orig = outlierKD2(cardio_remove, ap_lo, TRUE, TRUE, TRUE, TRUE)
+```
+With minimum as low as -150 and maximum as high as 16020
+Blood pressure outside the range 0-400 means person is either dead or just about to die
+We have removed records with these outliers from the data
+
+
+ 
+
+```{r asfactor}
+
+cardio_orig$age=cardio_orig$age/365 # transfer days to years
+
+cardio <- transform(cardio_orig,gender=as.factor(gender),
+                      alco = as.factor(alco),
+                      smoke = as.factor(smoke), 
+                      active = as.factor(active), 
+                      cholesterol=as.factor(cholesterol), 
+                      gluc= as.factor(gluc), 
+                      cardio=as.factor(cardio))
+str(cardio)
+```
+
+```{r cleanNA, include=FALSE}
+na_cardio<- sum(is.na(cardio))
+na_cardio # there are 0 NA in cardio
+cardio <- na.omit(cardio)
+sum(is.na(cardio))
+```
+
+```{r results=TRUE}
+str(cardio)
+```
+For our exploratory data analysis, we did some preprocessing including cleaning up and converting. First of all, we remove the outliers in both blood pressure columns. Then we transfer days to years for age.We dropped “NA” values from the dataset to simplify our analysis; we converted some variables into factor variables except `id`, `age`, `height`, `weight`, `ap_hi`,`ap_lo`
+
+# Chapter 3: Categorical Variables EDA  
+
+A brief overview of the dataset tells that there are 34,979 patients with cardiovascular disease and 35,021 patients without cardiovascular disease.
+
+## Has disease vs healthy
+### What do cardiovascular disease patients look like?
+```{r, include=FALSE}
+disease <- subset(cardio, cardio==1)
+healthy <- subset(cardio, cardio==0)
+summary(disease)
+```
+```{r, include=FALSE}
+xkablesummary(subset(disease, select=c(age, gender, ap_hi, ap_lo, cholesterol)), title="Heart Disease Patient Attributes")
+```
+Here we have picked out a few factors from the summary that have significant differences between factor levels. `r xkablesummary(subset(disease, select=c(age, gender, weight, ap_hi, ap_lo, cholesterol)), title="Heart Disease Patient Attributes")` We see that all except a few heart disease patients are `above the age of 40`.  It would  make sense that most heart disease patients are older patients. Approximately two/thirds of heart disease patients are `women` Most heart disease patients have `higher blood pressure` and most also have `high cholesterol` levels.
+
+### Contrast heart disease patients with healthy patients
+
+```{r, results='markup'}
+
+gender_1 <- ggplot(cardio, aes(x=gender, fill=cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "Women", "2" = "Man")) +
+                   labs(title="gender", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+cholesterol_1 <- ggplot(cardio, aes(x=cholesterol, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+                   labs(title="cholesterol", x="", y="Percentage") +
+                   theme(legend.position="top")
+gluc_1<- ggplot(cardio, aes(x=gluc, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+                   labs(title="gluc", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+smoke_1<- ggplot(cardio, aes(x=smoke, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No smoking", "1" = "Smoking")) +
+                   labs(title="smoke", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+alco_1<- ggplot(cardio, aes(x=alco, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No alcohol intake", "1" = "Alcohol intake")) +
+                   labs(title="alco", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+active_1<- ggplot(cardio, aes(x=active, fill= cardio)) +
+                   geom_bar(position="fill") +
+                   scale_fill_manual(values=c("pink3", "steelblue")) +
+                   scale_x_discrete(labels=c("0" = "No physical activity", "1" = "Physical activity" )) +
+                   labs(title="active", x="", y="Percentage") +
+                   theme(legend.position="top")
+
+ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
+
+```
+According to the plot above, we can draw the conclusion that:
+
+- Half of all men and all women have cardiovasulcar disease
+- Higher cholesterol and higher glucose levels can be linked to higher incidence of cardiovascular disease.
+- Almost half of smokers and drinkers have cardiovascular disease.
+- Doing physical exercise helps decrease the probability of getting cardiovascular disease.
+
+## Chi-squared tests
+We can use a $\chi^2$ test to determine if two categorical variables are independent based on a contigency table.
+
+### Test Gender
+
+```{r}
+disease_vs_gender = table(cardio$cardio, cardio$gender)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and gender are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test1 = chisq.test(disease_vs_gender)
+chi_test1
+```
+Since p-value = `r format(chi_test1$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
+
+### Test Cholestrol
+
+```{r}
+disease_vs_cholesterol = table(cardio$cardio, cardio$cholesterol)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and cholesterol levels are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test2 = chisq.test(disease_vs_cholesterol)
+chi_test2
+```
+
+Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
+
+### Test Glucose
+
+```{r}
+disease_vs_glucose = table(cardio$cardio, cardio$gluc)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and glucose levels are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test3 = chisq.test(disease_vs_glucose)
+chi_test3
+```
+
+Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
+
+### Test Smoking
+```{r}
+disease_vs_smoking = table(cardio$cardio, cardio$smoke)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and smoking are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test4 = chisq.test(disease_vs_smoking)
+chi_test4
+```
+
+Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
+
+### Test Alcohol
+
+```{r}
+disease_vs_alcohol = table(cardio$cardio, cardio$alco)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and drinking alcohol are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test5 = chisq.test(disease_vs_alcohol)
+chi_test5
+```
+
+Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
+
+### Test Activity
+```{r}
+disease_vs_activity = table(cardio$cardio, cardio$active)
+```
+Are they independent?
+- $H_0$: Heart disease incidence and activity are independent.  
+- $H_1$: They are not independent. 
+```{r, results='markup'}
+chi_test6 = chisq.test(disease_vs_activity)
+chi_test6
+```
+
+Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
+
+# Chapter 4: Continuous Variables EDA
+
+A brief overview of the dataset tells us that there are 5 continuous variables: age, height, weight, and systolic/diastolic blood pressures
+
+## 4.1 KDE plot of continuous variables
+
+The following plots are stacked for better visualization of the distribution.
+```{r,results='markup'}
+age_kdeplot <- ggplot(cardio, aes(x = age, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(age)), color="black", linetype="dashed", size=1) +
+  xlab("Age ") + ylab("Percentage") + 
+  ggtitle(expression(atop("Age Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(20, 70)
+age_kdeplot
+
+height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(height)), color="black", linetype="dashed", size=1) +
+  xlab("Height(in cm) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Height Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(10, 200)
+
+height_kdeplot
+
+weight_kdeplot<- ggplot(cardio, aes(x = weight, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(weight)), color="black", linetype="dashed", size=1) +
+  xlab("Weight(in kg) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Weight Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(0, 200)
+
+weight_kdeplot
+
+ap_hi_kdeplot<- ggplot(cardio, aes(x = ap_hi, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(ap_hi)), color="black", linetype="dashed", size=1) +
+  xlab("Systolic blood pressure(ap_hi) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Systolic blood pressure Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(50, 250)
+
+ap_hi_kdeplot
+
+ap_lo_kdeplot<-ggplot(cardio, aes(x = ap_lo, fill= cardio)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(ap_lo)), color="black", linetype="dashed", size=1) +
+  xlab("Diastolic blood pressure(ap_lo)) ") + ylab("Proportion") + 
+  ggtitle(expression(atop("Diastolic blood pressure Distribution (stacked)")))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
+  xlim(50, 150)
+
+ap_lo_kdeplot
+```
+As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular diseas`e. From the `heigh`t and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
+
+## Logistical Regression
+TODO- DEFINITIONS HERE: WRITE SOMETHING HERE
+
+ANOVA test results:
+```{r LogisticRegression,results = TRUE}
+lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = cardio)
+lm2 <- glm(cardio~age + height, family = binomial(link = "logit"), data = cardio)
+lm3 <- glm(cardio~age + height + weight, family = binomial(link = "logit"), data = cardio)
+lm4 <- glm(cardio~age + height + weight + ap_hi, family = binomial(link = "logit"), data = cardio)
+lm5 <- glm(cardio~age + height + weight + ap_hi + ap_lo, family = binomial(link = "logit"), data = cardio)
+anovat <- anova(lm1,lm2,lm3, lm4, lm5, test="LRT")
+anovat
+```
+
+
+TODO- ANALYSIS
+
+## AUC And ROC Curve
+
+
