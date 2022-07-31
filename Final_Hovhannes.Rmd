@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Team 2 - EDA"
 author: "Hovhannes Arestakesyan"
 #date: "today"
 date: "`r Sys.Date()`"
