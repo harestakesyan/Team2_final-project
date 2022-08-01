@@ -7,6 +7,7 @@ cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/final proj
 str(cardio.df)
 
 cardio.df$id<- as.character(cardio.df$id)
+cardio.df$age<- cardio.df$age / 365
 cardio.df$gender<- as.factor(cardio.df$gender)
 cardio.df$cholesterol<- factor(cardio.df$cholesterol, levels = c("1", "2", "3"))
 cardio.df$gluc<- factor(cardio.df$gluc, levels = c("1", "2", "3"))
@@ -14,27 +15,23 @@ cardio.df$smoke<- as.factor(cardio.df$smoke)
 cardio.df$alco<- as.factor(cardio.df$alco)
 cardio.df$active<- as.factor(cardio.df$active)
 cardio.df$cardio<- as.factor(cardio.df$cardio)
+cardio.df$bmi<- cardio.df$weight / ((cardio.df$height / 100) * (cardio.df$height / 100))
 str(cardio.df)
 
-#Summary/Descriptive Statistics
+#Remove Outliers
 summary(cardio.df)
 
+cardio1<- outlierKD2(cardio.df, height, rm = TRUE, histogram = FALSE)
+cardio2<- outlierKD2(cardio1, weight, rm = TRUE, histogram = FALSE)
+cardio3<- outlierKD2(cardio2, bmi, rm = TRUE, histogram = FALSE)
+cardio4<- outlierKD2(cardio3, ap_hi, rm = TRUE, histogram = FALSE)
+cardio5<- outlierKD2(cardio4, ap_lo, rm = TRUE, histogram = FALSE)
 
-#Remove observations with BP Outliers
-  #ap_hi 
-Q1 <- quantile(cardio.df$ap_hi, .25)
-Q3 <- quantile(cardio.df$ap_hi, .75)
-IQR <- IQR(cardio.df$ap_hi)
+Cardio<- na.omit(cardio5)
 
-hi.nouts <- subset(cardio.df, cardio.df$ap_hi > (Q1 - 1.5*IQR) & cardio.df$ap_hi < (Q3 + 1.5*IQR))
+summary(Cardio)
 
-  #ap_lo
-Q1 <- quantile(cardio.df$ap_lo, .25)
-Q3 <- quantile(cardio.df$ap_lo, .75)
-IQR <- IQR(cardio.df$ap_lo)
 
-lo.nouts <- subset(cardio.df, cardio.df$ap_lo > (Q1 - 1.5*IQR) & cardio.df$ap_lo < (Q3 + 1.5*IQR))
 
-#Summary/Descriptive Stats w/o Outliers
-cardio.df<- lo.nouts
-summary(cardio.df)
+
+
