@@ -99,3 +99,39 @@ alco.1 <- ggplot(cardio.final, aes(x=cardio, fill= alco.yn)) +
   scale_fill_manual(values=c("#990000", "#0000da")) +
   theme_minimal()
 alco.1
+
+#### EDA Graphics: Continuous Variables ####
+
+#age
+cvdage<- filter(cardio.final, cardio.yn == "Yes")
+mean(cvdage$age) #54.98427
+
+n.cvdage<- filter(cardio.final, cardio.yn == "No")
+mean(n.cvdage$age) #51.81747
+
+age.kde <- ggplot(cardio.final, aes(x = age, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  scale_x_continuous(limits = c(30,70)) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "CVD Patients are Typically Older Than CVD Patients",
+       subtitle = "Age Distribution (Stacked)",
+       fill = "Has CVD", x = "Age", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "segment", x = 54.98, xend = 54.98, y = 0, yend = .053, size = 1, color = "steelblue") +
+  annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 56, y =.01, label = "Patients is 55", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "segment", x = 51.81, xend = 51.81, y = 0, yend = .1, size = 1, color = "pink3") +
+  annotate(geom = "text", x= 53, y =.08, label = "Mean Age of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 53, y =.075, label = "Patients is 52", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+age.kde
+
+
+
+
+
+
