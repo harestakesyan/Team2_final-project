@@ -35,16 +35,29 @@ rm(cardio1, cardio2, cardio3, cardio4, cardio5)
 
 #EDA Graphics
   #cholesterol
-cholesterol_1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
+cholesterol.1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
   scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Patients with CVD Likely to Have Higher Cholesterol Levels", y = "", x = "",
         fill = "Cholesterol Level") +
   scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
-  theme_bw()
-cholesterol_1
+  theme_minimal()
+cholesterol.1
 
+cholesterol_1 <- ggplot(cardio.final, aes(x=cholesterol, fill= cardio.yn)) + geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above normal","3" = "Well Above Normal")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Patients with CVD Likely to Have Higher Cholesterol Levels",
+        subtitele = "",
+        y = "", x = "Cholesterol Level",
+        fill = "Has CVD") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+cholesterol_1
+  
+  
   #Physical Activity
 pa <- ggplot(cardio.final, aes(x=cardio, fill= active.yn)) +
   geom_bar(position="fill") +
