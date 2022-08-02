@@ -9,9 +9,9 @@ cardio$age = cardio$age/365
 cardio$bmi = cardio$weight/(cardio$height/100)**2
 
 #remove outliers from bmi, api_hi and api_lo
-cardio_clean = outlierKD2(cardio, bmi, TRUE, TRUE, TRUE, TRUE) 
-cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
-cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+cardio_clean = outlierKD2(cardio, bmi, TRUE, FALSE, FALSE, FALSE) 
+cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, FALSE, FALSE, FALSE) 
+cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, FALSE, FALSE, FALSE)
 
 #remove NA rows
 cardio_clean = na.omit(cardio_clean)
