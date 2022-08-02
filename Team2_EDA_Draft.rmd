@@ -46,7 +46,7 @@ active | Whether patient is physically active or not (0: no, 1: yes)
 cardio | Presence or absence of cardiovascular disease (0: absent, 1: present)
 
 ```{r, results='markup'}
-cardio = data.frame(read.csv("cardio_train.csv", sep=';'))
+cardio = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
 xkablesummary(cardio, title = "Cardio Data Frame Summary" )
 str(cardio)
 ```  
