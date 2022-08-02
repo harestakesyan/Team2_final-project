@@ -3,7 +3,7 @@ library(ezids)
 library(tidyverse)
 
 #Data
-cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/final project/Team2_final-project/cardio_train.csv")
+cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/cardio_train_copy.csv")
 str(cardio.df)
 
 cardio.df$id<- as.character(cardio.df$id)
