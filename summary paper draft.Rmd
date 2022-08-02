@@ -22,32 +22,32 @@ knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 
 ```
-#  Chapter 1: Background
+# I. Background
 
 Background on cardiovascular disease. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-#Chapter 2: Dataset Description
+# II. Dataset Description
 
-Brief background on dataset. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Brief background on dataset. This Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ## Variables
 
-Variable |  Variable Type | Definition  
+Variable | Type | Definition  
   :-     |  :--- |  :----
 `id`	 | chr | ID number
 `age`	 | num | Age in years
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
 `height` | num | Height in centimeters (cm)
 `weight` |num | Weight in kilograms (kg)
-`bmi` | Body Max Index (kg/m^2)
-`ap_hi` | Systolic blood pressure
-`ap_lo` | Diastolic blood pressure
-`cholesterol` | Cholesterol (1: normal, 2: above normal, 3: well above normal)
-`gluc` | Glucose (1: normal, 2: above normal, 3: well above normal)
-`smoke` | Whether patient smokes or not (0: no, 1: yes)
-`alco` | Whether patient consumes alcohol or not (0: no, 1: yes)
-`active` | Whether patient is physically active or not (0: no, 1: yes)
-`cardio` | Presence or absence of cardiovascular disease (0: absent, 1: present)
+`bmi` | num | Body Max Index (kg/m^2)
+`ap_hi` | int | Systolic blood pressure
+`ap_lo` | int | Diastolic blood pressure
+`cholesterol` |Factor w/ 3 levels| Cholesterol (1: normal, 2: above normal, 3: well above normal)
+`gluc` |Factor w/ 3 levels| Glucose (1: normal, 2: above normal, 3: well above normal)
+`smoke` |Factor w/ 3 levels| Whether patient smokes or not (0: no, 1: yes)
+`alco` |Factor w/ 3 levels| Whether patient consumes alcohol or not (0: no, 1: yes)
+`active` |Factor w/ 3 levels| Whether patient is physically active or not (0: no, 1: yes)
+`cardio` |Factor w/ 3 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
 
 
