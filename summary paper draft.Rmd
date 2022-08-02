@@ -36,8 +36,8 @@ Specifically, the research team answers the following Specific, Measurable, Achi
 
   1. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
   2. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
-  3. How accurately an the model predict the probability that a patient has cardiovascular disease?    
-  4. Is there any association between an individual's sex and whether they has the 
+  3. How accurately can the model predict the probability that a patient has cardiovascular disease?  
+  4. Is there any association between an individual's sex and whether they have 
 cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
 women?
 
@@ -68,11 +68,11 @@ Variable | Type | Definition
 # III. Exploratory Data Analysis
 ## Categorical Variables
 ....
-....
+
 
 ## Continuous Variables
 ....
-....
+
 
 ## All Variables
 
