@@ -262,7 +262,7 @@ chi_active
 ## Continuous Variables
 A brief overview of the dataset tells us that there are 5 continuous variables: `age`, `height`, `weight`, and systolic/diastolic blood pressures
 
-##4.1 KDE plot of continuous variables
+## 4.1 KDE plot of continuous variables
 The following plots are stacked for better visualization of the distribution.
 ```{r,results='markup'}
 age_kdeplot <- ggplot(cardio_clean_final, aes(x = age, fill= cardio)) + 
