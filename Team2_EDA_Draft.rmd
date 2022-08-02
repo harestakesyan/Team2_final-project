@@ -61,7 +61,7 @@ cardio$age = cardio$age/365 # transfer days to years
 cardio$bmi = cardio$weight/(cardio$height/100)**2
 
 #xkablesummary(cardio, title = "Cardio Data Frame Summary" )
-cardio
+head(cardio)
 ```  
 
 We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and maximum as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` function to remove the outliers.  
