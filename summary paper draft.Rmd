@@ -49,9 +49,29 @@ Variable | Type | Definition
 `active` |Factor w/ 3 levels| Whether patient is physically active or not (0: no, 1: yes)
 `cardio` |Factor w/ 3 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
+# III. Exploratory Data Analysis
+## Categorical Variables
+....
+....
 
+## Continuous Variables
+....
+....
 
+## All Variables
 
+# IV. Model Comparison
+## Logistic Model
+...
+
+## KNN
+...
+
+## Classification Tree
+
+## Discussion
+
+# V. Conclusion
 
 
 
