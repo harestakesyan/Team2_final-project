@@ -19,21 +19,20 @@ output:
 #library(tidyverse)
 #library(tinytex)
 #require(rmarkdown)
-knitr::opts_chunk$set(warning = F, results = "hide", message = F)
-options(scientific=T, digits = 3) 
+#knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+#options(scientific=T, digits = 3) 
 
 ```
 # I. Background
 
 Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
-The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use and harmful use of alcohol" are the most important behavioral risk factors 
-as the top behavioral factors contr
-risk factors for heart disease include xyz. Our research tem wanted to investigate the validity of their findings andprovide recommendations to reduce risk.
-explore thier findings and provide reccomendations.Given its prevalence and the detrimental effect it has on patients and their loved ones, it is imperative to determine the risk factors of heart disease and provide recommendations for reducing risk. This research paper is an attempt to do just that.
+The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+
+This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
 
 ## SMART Questions
-Specifically, the research team sought to answer the following Specific, Measurable, Achievable, Relevant, an Time-oriented (SMART) questions.  
+Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions.  
 
   1. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
   2. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
@@ -45,26 +44,26 @@ women?
 
 ## Dataset Description
 
-We used this Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `Cardio`, had roughly 62,000 observations and the following variables:
 
 ### Variables
 
 Variable | Type | Definition  
   :-     |  :-- |  :----
-`id`	 | chr | ID number
-`age`	 | num | Age in years
+`id`	 | Character | ID number
+`age`	 | Number | Age in years
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
-`height` | num | Height in centimeters (cm)
-`weight` |num | Weight in kilograms (kg)
-`bmi` | num | Body Max Index (kg/m^2^)
-`ap_hi` | int | Systolic blood pressure
-`ap_lo` | int | Diastolic blood pressure
+`height` | Number | Height in centimeters (cm)
+`weight` |Number | Weight in kilograms (kg)
+`bmi` | Number | Body Max Index (kg/m^2^)
+`ap_hi` | Integer | Systolic blood pressure
+`ap_lo` | Integer | Diastolic blood pressure
 `cholesterol` |Factor w/ 3 levels| Cholesterol (1: normal, 2: above normal, 3: well above normal)
 `gluc` |Factor w/ 3 levels| Glucose (1: normal, 2: above normal, 3: well above normal)
-`smoke` |Factor w/ 3 levels| Whether patient smokes or not (0: no, 1: yes)
-`alco` |Factor w/ 3 levels| Whether patient consumes alcohol or not (0: no, 1: yes)
-`active` |Factor w/ 3 levels| Whether patient is physically active or not (0: no, 1: yes)
-`cardio` |Factor w/ 3 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
+`smoke` |Factor w/ 2 levels| Whether patient smokes or not (0: no, 1: yes)
+`alco` |Factor w/ 2 levels| Whether patient consumes alcohol or not (0: no, 1: yes)
+`active` |Factor w/ 2 levels| Whether patient is physically active or not (0: no, 1: yes)
+`cardio` |Factor w/ 2 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
 # III. Exploratory Data Analysis
 ## Categorical Variables
@@ -97,7 +96,7 @@ Variable | Type | Definition
 # References
 World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
-
+Cleveland Clinic medical professional (Ed.). (2021, October 5). Cardiovascular disease: Heart disease causes and symptoms. Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
 
 
 
