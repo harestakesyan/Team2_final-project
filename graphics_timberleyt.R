@@ -1,0 +1,101 @@
+#### Startup ####
+
+#Libraries
+library(ezids)
+library(tidyverse)
+
+#Data
+cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/cardio_train_copy.csv")
+str(cardio.df)
+
+cardio.df$id<- as.character(cardio.df$id)
+cardio.df$age<- cardio.df$age / 365
+cardio.df$gender<- as.factor(cardio.df$gender)
+cardio.df$cholesterol<- factor(cardio.df$cholesterol, levels = c("1", "2", "3"))
+cardio.df$gluc<- factor(cardio.df$gluc, levels = c("1", "2", "3"))
+cardio.df$smoke<- as.factor(cardio.df$smoke)
+cardio.df$alco<- as.factor(cardio.df$alco)
+cardio.df$active<- as.factor(cardio.df$active)
+cardio.df$cardio<- as.factor(cardio.df$cardio)
+cardio.df$cardio.yn<- as.factor(ifelse(cardio.df$cardio == "0", "No", "Yes"))
+cardio.df$active.yn<- as.factor(ifelse(cardio.df$active == "0", "No", "Yes"))
+cardio.df$bmi<- cardio.df$weight / ((cardio.df$height / 100)**2)
+str(cardio.df)
+
+#Remove Outliers
+summary(cardio.df)
+
+#cardio1<- outlierKD2(cardio.df, height, rm = TRUE, histogram = FALSE)
+#cardio2<- outlierKD2(cardio1, weight, rm = TRUE, histogram = FALSE)
+cardio3<- outlierKD2(cardio.df, bmi, rm = TRUE, histogram = FALSE)
+cardio4<- outlierKD2(cardio3, ap_hi, rm = TRUE, histogram = FALSE)
+cardio5<- outlierKD2(cardio4, ap_lo, rm = TRUE, histogram = FALSE)
+
+cardio.final <- na.omit(cardio5)
+summary(cardio.final)
+rm(cardio3, cardio4, cardio5)
+
+#### EDA Graphics: Categorical Variables ####
+  #cholesterol
+cholesterol.1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Patients with CVD Likely to Have Higher Cholesterol Levels", y = "", x = "",
+        fill = "Cholesterol Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+cholesterol.1
+
+cholesterol.2<- ggplot() + geom_bar(cardio.final, 
+                                    mapping = aes(x = cardio.yn, fill = cholesterol),
+                                    position = position_dodge())
+cholesterol.2
+
+
+  #Glucose
+glucose.1 <- ggplot(cardio.final, aes(x=cardio, fill= gluc)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Patients with CVD Likely to Have Higher Glucose Levels", y = "", x = "",
+        fill = "Glucose Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+glucose.1
+
+#Gender
+cardio.final$gender.yn<- as.factor(ifelse(cardio.final$gender== "1", "Women", "Men"))
+
+gender.1 <- ggplot(cardio.final, aes(x=cardio, fill= gender.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( y = "", x = "", fill = "") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+gender.1
+
+#Smoke
+cardio.final$smoke.yn<- as.factor(ifelse(cardio.final$smoke== "1", "Yes", "No"))
+
+smoke.1 <- ggplot(cardio.final, aes(x=cardio, fill= smoke.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( y = "", x = "", fill = "Smoker") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+smoke.1
+
+#alco
+cardio.final$alco.yn<- as.factor(ifelse(cardio.final$alco== "1", "Yes", "No"))
+
+alco.1 <- ggplot(cardio.final, aes(x=cardio, fill= alco.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( y = "", x = "", fill = "Drinks Alcohol") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+alco.1
