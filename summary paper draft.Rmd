@@ -1,6 +1,6 @@
 ---
-title: "Cardiovascular Disease: Summary Paper"
-author: "Team 2"
+title: "Heartbreakers: Estimating the Risk Factors of Cardiovascular Disease"
+author: "Hovhannes Arestakesyan, Karina Martinez, Timberley Thompson, Chenxu Wang, Zhe Yu"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -24,16 +24,19 @@ options(scientific=T, digits = 3)
 ```
 # I. Background
 
-Background on cardiovascular disease. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Background on cardiovascular disease.  cv disease is bad. it affects xyz people a year. the sympotms  are xyz. beraking the hearts of patients and their loved ones. This research paper is an attempt to determine risk factors for cardiovascular disease and provide recommendations for prevention.
 
-# II. Dataset Description
+## SMART Questions
+Specifically, the research team sought to answer the following Specific, Measurable, Achievable, Relevant, an Time-oriented (SMART) questions.
 
-Brief background on dataset. This Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+##Dataset Description
 
-## Variables
+We used this Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+### Variables
 
 Variable | Type | Definition  
-  :-     |  :--- |  :----
+  :-     |  :-- |  :----
 `id`	 | chr | ID number
 `age`	 | num | Age in years
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
@@ -62,6 +65,8 @@ Variable | Type | Definition
 
 # IV. Model Comparison
 ## Logistic Model
+### Model Evaluation
+### Limitations
 ...
 
 ## KNN
@@ -75,6 +80,7 @@ Variable | Type | Definition
 
 
 
+# References
 
 
 
