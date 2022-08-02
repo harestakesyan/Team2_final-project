@@ -1,6 +1,6 @@
 ---
 title: "Heartbreakers: Estimating the Risk Factors of Cardiovascular Disease"
-author: "Hovhannes Arestakesyan, Karina Martinez, Timberley Thompson, Chenxu Wang, Zhe Yu"
+author: "By: Hovhannes Arestakesyan, Karina Martinez, Timberley Thompson, Chenxu Wang, & Zhe Yu"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -15,21 +15,35 @@ output:
 ---
 
 ```{r init, include=FALSE}
-library(ezids)
-library(tidyverse)
-library(tinytex)
+#library(ezids)
+#library(tidyverse)
+#library(tinytex)
+#require(rmarkdown)
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 
 ```
 # I. Background
 
-Background on cardiovascular disease.  cv disease is bad. it affects xyz people a year. the sympotms  are xyz. beraking the hearts of patients and their loved ones. This research paper is an attempt to determine risk factors for cardiovascular disease and provide recommendations for prevention.
+Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
+
+The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use and harmful use of alcohol" are the most important behavioral risk factors 
+as the top behavioral factors contr
+risk factors for heart disease include xyz. Our research tem wanted to investigate the validity of their findings andprovide recommendations to reduce risk.
+explore thier findings and provide reccomendations.Given its prevalence and the detrimental effect it has on patients and their loved ones, it is imperative to determine the risk factors of heart disease and provide recommendations for reducing risk. This research paper is an attempt to do just that.
 
 ## SMART Questions
-Specifically, the research team sought to answer the following Specific, Measurable, Achievable, Relevant, an Time-oriented (SMART) questions.
+Specifically, the research team sought to answer the following Specific, Measurable, Achievable, Relevant, an Time-oriented (SMART) questions.  
 
-##Dataset Description
+  1. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
+  2. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
+  3. How accurately an the model predict the probability that a patient has cardiovascular disease?    
+  4. Is there any association between an individual's sex and whether they has the 
+cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
+women?
+
+
+## Dataset Description
 
 We used this Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
@@ -42,7 +56,7 @@ Variable | Type | Definition
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
 `height` | num | Height in centimeters (cm)
 `weight` |num | Weight in kilograms (kg)
-`bmi` | num | Body Max Index (kg/m^2)
+`bmi` | num | Body Max Index (kg/m^2^)
 `ap_hi` | int | Systolic blood pressure
 `ap_lo` | int | Diastolic blood pressure
 `cholesterol` |Factor w/ 3 levels| Cholesterol (1: normal, 2: above normal, 3: well above normal)
@@ -81,8 +95,7 @@ Variable | Type | Definition
 
 
 # References
-
-
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 
 
