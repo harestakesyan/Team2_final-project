@@ -1,6 +1,6 @@
 ---
 title: "Team 2 EDA"
-author: "Karina Martinez"
+author: "Zhe, Chenxu, Hovhannes, Timberley, Karina"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -101,148 +101,18 @@ str(cardio_clean_final)
 
 We remove the NA rows with the `na.omit()` function and save over the `cardio_clean` data frame. We changed the following variables to categorical (factors): `gender`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `cardio` and saved the data frame as `cardio_clean_final`. There are now `r nrow(cardio_clean_final)` observations in the clean data frame.
 
-## Basic Statistics
-
-```{r, results='markup'}
-
-loadPkg("corrplot")
-cardio_cor = cor(cardio_clean) # get the correlation matrix  
-corrplot.mixed(cardio_cor) 
-```  
-
-**T-tests**
-
-```{r, results='markup'}
-cardio_pos = subset(cardio_clean_final, cardio_clean_final$cardio == 1)
-cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
-
-ttest_height = t.test(cardio_pos$height, cardio_neg$height)
-ttest_height
-
-ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
-ttest_weight
-```
+### Has disease vs healthy
+#### What do cardiovascular disease patients look like?
 ```{r}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+#summary(disease)
 
-box_weight_pos = ggplot(cardio_pos, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Present)",x="", y = "BMI")
-
-box_weight_neg = ggplot(cardio_neg, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Absent)",x="", y = "BMI")
-
-grid.arrange(box_weight_pos, box_weight_neg, ncol=2, nrow=1)
+xkablesummary(subset(disease, select=c(age, gender, ap_hi, ap_lo, cholesterol, bmi)), title="Heart Disease Patient Attributes")
 ```
+Here we have picked out a few factors from the summary that have significant differences between factor levels. `r xkablesummary(subset(disease, select=c(age, gender, weight, ap_hi, ap_lo, cholesterol, bmi)), title="Heart Disease Patient Attributes")` In this data set, we see that all except a few heart disease patients are `above the age of 40`.  It would  make sense that most heart disease patients are older patients. Approximately two/thirds of heart disease patients are `women`. Most heart disease patients have `higher blood pressure` and `high cholesterol` levels. The average heard disease patient is also overweight, with a `bmi` > 25.0.
 
-```{r, results='markup'}
-ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
-ttest_hi
-
-ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
-ttest_lo
-```
-```{r, results='markup'}
-anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
-
-```{r, results='markup'}
-anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
-
-```{r, results='markup'}
-contable = table(cardio_clean_final$gender, cardio_clean_final$cardio)
-rownames(contable) = c("Female", "Male")
-colnames(contable) = c("Absent","Present")
-
-xkabledply(contable, title="Contingency table for Gender vs Cardiovascular Disease Status")
-```
-
-```{r, results='markup'}
-chitest = chisq.test(contable, correct=FALSE)
-chitest
-```  
-In this data set, men are not more likely than women to have cardiovascular disease.
-
-
-## Team 2 Final Project - Categorical variables EDA - Zhe  
-
-**Look at the structure of the dataframe `cardio_clean_final`.**
-```{r}
-str(cardio_clean_final)
-```  
-
-
-**Chi-square test was used to test whether the categorical variables and presence of cardiovascular disease are independent.**  
-
-**1. Whether `cardio` and `gender` are independent.**  
-- H0: cardio and gender are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_gender = table(cardio_clean_final$cardio, cardio_clean_final$gender)
-chi_gender = chisq.test(cardio_vs_gender)
-chi_gender
-```  
-The p-value from the Chi-square test is 0.2, which is larger than 0.05. So we failed to reject the null hypothesis. This result indicating `gender` difference won't affect the onset of  cardiovascular diseases.  
-
-**2. Whether `cardio` and `cholesterol` are independent.**  
-- H0: cardio and cholesterol are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_cholesterol = table(cardio_clean_final$cardio, cardio_clean_final$cholesterol)
-chi_cholesterol = chisq.test(cardio_vs_cholesterol)
-chi_cholesterol
-```  
-The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating `cholesterol` level will contribute to the onset of cardiovascular diseases.  
-
-**3. Whether `cardio` and `gluc` are independent.**  
-- H0: cardio and gluc are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_glucose = table(cardio_clean_final$cardio, cardio_clean_final$gluc)
-chi_glucose = chisq.test(cardio_vs_glucose)
-chi_glucose
-```  
-The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating glucose (`gluc`) level will contribute to the onset of cardiovascular diseases.  
-
-**4. Whether `cardio` and `smoke` are independent.**  
-- H0: cardio and smoke are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_smoke = table(cardio_clean_final$cardio, cardio_clean_final$smoke)
-chi_smoke = chisq.test(cardio_vs_smoke)
-chi_smoke
-```  
-The p-value from the Chi-square test is 3e-08, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating smoke or not will contribute to the onset of cardiovascular diseases.  
-
-**5. Whether `cardio` and `alco` are independent.**  
-- H0: cardio and alco are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_alco = table(cardio_clean_final$cardio, cardio_clean_final$alco)
-chi_alco = chisq.test(cardio_vs_alco)
-chi_alco
-```  
-The p-value from the Chi-square test is 0.002, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient consumes alcohol or not will contribute to the onset of cardiovascular diseases.  
-
-**6. Whether `cardio` and `active` are independent.**  
-- H0: cardio and active are independent.  
-- H1: they are not independent.  
-```{r results='markup'}
-cardio_vs_active = table(cardio_clean_final$cardio, cardio_clean_final$active)
-chi_active = chisq.test(cardio_vs_active)
-chi_active
-```  
-The p-value from the Chi-square test is less then 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient is physically active or not will contribute to the onset of cardiovascular diseases.  
-
-**Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
-
-## Chenxu
-
+## Categorical Variables
 
 ```{r, results='markup'}
 library(ggpubr)
@@ -290,14 +160,107 @@ active_1<- ggplot(cardio_clean_final, aes(x=active, fill= cardio)) +
 
 ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
 
-```
-According to the plot above, we can draw the conclusion that 
+```  
+
+**1. According to the plot above, we can draw the conclusion that**
 *It's close to half the female and male population have cardiovascular disease.
 *The higher the degree of cholesterol and glucose ， more population have this disease.
 *It is surprised that whether patient smokes or not and consumes alcohol or not, Almost half of them have this disease.
 * Do physical exercise can slightly help us decrease the probability of cardiovascular disease.
 
-# Chapter 4: Continuous Variables EDA
+**2. According to the plot above, we can draw the conclusion that:**
+- Half of all men and all women have cardiovasulcar disease
+- Higher cholesterol and higher glucose levels can be linked to higher incidence of cardiovascular disease.
+- Almost half of smokers and drinkers have cardiovascular disease.
+- Doing physical exercise helps decrease the probability of getting cardiovascular disease.
+
+**Chi-square test was used to test whether the categorical variables and presence of cardiovascular disease are independent.**  
+We can use a $\chi^2$ test to determine if two categorical variables are independent based on a contigency table.
+
+
+### Gender
+**1. Whether `cardio` and `gender` are independent.**  
+- H0: cardio and gender are independent.  
+- H1: they are not independent.  
+
+```{r, results='markup'}
+cardio_vs_gender = table(cardio_clean_final$cardio, cardio_clean_final$gender)
+#rownames(cardio_vs_gender) = c("Absent","Present")
+#colnames(cardio_vs_gender) = c("Female", "Male")
+#xkabledply(cardio_vs_gender, title="Contingency table for Gender vs Cardiovascular Disease Status")
+
+chi_gender = chisq.test(cardio_vs_gender)
+chi_gender
+```  
+* In this data set, there gender and cardiovascular disease are NOT significantly independent. 
+* The p-value from the Chi-square test is 0.2, which is larger than 0.05. So we failed to reject the null hypothesis. This result indicating `gender` difference won't affect the onset of  cardiovascular diseases. 
+* Since p-value = `r format(chi_test1$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
+
+### Cholesterol
+**2. Whether `cardio` and `cholesterol` are independent.**  
+- H0: cardio and cholesterol are independent.  
+- H1: they are not independent.  
+```{r results='markup'}
+cardio_vs_cholesterol = table(cardio_clean_final$cardio, cardio_clean_final$cholesterol)
+chi_cholesterol = chisq.test(cardio_vs_cholesterol)
+chi_cholesterol
+```  
+* The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating `cholesterol` level will contribute to the onset of cardiovascular diseases.  
+* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
+
+### Glucose
+**3. Whether `cardio` and `gluc` are independent.**  
+- H0: cardio and gluc are independent.  
+- H1: they are not independent.  
+```{r results='markup'}
+cardio_vs_glucose = table(cardio_clean_final$cardio, cardio_clean_final$gluc)
+chi_glucose = chisq.test(cardio_vs_glucose)
+chi_glucose
+```  
+* The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating glucose (`gluc`) level will contribute to the onset of cardiovascular diseases. 
+* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
+
+### Smoking
+**4. Whether `cardio` and `smoke` are independent.**  
+- H0: cardio and smoke are independent.  
+- H1: they are not independent.  
+```{r results='markup'}
+cardio_vs_smoke = table(cardio_clean_final$cardio, cardio_clean_final$smoke)
+chi_smoke = chisq.test(cardio_vs_smoke)
+chi_smoke
+```  
+*The p-value from the Chi-square test is 3e-08, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating smoke or not will contribute to the onset of cardiovascular diseases.  
+*Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
+
+### Alcohol
+**5. Whether `cardio` and `alco` are independent.**  
+- H0: cardio and alco are independent.  
+- H1: they are not independent.  
+```{r results='markup'}
+cardio_vs_alco = table(cardio_clean_final$cardio, cardio_clean_final$alco)
+chi_alco = chisq.test(cardio_vs_alco)
+chi_alco
+```  
+* The p-value from the Chi-square test is 0.002, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient consumes alcohol or not will contribute to the onset of cardiovascular diseases. 
+* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
+
+### Physical Activity
+**6. Whether `cardio` and `active` are independent.**  
+- H0: cardio and active are independent.  
+- H1: they are not independent.  
+```{r results='markup'}
+cardio_vs_active = table(cardio_clean_final$cardio, cardio_clean_final$active)
+chi_active = chisq.test(cardio_vs_active)
+chi_active
+```  
+* The p-value from the Chi-square test is less then 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient is physically active or not will contribute to the onset of cardiovascular diseases.  
+* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
+
+**Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
+
+## Continuous Variables
+A brief overview of the dataset tells us that there are 5 continuous variables: `age`, `height`, `weight`, and systolic/diastolic blood pressures
+
 ##4.1 KDE plot of continuous variables
 The following plots are stacked for better visualization of the distribution.
 ```{r,results='markup'}
@@ -310,7 +273,6 @@ age_kdeplot <- ggplot(cardio_clean_final, aes(x = age, fill= cardio)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
   xlim(30, 70)
 age_kdeplot
-
 ```
 Above plot is stacked for better visualization of the distribution.
 The percentage of disease shows that the age of patients with disease mainly concentrate on around 50.
@@ -355,225 +317,138 @@ bmi_kdeplot<- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio)) +
 
 bmi_kdeplot
 ```
-## Hovhannes
 
-### Has disease vs healthy
-#### What do cardiovascular disease patients look like?
-```{r, include=FALSE}
-disease <- subset(cardio, cardio==1)
-healthy <- subset(cardio, cardio==0)
-summary(disease)
-```
-```{r, include=FALSE}
-xkablesummary(subset(disease, select=c(age, gender, ap_hi, ap_lo, cholesterol)), title="Heart Disease Patient Attributes")
-```
-Here we have picked out a few factors from the summary that have significant differences between factor levels. `r xkablesummary(subset(disease, select=c(age, gender, weight, ap_hi, ap_lo, cholesterol)), title="Heart Disease Patient Attributes")` We see that all except a few heart disease patients are `above the age of 40`.  It would  make sense that most heart disease patients are older patients. Approximately two/thirds of heart disease patients are `women` Most heart disease patients have `higher blood pressure` and most also have `high cholesterol` levels.
-
-### Contrast heart disease patients with healthy patients
-
-```{r, results='markup'}
-
-gender_1 <- ggplot(cardio, aes(x=gender, fill=cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "Women", "2" = "Man")) +
-                   labs(title="gender", x="", y="Percentage") +
-                   theme(legend.position="top")
-
-cholesterol_1 <- ggplot(cardio, aes(x=cholesterol, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="cholesterol", x="", y="Percentage") +
-                   theme(legend.position="top")
-gluc_1<- ggplot(cardio, aes(x=gluc, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="gluc", x="", y="Percentage") +
-                   theme(legend.position="top")
-
-smoke_1<- ggplot(cardio, aes(x=smoke, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No smoking", "1" = "Smoking")) +
-                   labs(title="smoke", x="", y="Percentage") +
-                   theme(legend.position="top")
-
-alco_1<- ggplot(cardio, aes(x=alco, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No alcohol intake", "1" = "Alcohol intake")) +
-                   labs(title="alco", x="", y="Percentage") +
-                   theme(legend.position="top")
-
-active_1<- ggplot(cardio, aes(x=active, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No physical activity", "1" = "Physical activity" )) +
-                   labs(title="active", x="", y="Percentage") +
-                   theme(legend.position="top")
-
-ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
-
-```
-According to the plot above, we can draw the conclusion that:
-
-- Half of all men and all women have cardiovasulcar disease
-- Higher cholesterol and higher glucose levels can be linked to higher incidence of cardiovascular disease.
-- Almost half of smokers and drinkers have cardiovascular disease.
-- Doing physical exercise helps decrease the probability of getting cardiovascular disease.
-
-## Chi-squared tests
-We can use a $\chi^2$ test to determine if two categorical variables are independent based on a contigency table.
-
-### Test Gender
-
-```{r}
-disease_vs_gender = table(cardio$cardio, cardio$gender)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and gender are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test1 = chisq.test(disease_vs_gender)
-chi_test1
-```
-Since p-value = `r format(chi_test1$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
-
-### Test Cholestrol
-
-```{r}
-disease_vs_cholesterol = table(cardio$cardio, cardio$cholesterol)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and cholesterol levels are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test2 = chisq.test(disease_vs_cholesterol)
-chi_test2
-```
-
-Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
-
-### Test Glucose
-
-```{r}
-disease_vs_glucose = table(cardio$cardio, cardio$gluc)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and glucose levels are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test3 = chisq.test(disease_vs_glucose)
-chi_test3
-```
-
-Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
-
-### Test Smoking
-```{r}
-disease_vs_smoking = table(cardio$cardio, cardio$smoke)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and smoking are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test4 = chisq.test(disease_vs_smoking)
-chi_test4
-```
-
-Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
-
-### Test Alcohol
-
-```{r}
-disease_vs_alcohol = table(cardio$cardio, cardio$alco)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and drinking alcohol are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test5 = chisq.test(disease_vs_alcohol)
-chi_test5
-```
-
-Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
-
-### Test Activity
-```{r}
-disease_vs_activity = table(cardio$cardio, cardio$active)
-```
-Are they independent?
-- $H_0$: Heart disease incidence and activity are independent.  
-- $H_1$: They are not independent. 
-```{r, results='markup'}
-chi_test6 = chisq.test(disease_vs_activity)
-chi_test6
-```
-
-Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
-
-# Chapter 4: Continuous Variables EDA
-
-A brief overview of the dataset tells us that there are 5 continuous variables: age, height, weight, and systolic/diastolic blood pressures
-
-## 4.1 KDE plot of continuous variables
-
-The following plots are stacked for better visualization of the distribution.
 ```{r,results='markup'}
-age_kdeplot <- ggplot(cardio, aes(x = age, fill= cardio)) + 
-  geom_density(position = "stack") +
-  geom_vline(aes(xintercept=mean(age)), color="black", linetype="dashed", size=1) +
-  xlab("Age ") + ylab("Percentage") + 
-  ggtitle(expression(atop("Age Distribution (stacked)")))+
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(20, 70)
-age_kdeplot
-
-height_kdeplot<-  ggplot(cardio, aes(x = height, fill= cardio)) + 
-  geom_density(position = "stack") +
-  geom_vline(aes(xintercept=mean(height)), color="black", linetype="dashed", size=1) +
-  xlab("Height(in cm) ") + ylab("Proportion") + 
-  ggtitle(expression(atop("Height Distribution (stacked)")))+
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(10, 200)
-
-height_kdeplot
-
-weight_kdeplot<- ggplot(cardio, aes(x = weight, fill= cardio)) + 
-  geom_density(position = "stack") +
-  geom_vline(aes(xintercept=mean(weight)), color="black", linetype="dashed", size=1) +
-  xlab("Weight(in kg) ") + ylab("Proportion") + 
-  ggtitle(expression(atop("Weight Distribution (stacked)")))+
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(0, 200)
-
-weight_kdeplot
-
-ap_hi_kdeplot<- ggplot(cardio, aes(x = ap_hi, fill= cardio)) + 
+ap_hi_kdeplot<- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(ap_hi)), color="black", linetype="dashed", size=1) +
   xlab("Systolic blood pressure(ap_hi) ") + ylab("Proportion") + 
   ggtitle(expression(atop("Systolic blood pressure Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(50, 250)
+  xlim(85, 175)
 
 ap_hi_kdeplot
 
-ap_lo_kdeplot<-ggplot(cardio, aes(x = ap_lo, fill= cardio)) + 
+ap_lo_kdeplot<-ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(ap_lo)), color="black", linetype="dashed", size=1) +
   xlab("Diastolic blood pressure(ap_lo)) ") + ylab("Proportion") + 
   ggtitle(expression(atop("Diastolic blood pressure Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
-  xlim(50, 150)
+  xlim(60, 110)
 
 ap_lo_kdeplot
 ```
-As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular diseas`e. From the `heigh`t and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
+As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular disease`. From the `height` and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
+
+**T-tests**
+### Age
+**1. Whether age mean is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average ages are independent.  
+- H1: they are not independent.  
+
+```{r, results='markup'}
+cardio_pos = subset(cardio_clean_final, cardio_clean_final$cardio == 1)
+cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
+
+ttest_age = t.test(cardio_pos$age, cardio_neg$age)
+ttest_age
+```  
+
+### Height
+**2. Whether height mean is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average heights are independent.  
+- H1: they are not independent.  
+
+```{r, results='markup'}
+ttest_height = t.test(cardio_pos$height, cardio_neg$height)
+ttest_height
+```
+### Weight
+**3. Whether weight mean is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average weights are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
+ttest_weight
+```  
+
+### Systolic Blood Pressure
+**4. Whether systolic blood pressure is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average systolic blood pressure are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_ap_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
+ttest_ap_hi
+```
+
+### Diastolic Blood Pressure
+**5. Whether diastolic blood pressure is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average diastolic blood pressure are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_ap_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
+ttest_ap_lo
+```  
+
+### BMI
+**6. Whether BMI mean is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average BMI are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_bmi = t.test(cardio_pos$bmi, cardio_neg$bmi)
+ttest_bmi
+```  
+
+## Correlation
+
+```{r, results='markup'}
+
+loadPkg("corrplot")
+
+# corrplot with spearman method for categorical variables
+cardio_cor <- cor(cardio_clean, method="spearman")
+corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
+```  
+
+
+
+
+```{r}
+
+box_weight_pos = ggplot(cardio_pos, aes(y=bmi)) + 
+  geom_boxplot() + 
+  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
+  labs(title="BMI Boxplot (Cardiovascular \nDisease Present)",x="", y = "BMI")
+
+box_weight_neg = ggplot(cardio_neg, aes(y=bmi)) + 
+  geom_boxplot() + 
+  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
+  labs(title="BMI Boxplot (Cardiovascular \nDisease Absent)",x="", y = "BMI")
+
+grid.arrange(box_weight_pos, box_weight_neg, ncol=2, nrow=1)
+```
+
+```{r, results='markup'}
+ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
+ttest_hi
+
+ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
+ttest_lo
+```
+```{r, results='markup'}
+anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
+xkabledply(anovaRes, title = "ANOVA result summary")
+```
+
+```{r, results='markup'}
+anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
+xkabledply(anovaRes, title = "ANOVA result summary")
+```
+
