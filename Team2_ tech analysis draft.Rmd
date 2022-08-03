@@ -98,6 +98,8 @@ summary(healthy)
 ```
 
 ## Categorical Variables
+A brief overview of the dataset tells us we have the following independent categorical variables: `gender`, `cholesterol`, `gluc`, `smoke`, and `active`.
+
 ### Graphics
 ```{r, results='markup'}
 require(patchwork)
@@ -171,7 +173,7 @@ cholesterol.1 + gluc.1 + smoke.1 + gender.1 + alco.1 + active.1 + plot_layout(nc
 ```
 
 **Healthy Patients vs. Heart Disease Patients **  
-*According to the plot above, we can draw the conclusion that: *  
+*According to the plot above, we can draw the conclusion that:*  
 - It's close to half the female and male population have cardiovascular disease.  
 - The higher the degree of cholesterol and glucose ， more population have this disease.  
 - It is surprised that whether patient smokes or not and consumes alcohol or not, Almost half of them have this disease.  
@@ -184,8 +186,7 @@ cholesterol.1 + gluc.1 + smoke.1 + gender.1 + alco.1 + active.1 + plot_layout(nc
 ### Statistical Tests
 We can use a $\chi^2$ test to determine if the categorical variables and presence of cardiovascular disease are independent.
 
-**Gender**
-**1. Whether `cardio` and `gender` are independent.**  
+**Gender**    
 - H0: cardio and gender are independent.  
 - H1: they are not independent.  
 
@@ -198,12 +199,10 @@ cardio_vs_gender = table(cardio_clean_final$cardio, cardio_clean_final$gender)
 chi_gender = chisq.test(cardio_vs_gender)
 chi_gender
 ```  
-* In this data set, there gender and cardiovascular disease are NOT significantly independent. 
-* The p-value from the Chi-square test is 0.2, which is larger than 0.05. So we failed to reject the null hypothesis. This result indicating `gender` difference won't affect the onset of  cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
+ 
+Since p-value = `r format(chi_gender$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
 
-### Cholesterol
-**2. Whether `cardio` and `cholesterol` are independent.**  
+**Cholesterol**    
 - H0: cardio and cholesterol are independent.  
 - H1: they are not independent.  
 ```{r results='markup'}
@@ -211,11 +210,9 @@ cardio_vs_cholesterol = table(cardio_clean_final$cardio, cardio_clean_final$chol
 chi_cholesterol = chisq.test(cardio_vs_cholesterol)
 chi_cholesterol
 ```  
-* The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating `cholesterol` level will contribute to the onset of cardiovascular diseases.  
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_cholesterol$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
 
-### Glucose
-**3. Whether `cardio` and `gluc` are independent.**  
+**Glucose**  
 - H0: cardio and gluc are independent.  
 - H1: they are not independent.  
 ```{r results='markup'}
@@ -223,11 +220,9 @@ cardio_vs_glucose = table(cardio_clean_final$cardio, cardio_clean_final$gluc)
 chi_glucose = chisq.test(cardio_vs_glucose)
 chi_glucose
 ```  
-* The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating glucose (`gluc`) level will contribute to the onset of cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_glucose$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
 
-### Smoking
-**4. Whether `cardio` and `smoke` are independent.**  
+**Smoking**  
 - H0: cardio and smoke are independent.  
 - H1: they are not independent.  
 ```{r results='markup'}
@@ -235,11 +230,9 @@ cardio_vs_smoke = table(cardio_clean_final$cardio, cardio_clean_final$smoke)
 chi_smoke = chisq.test(cardio_vs_smoke)
 chi_smoke
 ```  
-*The p-value from the Chi-square test is 3e-08, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating smoke or not will contribute to the onset of cardiovascular diseases.  
-*Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
+*Since p-value = `r format(chi_smoke$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
 
-### Alcohol
-**5. Whether `cardio` and `alco` are independent.**  
+**Alcohol**  
 - H0: cardio and alco are independent.  
 - H1: they are not independent.  
 ```{r results='markup'}
@@ -247,11 +240,9 @@ cardio_vs_alco = table(cardio_clean_final$cardio, cardio_clean_final$alco)
 chi_alco = chisq.test(cardio_vs_alco)
 chi_alco
 ```  
-* The p-value from the Chi-square test is 0.002, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient consumes alcohol or not will contribute to the onset of cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
+Since p-value = `r format(chi_alco$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
 
-### Physical Activity
-**6. Whether `cardio` and `active` are independent.**  
+**Physical Activity**  
 - H0: cardio and active are independent.  
 - H1: they are not independent.  
 ```{r results='markup'}
@@ -259,10 +250,39 @@ cardio_vs_active = table(cardio_clean_final$cardio, cardio_clean_final$active)
 chi_active = chisq.test(cardio_vs_active)
 chi_active
 ```  
-* The p-value from the Chi-square test is less then 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient is physically active or not will contribute to the onset of cardiovascular diseases.  
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
+Since p-value = `r format(chi_active$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
 
-**Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
+**Conclusion:** *Based on the Chi-square tests we performed, we found `gender` does not contribute to the presence or absence of cardiovascular disease. `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that contribute to the presence or absence of cardiovascular disease.*
 
+## Continuous Variables
+A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `systolic blood pressure`, `diastolic blood pressure`, plus the new `bmi` variable we added.
 
+### Graphics
+The following plots are stacked for better visualization of the distribution. CVD = Cardiovascular Disease.
 
+**Age**
+```{r, results='markup'}
+#mean(disease$age) #54.98427
+#mean(healthy$age) #51.81747
+cardio_clean_final$cardio.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
+
+age.kde <- ggplot(cardio_clean_final, aes(x = age, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  scale_x_continuous(limits = c(30,70)) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Age Distribution (Stacked)",
+       fill = "Has CVD", x = "Age", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "segment", x = 54.98, xend = 54.98, y = 0, yend = .053, size = 1, color = "steelblue") +
+  annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 56, y =.01, label = "Patients is 55", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "segment", x = 51.81, xend = 51.81, y = 0, yend = .1, size = 1, color = "pink3") +
+  annotate(geom = "text", x= 53, y =.08, label = "Mean Age of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 53, y =.075, label = "Patients is 52", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+age.kde
+```
