@@ -66,7 +66,7 @@ head(cardio)
 
 We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and maximum as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` function to remove the outliers.  
 
-Removing `height`, `weight`, `ap_hi`, `ap_lo` we get:
+Removing `height`, `weight`, `ap_hi`, `ap_lo` we get: ## ARE WE DELETING THIS? ##
 
 ```{r}
 #cardio_clean = outlierKD2(cardio, height, TRUE, TRUE, TRUE, TRUE) 
