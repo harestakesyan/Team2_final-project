@@ -429,49 +429,37 @@ ttest_ap_lo
 ## Correlation
 
 ```{r, results='markup'}
-
 loadPkg("corrplot")
 
+col_order <- c("age", "gender", "height", "weight", "ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "cardio")
+cardio_clean_cor <- cardio_clean[, col_order]
+
 # corrplot with spearman method for categorical variables
-cardio_cor <- cor(cardio_clean, method="spearman")
+cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
+We see that cardiovascular disease has a positive correlation with blood pressure, cholesterol, age, and bmi.
 
-
-
-
-```{r}
-
-box_weight_pos = ggplot(cardio_pos, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Present)",x="", y = "BMI")
-
-box_weight_neg = ggplot(cardio_neg, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Absent)",x="", y = "BMI")
-
-grid.arrange(box_weight_pos, box_weight_neg, ncol=2, nrow=1)
-```
-
+### Will blood pressure influence cardiovascular disease with other variables?
 ```{r, results='markup'}
-ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
-ttest_hi
+#library(patchwork)
 
-ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
-ttest_lo
-```
-```{r, results='markup'}
-anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
+ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Cholesterol") + ylab("Systolic blood pressure") + 
+  scale_fill_hue(labels = c("Absent", "Present"))
+ap1
 
-```{r, results='markup'}
-anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
+ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
+  geom_point(size=0.6,alpha=0.4) + 
+  scale_colour_hue(labels = c("Absent", "Present"))
+ap2
 
+ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
+  geom_point(size=0.6,alpha=0.4) + 
+  scale_colour_hue(labels = c("Absent", "Present"))
+ap3
+```  
 
 ## Classification Tree  -----Chenxu Wang
 
