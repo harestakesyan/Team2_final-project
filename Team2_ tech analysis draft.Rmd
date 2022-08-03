@@ -17,6 +17,7 @@ output:
 ```{r setup, include=FALSE}
 #Libraries
 library(ezids)
+library(tidyverse)
 
 #Knit Options
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
@@ -47,6 +48,8 @@ alco | Whether patient consumes alcohol or not (0: no, 1: yes)
 active | Whether patient is physically active or not (0: no, 1: yes)
 cardio | Presence or absence of cardiovascular disease (0: absent, 1: present)
 
+There are 70000 observations in the dataset.
+
 # Data Cleanup
 ```{r}
 #Fix Variables
@@ -66,14 +69,33 @@ summary(cardio)
 
 We remove the `id` column and converted `age` from days to years.  We added a new column `bmi`, for body mass index. Body mass index (BMI) is a measure of body fat based on height and weight, and the formula is $BMI = kg/m^2$. We also converted categorical variables from integer to factor. The new data frame is saved as `cardio`. 
 
-We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` function to remove the outliers.
+We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` and `na.omit()` functions to remove the observations with outliers. 
 
 ```{r}
 #Remove Outliers
 cardio_clean = outlierKD2(cardio, bmi, TRUE, TRUE, TRUE, TRUE) 
 cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
 cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+
+cardio_clean_final = na.omit(cardio_clean) #remove NA rows
 ```
 
-After the outliers were dropped, the QQ-plots improved, indicating the distribution is closer to normal. The "stair-case" pattern on the blood pressure QQ-plots is due to discrete or rounded values. We can also see the more normal distribution in the histograms and box plots for all of the variables.
- 
+After the outliers were dropped, the QQ-plots improved, indicating the distribution is closer to normal. The "stair-case" pattern on the blood pressure QQ-plots is due to discrete or rounded values. We can also see the more normal distribution in the histograms and box plots for all of the variables.  
+The new dataframe is saved as `cardio_clean_final`. There are `r nrow(cardio_clean_final)` observations in the new dataset.
+
+```{r}
+xkablesummary(cardio_clean_final, title = "Clean Cardio Data Frame Summary" )
+```
+
+# Exploratory Data Analysis (EDA)
+## Cardiovascular Disease (CVD) Patients vs. Non- CVD Patients
+
+```{r}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+summary(disease)
+summary(healthy)
+
+```
+
+## Categorical Variables
