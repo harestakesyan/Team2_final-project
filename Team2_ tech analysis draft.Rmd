@@ -255,34 +255,225 @@ Since p-value = `r format(chi_active$p.value, scientific=T)` < 0.05, we reject t
 **Conclusion:** *Based on the Chi-square tests we performed, we found `gender` does not contribute to the presence or absence of cardiovascular disease. `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that contribute to the presence or absence of cardiovascular disease.*
 
 ## Continuous Variables
-A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `systolic blood pressure`, `diastolic blood pressure`, plus the new `bmi` variable we added.
+A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `ap_hi`, `ap_lo`, plus the new `bmi` variable we added.
 
 ### Graphics
 The following plots are stacked for better visualization of the distribution. CVD = Cardiovascular Disease.
 
 **Age**
 ```{r, results='markup'}
-#mean(disease$age) #54.98427
-#mean(healthy$age) #51.81747
 cardio_clean_final$cardio.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
 
 age.kde <- ggplot(cardio_clean_final, aes(x = age, fill= cardio.yn)) + 
   geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$age)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$age)), color="pink3", linetype="dashed", size=1) +
   scale_x_continuous(limits = c(30,70)) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Age Distribution (Stacked)",
        fill = "Has CVD", x = "Age", y = "Distribution") +
   scale_fill_manual(values=c("#990000", "#0000da")) +
   theme_minimal() +
-  annotate(geom = "segment", x = 54.98, xend = 54.98, y = 0, yend = .053, size = 1, color = "steelblue") +
   annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
   annotate(geom = "text", x= 56, y =.01, label = "Patients is 55", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "segment", x = 51.81, xend = 51.81, y = 0, yend = .1, size = 1, color = "pink3") +
-  annotate(geom = "text", x= 53, y =.08, label = "Mean Age of Healthy", size = 4,
+  annotate(geom = "text", x= 36, y =.09, label = "Mean Age of Healthy", size = 4,
            hjust = 0, color = "pink3", fontface = 2) +
-  annotate(geom = "text", x= 53, y =.075, label = "Patients is 52", size = 4,
+  annotate(geom = "text", x= 36, y =.085, label = "Patients is 52", size = 4,
            hjust = 0, color = "pink3", fontface = 2)
 age.kde
+
+
 ```
+
+The average age of CVD patients is 3 years older than the average age of healthy patients. 
+
+**Height**
+```{r}
+height.kde <- ggplot(cardio_clean_final, aes(x = height, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$height)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$height)), color="pink3", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Height Distribution (Stacked)",
+       fill = "Has CVD", x = "Height (cm)", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+height.kde
+```
+
+The average height does not differ between healthy patients and patients with CVD. The average height is 165cm for both groups.
+
+**Weight**
+```{r}
+weight.kde <- ggplot(cardio_clean_final, aes(x = weight, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$weight)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$weight)), color="pink3", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Weight Distribution (Stacked)",
+       fill = "Has CVD", x = "Weight (kg)", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 99, y =.02, label = "Mean Weight of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 99, y =.015, label = "Patients is 75kg", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 30, y =.072, label = "Mean Weight of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 30, y =.067, label = "Patients is 71kg", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+
+weight.kde
+```
+
+The average weight of CVD patients is 4 kg heavier than the average weight of healthy patients. 
+
+**Systolic Blood Pressure**
+```{r}
+ap_hi.kde <- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$ap_hi)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$ap_hi)), color="pink3", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = c(seq(90,170,20))) +
+  labs(title = "Systolic BP Distribution (Stacked)",
+       fill = "Has CVD", x = "Systolic BP", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 135, y =.11, label = "Mean SBP of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 135, y =.1, label = "Patients is 133", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 93, y =.2, label = "Mean SBP of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 93, y =.19, label = "Patients is 120", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+
+ap_hi.kde
+```
+
+The average systolic blood pressure (SBP) in CVD patients is 13 units greater than the average systolic blood pressure in healthy patients.
+
+**Diastolic Blood Pressure**
+```{r}
+ap_lo.kde <- ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$ap_lo)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$ap_lo)), color="pink3", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = c(seq(65,105,10))) +
+  labs(title = "Diastolic BP Distribution (Stacked)",
+       fill = "Has CVD", x = "Diastolic BP", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 86, y =.25, label = "Mean DBP of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 86, y =.22, label = "Patients is 84", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 66, y =.45, label = "Mean DBP of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 66, y =.42, label = "Patients is 79", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+
+ap_lo.kde
+```
+
+The average diastolic blood pressure (DBP) in CVD patients is 5 units greater than the average diastolic blood pressure in healthy patients.
+
+**BMI**
+```{r}
+bmi.kde <- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$bmi)), color="steelblue", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$bmi)), color="pink3", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "BMI Distribution (Stacked)",
+       fill = "Has CVD", x = "BMI", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 30, y =.13, label = "Mean BMI of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 30, y =.12, label = "Patients is 28", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 15.5, y =.2, label = "Mean BMI of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 15.5, y =.19, label = "Patients is 26", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+
+bmi.kde
+```
+
+The average body max index (BMI) of CVD patients is 2 units higher than the average BMI of healthy patients.
+
+
+###Statistical Tests  
+We can use a two-sample t-test to compare if the continuous variable means with and without cardiovascular disease are different.
+
+**Age**  
+- H0: cardio_pos and cardio_neg average ages are independent.    
+- H1: they are not independent.  
+```{r, results='markup'}
+cardio_pos = subset(cardio_clean_final, cardio_clean_final$cardio == 1)
+cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
+
+ttest_age = t.test(cardio_pos$age, cardio_neg$age)
+ttest_age
+```  
+* Since p-value = `r format(ttest_age$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `age` of patients with cardiovascular disease is different from patients without cardiovascular disease.
+* The p-value is very low
+
+**Height**  
+- H0: cardio_pos and cardio_neg average heights are independent.   
+- H1: they are not independent.  
+
+```{r, results='markup'}
+ttest_height = t.test(cardio_pos$height, cardio_neg$height)
+ttest_height
+```  
+* Since p-value = `r format(ttest_height$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `height` of patients with cardiovascular disease is different from patients without cardiovascular disease.  However, both of the estimated means are 165cm, and the true difference interval at $a=0.05$ is only -0.364, -0.120.
+
+**Weight**  
+- H0: cardio_pos and cardio_neg average weights are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
+ttest_weight
+```  
+* Since p-value = `r format(ttest_weight$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `weight` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low  
+
+**Systolic Blood Pressure**  
+- H0: cardio_pos and cardio_neg average systolic blood pressure are independent.  
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_ap_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
+ttest_ap_hi
+```
+* Since p-value = `r format(ttest_ap_hi$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `ap_hi` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low 
+
+**Diastolic Blood Pressure**  
+- H0: cardio_pos and cardio_neg average diastolic blood pressure are independent.    
+- H1: they are not independent. 
+
+```{r, results='markup'}
+ttest_ap_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
+ttest_ap_lo
+```  
+* Since p-value = `r format(ttest_ap_lo$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `ap_lo` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low 
+
+**BMI**  
+- H0: cardio_pos and cardio_neg average BMI are independent.   
+- H1: they are not independent. 
+```{r, results='markup'}
+ttest_bmi = t.test(cardio_pos$bmi, cardio_neg$bmi)
+ttest_bmi
+```  
+* Since p-value = `r format(ttest_bmi$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `bmi` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low
