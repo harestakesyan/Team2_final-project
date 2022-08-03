@@ -174,8 +174,8 @@ ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
 - Almost half of smokers and drinkers have cardiovascular disease.
 - Doing physical exercise helps decrease the probability of getting cardiovascular disease.
 
-**Chi-square test was used to test whether the categorical variables and presence of cardiovascular disease are independent.**  
-We can use a $\chi^2$ test to determine if two categorical variables are independent based on a contigency table.
+**Chi-square tests**
+We can use a $\chi^2$ test to determine if the categorical variables and presence of cardiovascular disease are independent.
 
 
 ### Gender
@@ -259,7 +259,7 @@ chi_active
 **Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
 
 ## Continuous Variables
-A brief overview of the dataset tells us that there are 5 continuous variables: `age`, `height`, `weight`, and systolic/diastolic blood pressures
+A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `systolic blood pressure`, `diastolic blood pressure`, plus the new `bmi` variable we added.
 
 ##4.1 KDE plot of continuous variables
 The following plots are stacked for better visualization of the distribution.
@@ -273,9 +273,8 @@ age_kdeplot <- ggplot(cardio_clean_final, aes(x = age, fill= cardio)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
   xlim(30, 70)
 age_kdeplot
-```
-Above plot is stacked for better visualization of the distribution.
-The percentage of disease shows that the age of patients with disease mainly concentrate on around 50.
+```  
+The percentage of disease shows that the age of patients with disease mainly concentrate on around 55.
 
 
 ```{r,results='markup'}
@@ -290,7 +289,7 @@ height_kdeplot<-  ggplot(cardio_clean_final, aes(x = height, fill= cardio)) +
 
 height_kdeplot
 ```
-
+The height density is about the same for cardio absent and present patients.
   
 ```{r,results='markup'}
 weight_kdeplot<- ggplot(cardio_clean_final, aes(x = weight, fill= cardio)) + 
@@ -304,11 +303,12 @@ weight_kdeplot<- ggplot(cardio_clean_final, aes(x = weight, fill= cardio)) +
 
 weight_kdeplot
 ```
+The mean weight of patients with cardiovascular disease is slightly higher than those without cardiovascular disease.
 
 ```{r,results='markup'}
 bmi_kdeplot<- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio)) + 
   geom_density(position = "stack") +
-  geom_vline(aes(xintercept=mean(weight)), color="black", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(bmi)), color="black", linetype="dashed", size=1) +
   xlab("BMI") + ylab("Proportion") + 
   ggtitle(expression(atop("BMI Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -317,6 +317,7 @@ bmi_kdeplot<- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio)) +
 
 bmi_kdeplot
 ```
+We see a much higher proportion of patients with cardiovascular disease at BMIs of >25 (overweight is >25, obese is >30).
 
 ```{r,results='markup'}
 ap_hi_kdeplot<- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio)) + 
@@ -329,6 +330,10 @@ ap_hi_kdeplot<- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio)) +
   xlim(85, 175)
 
 ap_hi_kdeplot
+```  
+The proportion of patients with cardiovascular disease increases as systolic blood pressure increases.
+
+```{r,results='markup'}
 
 ap_lo_kdeplot<-ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio)) + 
   geom_density(position = "stack") +
@@ -340,15 +345,19 @@ ap_lo_kdeplot<-ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio)) +
   xlim(60, 110)
 
 ap_lo_kdeplot
+
 ```
-As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular disease`. From the `height` and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
+The proportion of patients with cardiovascular disease increases as diastolic blood pressure increases.  
+
+As we can see from age_kdeplot, `older` patients are more likely to have `cardiovascular disease`. From the `height` and `weight` KDE plots, indicate there is no major correlation between `height` or `weight` and `cardiovascular disease`. Patients with high BMI (>25) are more likely to have cardiovascular disease. For the last two KDE plots (`blood pressure`), patients with `higher blood pressure appear to be more likely to have `cardiovascular disease`.
 
 **T-tests**
+We can use a two-sample t-test to compare if the continuous variable means with and without cardiovascular disease are different. 
+
 ### Age
 **1. Whether age mean is different between `cardiovascular disease` positive and negative patients**  
 - H0: cardio_pos and cardio_neg average ages are independent.  
 - H1: they are not independent.  
-
 ```{r, results='markup'}
 cardio_pos = subset(cardio_clean_final, cardio_clean_final$cardio == 1)
 cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
@@ -356,6 +365,8 @@ cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
 ttest_age = t.test(cardio_pos$age, cardio_neg$age)
 ttest_age
 ```  
+* Since p-value = `r format(ttest_age$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `age` of patients with cardiovascular disease is different from patients without cardiovascular disease.
+* The p-value is very low
 
 ### Height
 **2. Whether height mean is different between `cardiovascular disease` positive and negative patients**  
@@ -365,7 +376,9 @@ ttest_age
 ```{r, results='markup'}
 ttest_height = t.test(cardio_pos$height, cardio_neg$height)
 ttest_height
-```
+```  
+* Since p-value = `r format(ttest_height$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `height` of patients with cardiovascular disease is different from patients without cardiovascular disease.  However, both of the estimated means are 165cm, and the true difference interval at $a=0.05$ is only -0.364, -0.120.
+
 ### Weight
 **3. Whether weight mean is different between `cardiovascular disease` positive and negative patients**  
 - H0: cardio_pos and cardio_neg average weights are independent.  
@@ -375,6 +388,19 @@ ttest_height
 ttest_weight = t.test(cardio_pos$weight, cardio_neg$weight)
 ttest_weight
 ```  
+* Since p-value = `r format(ttest_weight$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `weight` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low  
+
+### BMI
+**6. Whether BMI mean is different between `cardiovascular disease` positive and negative patients**  
+- H0: cardio_pos and cardio_neg average BMI are independent.  
+- H1: they are not independent. 
+```{r, results='markup'}
+ttest_bmi = t.test(cardio_pos$bmi, cardio_neg$bmi)
+ttest_bmi
+```  
+* Since p-value = `r format(ttest_bmi$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `bmi` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low  
 
 ### Systolic Blood Pressure
 **4. Whether systolic blood pressure is different between `cardiovascular disease` positive and negative patients**  
@@ -385,6 +411,8 @@ ttest_weight
 ttest_ap_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
 ttest_ap_hi
 ```
+* Since p-value = `r format(ttest_ap_hi$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `ap_hi` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low  
 
 ### Diastolic Blood Pressure
 **5. Whether diastolic blood pressure is different between `cardiovascular disease` positive and negative patients**  
@@ -395,63 +423,43 @@ ttest_ap_hi
 ttest_ap_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
 ttest_ap_lo
 ```  
-
-### BMI
-**6. Whether BMI mean is different between `cardiovascular disease` positive and negative patients**  
-- H0: cardio_pos and cardio_neg average BMI are independent.  
-- H1: they are not independent. 
-
-```{r, results='markup'}
-ttest_bmi = t.test(cardio_pos$bmi, cardio_neg$bmi)
-ttest_bmi
-```  
+* Since p-value = `r format(ttest_ap_lo$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `ap_lo` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
+* The p-value is very low  
 
 ## Correlation
 
 ```{r, results='markup'}
-
 loadPkg("corrplot")
 
+col_order <- c("age", "gender", "height", "weight", "ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "cardio")
+cardio_clean_cor <- cardio_clean[, col_order]
+
 # corrplot with spearman method for categorical variables
-cardio_cor <- cor(cardio_clean, method="spearman")
+cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
+We see that cardiovascular disease has a positive correlation with blood pressure, cholesterol, age, and bmi.
 
-
-
-
-```{r}
-
-box_weight_pos = ggplot(cardio_pos, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="#f67e7d", fill="#ffb997", alpha = .9, outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Present)",x="", y = "BMI")
-
-box_weight_neg = ggplot(cardio_neg, aes(y=bmi)) + 
-  geom_boxplot() + 
-  geom_boxplot(colour="blue", fill="purple", alpha = .4,  outlier.colour="red", outlier.size=2) +
-  labs(title="BMI Boxplot (Cardiovascular \nDisease Absent)",x="", y = "BMI")
-
-grid.arrange(box_weight_pos, box_weight_neg, ncol=2, nrow=1)
-```
-
+### Will blood pressure influence cardiovascular disease with other variables?
 ```{r, results='markup'}
-ttest_hi = t.test(cardio_pos$ap_hi, cardio_neg$ap_hi)
-ttest_hi
+#library(patchwork)
 
-ttest_lo = t.test(cardio_pos$ap_lo, cardio_neg$ap_lo)
-ttest_lo
-```
-```{r, results='markup'}
-anovaRes = aov(weight ~ gluc, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
+ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Cholesterol") + ylab("Systolic blood pressure") + 
+  scale_fill_hue(labels = c("Absent", "Present"))
+ap1
 
-```{r, results='markup'}
-anovaRes = aov(weight ~ cholesterol, data=cardio_clean_final)
-xkabledply(anovaRes, title = "ANOVA result summary")
-```
+ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
+  geom_point(size=0.6,alpha=0.4) + 
+  scale_colour_hue(labels = c("Absent", "Present"))
+ap2
 
+ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
+  geom_point(size=0.6,alpha=0.4) + 
+  scale_colour_hue(labels = c("Absent", "Present"))
+ap3
+```  
 
 ## Classification Tree  -----Chenxu Wang
 
