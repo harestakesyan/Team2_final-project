@@ -1,0 +1,124 @@
+---
+title: "Heartbreakers: Estimating the Risk Factors of Cardiovascular Disease"
+author: "By: Hovhannes Arestakesyan, Karina Martinez, Timberley Thompson, Chenxu Wang, & Zhe Yu"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=FALSE}
+#library(ezids)
+#library(tidyverse)
+#library(tinytex)
+#require(rmarkdown)
+#knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+#options(scientific=T, digits = 3) 
+
+```
+# I. Background
+
+Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
+
+The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+
+This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
+
+## SMART Questions
+Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
+
+  1. How accurately can the model predict the probability that a patient has cardiovascular disease?
+  2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
+  3. Is there any association between an individual's sex and whether they have 
+cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
+women?
+  4. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
+
+
+## Dataset Description
+
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `Cardio`, had roughly 63,000 observations and the following variables:
+
+### Variables
+
+Variable | Type | Definition  
+  :-     |  :-- |  :----
+`id`	 | Character | ID number
+`age`	 | Number | Age in years
+`gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
+`height` | Number | Height in centimeters (cm)
+`weight` |Number | Weight in kilograms (kg)
+`bmi` | Number | Body Max Index (kg/m^2^)
+`ap_hi` | Integer | Systolic blood pressure
+`ap_lo` | Integer | Diastolic blood pressure
+`cholesterol` |Factor w/ 3 levels| Cholesterol (1: normal, 2: above normal, 3: well above normal)
+`gluc` |Factor w/ 3 levels| Glucose (1: normal, 2: above normal, 3: well above normal)
+`smoke` |Factor w/ 2 levels| Whether patient smokes or not (0: no, 1: yes)
+`alco` |Factor w/ 2 levels| Whether patient consumes alcohol or not (0: no, 1: yes)
+`active` |Factor w/ 2 levels| Whether patient is physically active or not (0: no, 1: yes)
+`cardio` |Factor w/ 2 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
+
+# III. Exploratory Data Analysis
+## Categorical Variables
+How do CVD patients differ from non-CVD  patients with respect to the categorical variables?
+
+## Chi-Squared Test
+What do the chi-squared tests tell us?
+
+## Continuous Variables
+How do CVD patients differ from non-CVD  patients with respect to the continuous variables?
+
+## Statistical Tests
+What do the hypothesis tests tell us?
+
+
+## All Variables
+Summarize what we've learned from the EDA. How did this inform our choice in models?
+
+# IV. Model Comparison
+## Logistic Model
+...
+
+### Model Evaluation
+
+** ROC & AUC **
+** McFadden Value **
+
+### Limitations
+...
+
+## KNN
+...
+
+## Classification Tree
+
+## Discussion
+
+# V. Conclusion
+## Predictions
+
+## Risk Factors
+
+## Reccommendations
+
+
+# References
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
+
+Cleveland Clinic medical professional (Ed.). (2021, October 5). Cardiovascular disease: Heart disease causes and symptoms. Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
+
+
+
+
+
+
+
+
+
