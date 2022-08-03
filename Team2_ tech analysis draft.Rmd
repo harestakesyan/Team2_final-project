@@ -48,43 +48,48 @@ alco | Whether patient consumes alcohol or not (0: no, 1: yes)
 active | Whether patient is physically active or not (0: no, 1: yes)
 cardio | Presence or absence of cardiovascular disease (0: absent, 1: present)
 
-There are 70000 observations in the dataset.
+There are 70000 observations in the dataset. The dependent variable is `cardio`.
 
 # Data Cleanup
 ```{r}
-#Fix Variables
+#Minor Adjustments
 cardio = cardio_orig[-c(1)] #get rid of id
 cardio$age = cardio$age/365 # transfer days to years
-cardio$gender = as.factor(cardio$gender)
-cardio$cholesterol = as.factor(cardio$cholesterol) 
-cardio$gluc = as.factor(cardio$gluc)
-cardio$smoke = as.factor(cardio$smoke)
-cardio$alco = as.factor(cardio$alco)
-cardio$active = as.factor(cardio$active)
-cardio$cardio = as.factor(cardio$cardio)
 cardio$bmi = cardio$weight/((cardio$height/100)**2) #add bmi variable
 
 summary(cardio)
 ```
+We remove the `id` column and convert `age` from days to years.  We add a new column `bmi`, for body mass index. Body mass index (BMI) is a measure of body fat based on height and weight, and the formula is $BMI = kg/m^2$. The new data frame is saved as `cardio`. 
 
-We remove the `id` column and converted `age` from days to years.  We added a new column `bmi`, for body mass index. Body mass index (BMI) is a measure of body fat based on height and weight, and the formula is $BMI = kg/m^2$. We also converted categorical variables from integer to factor. The new data frame is saved as `cardio`. 
-
-We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` and `na.omit()` functions to remove the observations with outliers. 
+We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  So, we use the `outlierKD2()` and `na.omit()` functions to remove the observations with outliers. This new dataset is saved as `cardio_clean`. We will preserve this dataset, with the categorical variables recognized as numerical values, for future analysis.
 
 ```{r}
 #Remove Outliers
 cardio_clean = outlierKD2(cardio, bmi, TRUE, TRUE, TRUE, TRUE) 
 cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
 cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+cardio_clean = na.omit(cardio_clean) #remove NA rows
 
-cardio_clean_final = na.omit(cardio_clean) #remove NA rows
+#Fix Variables
+cardio_clean_final = cardio_clean
+cardio_clean_final$gender = as.factor(cardio_clean$gender)
+cardio_clean_final$cholesterol = as.factor(cardio_clean$cholesterol) 
+cardio_clean_final$gluc = as.factor(cardio_clean$gluc)
+cardio_clean_final$smoke = as.factor(cardio_clean$smoke)
+cardio_clean_final$alco = as.factor(cardio_clean$alco)
+cardio_clean_final$active = as.factor(cardio_clean$active)
+cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
+
+
+summary(cardio_clean_final)
 ```
 
 After the outliers were dropped, the QQ-plots improved, indicating the distribution is closer to normal. The "stair-case" pattern on the blood pressure QQ-plots is due to discrete or rounded values. We can also see the more normal distribution in the histograms and box plots for all of the variables.  
-The new dataframe is saved as `cardio_clean_final`. There are `r nrow(cardio_clean_final)` observations in the new dataset.
 
-```{r}
-xkablesummary(cardio_clean_final, title = "Clean Cardio Data Frame Summary" )
+Finally, we convert categorical variables from integer to factor. The new dataframe is saved as `cardio_clean_final`. There are `r nrow(cardio_clean_final)` observations in the final dataset.
+
+```{r, results='markup'}
+xkablesummary(cardio_clean_final, title = "Final Dataframe Summary" )
 ```
 
 # Exploratory Data Analysis (EDA)
@@ -98,9 +103,11 @@ summary(healthy)
 ```
 
 ## Categorical Variables
-A brief overview of the dataset tells us we have the following independent categorical variables: `gender`, `cholesterol`, `gluc`, `smoke`, and `active`.
+A brief overview of the dataset tells us we have the following independent categorical variables: `gender`, `cholesterol`, `gluc`, `smoke`, `alco` and `active`. 
 
 ### Graphics
+Cardiovascular disease and heart disease are synonymous.
+
 ```{r, results='markup'}
 require(patchwork)
 
@@ -169,7 +176,7 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   scale_fill_manual(values=c("#990000", "#0000da")) +
   theme_minimal()
 
-cholesterol.1 + gluc.1 + smoke.1 + gender.1 + alco.1 + active.1 + plot_layout(ncol = 2)
+gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
 
 **Healthy Patients vs. Heart Disease Patients **  
@@ -409,8 +416,8 @@ bmi.kde
 The average body max index (BMI) of CVD patients is 2 units higher than the average BMI of healthy patients.
 
 
-###Statistical Tests  
-We can use a two-sample t-test to compare if the continuous variable means with and without cardiovascular disease are different.
+### Statistical Tests  
+We can use a two-sample t-test to determine if the differences in averages (for the continuous variables) are statistically significant.
 
 **Age**  
 - H0: cardio_pos and cardio_neg average ages are independent.    
@@ -477,3 +484,45 @@ ttest_bmi
 ```  
 * Since p-value = `r format(ttest_bmi$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `bmi` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
 * The p-value is very low
+
+## Correlation Between Variables
+```{r}
+loadPkg("corrplot")
+
+col_order <- c("age", "gender", "height", "weight", "ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "cardio")
+cardio_clean_cor <- cardio_clean[, col_order]
+
+# corrplot with spearman method for categorical variables
+cardio_cor <- cor(cardio_clean, method="spearman")
+corrplot(cardio_cor, type="lower", addCoef.col="darkred", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
+```
+
+We see that cardiovascular disease has a positive correlation with age, weight, blood pressure, cholesterol, and BMI. 
+The following variables have relatively strong correlations:
+gender and height
+gender and weight
+gender and smoke
+gender and alco
+**height and weight**
+height and smoke
+height and alco
+**height and bmi**
+**weight and bp**
+weight and cholesterol
+weight and glucose
+**weight and bmi**
+**ap_hi and ap_lo**
+bp and cholesterol
+**bp and bmi**
+cholesterol and glucose
+cholesterol and bmi
+gluc an bmi
+smoke and alco
+
+```{r}
+
+hw <- ggplot(cardio_clean_final, aes(x=height, y=weight, color=cardio)) +
+  scale_color_manual(values = c("Absent", "Present"))
+ap2
+
+```
