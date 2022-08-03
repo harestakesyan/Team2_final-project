@@ -59,7 +59,7 @@ cardio$age = cardio$age/365 # transfer days to years
 cardio$bmi = cardio$weight/(cardio$height/100)**2
 
 #xkablesummary(cardio, title = "Cardio Data Frame Summary" )
-cardio
+head(cardio)
 ```  
 
 We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and maximum as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` function to remove the outliers.  
@@ -193,7 +193,7 @@ chi_gender
 ```  
 * In this data set, there gender and cardiovascular disease are NOT significantly independent. 
 * The p-value from the Chi-square test is 0.2, which is larger than 0.05. So we failed to reject the null hypothesis. This result indicating `gender` difference won't affect the onset of  cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_gender$p.value, scientific=T)` > 0.05, we fail to reject the null hypothesis, so `gender` does not have a significant impact on contracting cardiovascular disease.
 
 ### Cholesterol
 **2. Whether `cardio` and `cholesterol` are independent.**  
@@ -205,7 +205,7 @@ chi_cholesterol = chisq.test(cardio_vs_cholesterol)
 chi_cholesterol
 ```  
 * The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating `cholesterol` level will contribute to the onset of cardiovascular diseases.  
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_cholesterol$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `cholesterol` does have a significant impact on contracting cardiovascular disease.
 
 ### Glucose
 **3. Whether `cardio` and `gluc` are independent.**  
@@ -217,7 +217,7 @@ chi_glucose = chisq.test(cardio_vs_glucose)
 chi_glucose
 ```  
 * The p-value from the Chi-square test is less than 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating glucose (`gluc`) level will contribute to the onset of cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_glucose$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `glucose` does have a significant impact on contracting cardiovascular disease.
 
 ### Smoking
 **4. Whether `cardio` and `smoke` are independent.**  
@@ -229,7 +229,7 @@ chi_smoke = chisq.test(cardio_vs_smoke)
 chi_smoke
 ```  
 *The p-value from the Chi-square test is 3e-08, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating smoke or not will contribute to the onset of cardiovascular diseases.  
-*Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
+*Since p-value = `r format(chi_smoke$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `smoking` does have a significant impact on contracting cardiovascular disease.
 
 ### Alcohol
 **5. Whether `cardio` and `alco` are independent.**  
@@ -241,7 +241,7 @@ chi_alco = chisq.test(cardio_vs_alco)
 chi_alco
 ```  
 * The p-value from the Chi-square test is 0.002, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient consumes alcohol or not will contribute to the onset of cardiovascular diseases. 
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_alco$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `alcohol` does have a significant impact on contracting cardiovascular disease.
 
 ### Physical Activity
 **6. Whether `cardio` and `active` are independent.**  
@@ -253,7 +253,7 @@ chi_active = chisq.test(cardio_vs_active)
 chi_active
 ```  
 * The p-value from the Chi-square test is less then 2e-16, which is smaller than 0.05. So we can reject the null hypothesis. This result indicating whether the patient is physically active or not will contribute to the onset of cardiovascular diseases.  
-* Since p-value = `r format(chi_test1$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
+* Since p-value = `r format(chi_active$p.value, scientific=T)` < 0.05, we reject the null hypothesis, so `activity` does have a significant impact on contracting cardiovascular disease.
 
 **Based on the Chi-square tests we performed, we found `gender` is not contribute to the presence or absence of cardiovascular disease, while `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that can affect whether the patient has cardiovascular disease or not.**
 
