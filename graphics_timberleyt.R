@@ -130,6 +130,74 @@ age.kde <- ggplot(cardio.final, aes(x = age, fill= cardio.yn)) +
            hjust = 0, color = "pink3", fontface = 2)
 age.kde
 
+#bmi
+cvd.bmi<- filter(cardio.final, cardio.yn == "Yes")
+mean(cvd.bmi$bmi) #27.83434
+
+ncvd.bmi<- filter(cardio.final, cardio.yn == "No")
+mean(ncvd.bmi$bmi) #26.25536
+
+bmi.kde <- ggplot(cardio.final, aes(x = bmi, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  scale_x_continuous(breaks = c(seq(0, 40, 5))) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "CVD Patients  Typically Have Higher BMIs Than Non-CVD Patients",
+       subtitle = "BMI Distribution (Stacked)",
+       fill = "Has CVD", x = "BMI", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()+
+  annotate(geom = "segment", x = 27.83, xend = 27.83, y = 0, yend = .077, size = 1, color = "steelblue") +
+  annotate(geom = "text", x= 28.5, y =.04, label = "Mean BMI of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 28.5, y =.03, label = "Patients is 28", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "segment", x = 26.25, xend = 26.25, y = 0, yend = .175, size = 1, color = "pink3") +
+  annotate(geom = "text", x= 27, y =.185, label = "Mean Age of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 27, y =.175, label = "Patients is 26", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+
+bmi.kde
+
+
+#height
+cvd.height<- filter(cardio.final, cardio.yn == "Yes")
+mean(cvd.height$height) #164.5428
+
+ncvd.height<- filter(cardio.final, cardio.yn == "No")
+mean(ncvd.height$height) #164.7847
+
+#weight
+cvd.weight<- filter(cardio.final, cardio.yn == "Yes")
+mean(cvd.weight$weight) #75.31369
+
+ncvd.weight<- filter(cardio.final, cardio.yn == "No")
+mean(ncvd.weight$weight) #71.27051
+
+weight.kde <- ggplot(cardio.final, aes(x = weight, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  scale_x_continuous(breaks = c(seq(0, 40, 5))) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "CVD Patients  Typically Have Higher weights Than Non-CVD Patients",
+       subtitle = "weight Distribution (Stacked)",
+       fill = "Has CVD", x = "weight", y = "Distribution") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()+
+  annotate(geom = "segment", x = 27.83, xend = 27.83, y = 0, yend = .077, size = 1, color = "steelblue") +
+  annotate(geom = "text", x= 28.5, y =.04, label = "Mean weight of CVD", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 28.5, y =.03, label = "Patients is 28", size = 4,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "segment", x = 26.25, xend = 26.25, y = 0, yend = .175, size = 1, color = "pink3") +
+  annotate(geom = "text", x= 27, y =.185, label = "Mean Age of Healthy", size = 4,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 27, y =.175, label = "Patients is 26", size = 4,
+           hjust = 0, color = "pink3", fontface = 2)
+#aphi
+...
+
+#aplo
+
 
 
 
