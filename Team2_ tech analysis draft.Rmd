@@ -1,8 +1,8 @@
 ---
-title: "Team 2_tech analysis draft"
-author: "Team 2"
-date: "2022-08-03"
-output: 
+title: "Team 2 Technical Analysis"
+author: "Hovhannes Arestakesyan, Karina Martinez, Timberley Thompson, Chenxu Wang, & Zhe Yu"
+date: "`r Sys.Date()`"
+output:
   html_document:
     code_folding: hide
     number_sections: false
@@ -11,29 +11,91 @@ output:
     toc_float: yes
   pdf_document:
     toc: yes
-    toc_depth: '3
+    toc_depth: '3'
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#Libraries
+library(ezids)
+library(tidyverse)
+
+#Knit Options
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
 ```
 
-## R Markdown
+# Cardiovascular Dataset
+```{r}
+#Import Data
+cardio_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
+str(cardio_orig)
+```
+This Cardiovascular Disease dataset is from [Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). The variables are:  
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Variable |  Definition  
+  :-     |  :---- 
+id	 | ID number
+age	 | Age in days
+gender | Gender (1: women, 2: men)
+height | Height in centimeters (cm)
+weight | Weight in kilograms (kg)
+ap_hi | Systolic blood pressure
+ap_lo | Diastolic blood pressure
+cholesterol | Cholesterol (1: normal, 2: above normal, 3: well above normal)
+gluc | Glucose (1: normal, 2: above normal, 3: well above normal)
+smoke | Whether patient smokes or not (0: no, 1: yes)
+alco | Whether patient consumes alcohol or not (0: no, 1: yes)
+active | Whether patient is physically active or not (0: no, 1: yes)
+cardio | Presence or absence of cardiovascular disease (0: absent, 1: present)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+There are 70000 observations in the dataset.
 
-```{r cars}
-summary(cars)
+# Data Cleanup
+```{r}
+#Fix Variables
+cardio = cardio_orig[-c(1)] #get rid of id
+cardio$age = cardio$age/365 # transfer days to years
+cardio$gender = as.factor(cardio$gender)
+cardio$cholesterol = as.factor(cardio$cholesterol) 
+cardio$gluc = as.factor(cardio$gluc)
+cardio$smoke = as.factor(cardio$smoke)
+cardio$alco = as.factor(cardio$alco)
+cardio$active = as.factor(cardio$active)
+cardio$cardio = as.factor(cardio$cardio)
+cardio$bmi = cardio$weight/((cardio$height/100)**2) #add bmi variable
+
+summary(cardio)
 ```
 
-## Including Plots
+We remove the `id` column and converted `age` from days to years.  We added a new column `bmi`, for body mass index. Body mass index (BMI) is a measure of body fat based on height and weight, and the formula is $BMI = kg/m^2$. We also converted categorical variables from integer to factor. The new data frame is saved as `cardio`. 
 
-You can also embed plots, for example:
+We see that there are unexpected minimum and maximum observations for `height`, `weight`, `ap_hi`, `ap_lo` and `bmi`.  Blood pressure measurements as low as -150 and as high as 16020 are incompatable with life, as are BMIs of 3.5 and 299.  We use the `outlierKD2()` and `na.omit()` functions to remove the observations with outliers. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+#Remove Outliers
+cardio_clean = outlierKD2(cardio, bmi, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+
+cardio_clean_final = na.omit(cardio_clean) #remove NA rows
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+After the outliers were dropped, the QQ-plots improved, indicating the distribution is closer to normal. The "stair-case" pattern on the blood pressure QQ-plots is due to discrete or rounded values. We can also see the more normal distribution in the histograms and box plots for all of the variables.  
+The new dataframe is saved as `cardio_clean_final`. There are `r nrow(cardio_clean_final)` observations in the new dataset.
+
+```{r}
+xkablesummary(cardio_clean_final, title = "Clean Cardio Data Frame Summary" )
+```
+
+# Exploratory Data Analysis (EDA)
+## Cardiovascular Disease (CVD) Patients vs. Non- CVD Patients
+
+```{r}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+summary(disease)
+summary(healthy)
+
+```
+
+## Categorical Variables

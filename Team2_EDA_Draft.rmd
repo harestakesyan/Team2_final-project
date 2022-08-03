@@ -47,8 +47,7 @@ cardio | Presence or absence of cardiovascular disease (0: absent, 1: present)
 
 ```{r, results='markup'}
 cardio_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
-#xkablesummary(cardio_orig, title = "Cardio Data Frame Summary" )
-#str(cardio_orig)
+str(cardio_orig)
 ```  
 There are `r nrow(cardio_orig)` observations in the dataset.  
  
