@@ -279,13 +279,13 @@ cardio_clean_3 = outlierKD2(cardio_clean_2, ap_lo, TRUE, FALSE, FALSE, FALSE)
 #remove NA rows
 cardio_clean_3 = na.omit(cardio_clean_3)
 cardio_clean_tree_final <- transform(cardio_clean_3, cardio=as.factor(cardio))
-cardio_tree = cardio_clean_final[,c(1,2,3,4,13,5,6,7,8,9,10,11,12)]
+cardio_tree = cardio_clean_tree_final[,c(1,2,3,4,13,5,6,7,8,9,10,11,12)]
 str(cardio_tree)
 
 
 ```
 
-Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choosed the top 6 features to build this classification tree model.
+Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choosed the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
 
 ```{r Classification Tree feature selection, results=TRUE}
 library(randomForest)
@@ -306,7 +306,7 @@ loadPkg("caret")
 confusionMatrixResultDf = data.frame( Depth=numeric(0), Accuracy= numeric(0), Sensitivity=numeric(0), Specificity=numeric(0), Pos.Pred.Value=numeric(0), Neg.Pred.Value=numeric(0), Precision=numeric(0), Recall=numeric(0), F1=numeric(0), Prevalence=numeric(0), Detection.Rate=numeric(0), Detection.Prevalence=numeric(0), Balanced.Accuracy=numeric(0), row.names = NULL )
 
 for (deep in 2:8) {
-  kfit <- rpart(cardio ~age+ap_lo+bmi+weight+height+cholesterol+gluc+gender+active+smoke+alco, data= cardio_tree, method="class", control = list(maxdepth = deep) )
+  kfit <- rpart(cardio ~age+ap_lo+bmi+weight+height+cholesterol, data= cardio_tree, method="class", control = list(maxdepth = deep) )
   # 
   cm = confusionMatrix( predict(kfit, type = "class"), reference = cardio_tree[, "cardio"] ) # from caret library
   # 
@@ -330,7 +330,7 @@ xkabledply(confusionMatrixResultDf, title="Cardio Classification Trees summary w
 Then we built this classification tree model and plot it.
 ```{r , echo = T, fig.dim=c(6,4), results=TRUE}
 set.seed(1)
-cardio_tree_fit <- rpart(cardio ~ age+ap_lo+bmi+weight+height , data= cardio_tree, method="class", control = list(maxdepth = 6) )
+cardio_tree_fit <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol , data= cardio_tree, method="class", control = list(maxdepth = 6) )
 
 printcp(cardio_tree_fit) # display the results 
 plotcp(cardio_tree_fit) # visualize cross-validation results 
@@ -376,7 +376,7 @@ fancyRpartPlot(cardio_tree_fit)
 Finally, we also checked the ROC and AUC of this classification tree model. As we can see, this model is kind of a good model.  
 ```{R ROC curve of Classification Tree, results=TRUE}
 library(rpart)
-rp <- rpart(cardio ~age+ap_lo+bmi+weight+height, data = cardio_tree)
+rp <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol, data = cardio_tree)
 library(ROCR)
 pred <- prediction(predict(cardio_tree_fit, type = "prob")[, 2], cardio_tree$cardio)
 tree.predict.prob <- predict(cardio_tree_fit, type = "prob")[, 2]
