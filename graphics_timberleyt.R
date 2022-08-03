@@ -36,7 +36,8 @@ summary(cardio.final)
 rm(cardio3, cardio4, cardio5)
 
 #### EDA Graphics: Categorical Variables ####
-  #cholesterol
+
+#cholesterol
 cholesterol.1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
   scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
@@ -46,12 +47,6 @@ cholesterol.1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
   scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
   theme_minimal()
 cholesterol.1
-
-cholesterol.2<- ggplot() + geom_bar(cardio.final, 
-                                    mapping = aes(x = cardio.yn, fill = cholesterol),
-                                    position = position_dodge())
-cholesterol.2
-
 
   #Glucose
 glucose.1 <- ggplot(cardio.final, aes(x=cardio, fill= gluc)) +
