@@ -32,19 +32,19 @@ The World Health Organization asserts that "unhealthy diet, physical inactivity,
 This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
 
 ## SMART Questions
-Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions.  
+Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
 
-  1. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
-  2. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
-  3. How accurately can the model predict the probability that a patient has cardiovascular disease?  
-  4. Is there any association between an individual's sex and whether they have 
+  1. How accurately can the model predict the probability that a patient has cardiovascular disease?
+  2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
+  3. Is there any association between an individual's sex and whether they have 
 cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
 women?
+  4. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
 
 
 ## Dataset Description
 
-Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `Cardio`, had roughly 62,000 observations and the following variables:
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `Cardio`, had roughly 63,000 observations and the following variables:
 
 ### Variables
 
@@ -67,18 +67,30 @@ Variable | Type | Definition
 
 # III. Exploratory Data Analysis
 ## Categorical Variables
-....
+How do CVD patients differ from non-CVD  patients with respect to the categorical variables?
 
+## Chi-Squared Test
+What do the chi-squared tests tell us?
 
 ## Continuous Variables
-....
+How do CVD patients differ from non-CVD  patients with respect to the continuous variables?
+
+## Statistical Tests
+What do the hypothesis tests tell us?
 
 
 ## All Variables
+Summarize what we've learned from the EDA. How did this inform our choice in models?
 
 # IV. Model Comparison
 ## Logistic Model
+...
+
 ### Model Evaluation
+
+** ROC & AUC **
+** McFadden Value **
+
 ### Limitations
 ...
 
@@ -90,7 +102,11 @@ Variable | Type | Definition
 ## Discussion
 
 # V. Conclusion
+## Predictions
 
+## Risk Factors
+
+## Reccommendations
 
 
 # References
