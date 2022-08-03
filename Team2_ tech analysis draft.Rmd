@@ -88,7 +88,7 @@ xkablesummary(cardio_clean_final, title = "Clean Cardio Data Frame Summary" )
 ```
 
 # Exploratory Data Analysis (EDA)
-## Cardiovascular Disease (CVD) Patients vs. Non- CVD Patients
+## Healthy Patients vs. Heart Disease Patients
 
 ```{r}
 disease <- subset(cardio_clean_final, cardio==1)
@@ -99,3 +99,96 @@ summary(healthy)
 ```
 
 ## Categorical Variables
+
+```{r, results='markup'}
+require(patchwork)
+
+#cholesterol
+cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Cholesterol", y = "", x = "",
+        fill = "Cholesterol Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+
+#Glucose
+gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Glucose", y = "", x = "",
+        fill = "Glucose Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+
+#Gender
+cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1", "Women", "Men"))
+
+gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Gender",
+        y = "", x = "", fill = "") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+#Smoke
+cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "Yes", "No"))
+
+smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+#alcohol
+  cardio_clean_final$alco.yn<- as.factor(ifelse(cardio_clean_final$alco== "1", "Yes", "No"))
+
+alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+#active
+cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
+
+active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+  theme_minimal()
+
+cholesterol.1 + gluc.1 + smoke.1 + gender.1 + alco.1 + active.1 + plot_layout(ncol = 2)
+```
+
+
+**1. According to the plot above, we can draw the conclusion that**
+*It's close to half the female and male population have cardiovascular disease.
+*The higher the degree of cholesterol and glucose ， more population have this disease.
+*It is surprised that whether patient smokes or not and consumes alcohol or not, Almost half of them have this disease.
+* Do physical exercise can slightly help us decrease the probability of cardiovascular disease.
+
+**2. According to the plot above, we can draw the conclusion that:**
+- Half of all men and all women have cardiovasulcar disease
+- Higher cholesterol and higher glucose levels can be linked to higher incidence of cardiovascular disease.
+- Almost half of smokers and drinkers have cardiovascular disease.
+- Doing physical exercise helps decrease the probability of getting cardiovascular disease.
+
+
+
+
+
+
+
+
+
