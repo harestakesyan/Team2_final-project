@@ -120,41 +120,41 @@ gender_1 <- ggplot(cardio_clean_final, aes(x=gender, fill=cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("1" = "Women", "2" = "Men")) +
-                   labs(title="gender", x="", y="Percentage") +
+                   labs(title="gender", x="", y="Proportion") +
                    theme(legend.position="top")
 
 cholesterol_1 <- ggplot(cardio_clean_final, aes(x=cholesterol, fill= cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="cholesterol", x="", y="Percentage") +
+                   labs(title="cholesterol", x="", y="Proportion") +
                    theme(legend.position="top")
 gluc_1<- ggplot(cardio_clean_final, aes(x=gluc, fill= cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="gluc", x="", y="Percentage") +
+                   labs(title="gluc", x="", y="Proportion") +
                    theme(legend.position="top")
 
 smoke_1<- ggplot(cardio_clean_final, aes(x=smoke, fill= cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("0" = "No smoking", "1" = "Smoking")) +
-                   labs(title="smoke", x="", y="Percentage") +
+                   labs(title="smoke", x="", y="Proportion") +
                    theme(legend.position="top")
 
 alco_1<- ggplot(cardio_clean_final, aes(x=alco, fill= cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("0" = "No alcohol intake", "1" = "Alcohol intake")) +
-                   labs(title="alco", x="", y="Percentage") +
+                   labs(title="alco", x="", y="Proportion") +
                    theme(legend.position="top")
 
 active_1<- ggplot(cardio_clean_final, aes(x=active, fill= cardio)) +
                    geom_bar(position="fill") +
                    scale_fill_manual(values=c("pink3", "steelblue")) +
                    scale_x_discrete(labels=c("0" = "No physical activity", "1" = "Physical activity" )) +
-                   labs(title="active", x="", y="Percentage") +
+                   labs(title="active", x="", y="Proportion") +
                    theme(legend.position="top")
 
 ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
@@ -266,7 +266,7 @@ The following plots are stacked for better visualization of the distribution.
 age_kdeplot <- ggplot(cardio_clean_final, aes(x = age, fill= cardio)) + 
   geom_density(position = "stack") +
   geom_vline(aes(xintercept=mean(age)), color="black", linetype="dashed", size=1) +
-  xlab("Age ") + ylab("Percentage") + 
+  xlab("Age ") + ylab("Proportion") + 
   ggtitle(expression(atop("Age Distribution (stacked)")))+
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) + 
