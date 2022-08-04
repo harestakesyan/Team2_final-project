@@ -261,8 +261,8 @@ Since p-value = `r format(chi_active$p.value, scientific=T)` < 0.05, we reject t
 
 **Conclusion:** *Based on the Chi-square tests we performed, we found `gender` does not contribute to the presence or absence of cardiovascular disease. `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that contribute to the presence or absence of cardiovascular disease.*
 
-## Continuous Variables
-A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `ap_hi`, `ap_lo`, plus the new `bmi` variable we added.
+## Numerical Variables
+A brief overview of the dataset tells us we have the following numerical variables: `age`, `height`, `weight`, `ap_hi`, `ap_lo`, plus the new `bmi` variable we added.
 
 ### Graphics
 The following plots are stacked for better visualization of the distribution. CVD = Cardiovascular Disease.
@@ -417,7 +417,7 @@ The average body max index (BMI) of CVD patients is 2 units higher than the aver
 
 
 ### Statistical Tests  
-We can use a two-sample t-test to determine if the differences in averages (for the continuous variables) are statistically significant.
+We can use a two-sample t-test to determine if the differences in averages (for the numerical variables) are statistically significant.
 
 **Age**  
 - H0: cardio_pos and cardio_neg average ages are independent.    
