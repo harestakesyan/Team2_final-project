@@ -27,7 +27,7 @@ output:
 
 Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
-The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+The World Health Organization asserts that an "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
 
 This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
 
@@ -84,7 +84,7 @@ Summarize what we've learned from the EDA. How did this inform our choice in mod
 
 # IV. Model Comparison
 ## Logistic Model
-...
+Why is a logistic model appropriate for this data? What variables did you use? Why?
 
 ### Model Evaluation
 
@@ -95,6 +95,9 @@ Summarize what we've learned from the EDA. How did this inform our choice in mod
 ...
 
 ## KNN
+...
+
+### Model Evaluation
 ...
 
 ## Classification Tree
