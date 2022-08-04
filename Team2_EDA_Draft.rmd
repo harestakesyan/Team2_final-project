@@ -425,7 +425,7 @@ ttest_ap_lo
 * Since p-value = `r format(ttest_ap_lo$p.value)` < 0.05, we reject the null hypothesis and accept the alternative that the mean `ap_lo` of patients with cardiovascular disease is different from patients without cardiovascular disease.  
 * The p-value is very low  
 
-## Correlation
+## Correlations
 
 ```{r, results='markup'}
 loadPkg("corrplot")
@@ -437,28 +437,206 @@ cardio_clean_cor <- cardio_clean[, col_order]
 cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
-We see that cardiovascular disease has a positive correlation with blood pressure, cholesterol, age, and bmi.
+We see that cardiovascular disease has the strongest correlation with blood pressure (`ap_hi` & `ap_lo`), `cholesterol`, `age`, and `BMI.`
 
-### Will blood pressure influence cardiovascular disease with other variables?
+### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?
 ```{r, results='markup'}
 #library(patchwork)
+#install.packages("ggExtra")
+library(ggExtra)
 
-ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi , fill = cardio)) +
-  geom_violin(alpha = 0.5, aes(linetype=NA)) +
-  xlab("Cholesterol") + ylab("Systolic blood pressure") + 
-  scale_fill_hue(labels = c("Absent", "Present"))
+ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Cholesterol") +
+  xlab("Cholesterol") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) + 
+  geom_hline(yintercept = 120, linetype = 'dashed')
 ap1
 
 ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
-  geom_point(size=0.6,alpha=0.4) + 
-  scale_colour_hue(labels = c("Absent", "Present"))
-ap2
+  geom_point(size = 1.5, alpha=0.7) + 
+  labs(title = "Systolic Blood Pressure vs Age") + 
+  xlab("Age ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) +
+  geom_hline(yintercept = 120, linetype = 'dashed')
+#ap2
+ggMarginal(ap2, type = "density", groupFill = TRUE)
 
 ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
-  geom_point(size=0.6,alpha=0.4) + 
-  scale_colour_hue(labels = c("Absent", "Present"))
-ap3
+  geom_point(size=1.5,alpha=0.7) + 
+  labs(title = "Systolic Blood Pressure vs BMI") + 
+  xlab("BMI ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) + 
+  geom_hline(yintercept = 120, linetype = 'dashed')
+#ap3
+ggMarginal(ap3, type = "density", groupFill = TRUE)
 ```  
+Normal blood pressure for most adults is defined as a systolic pressure of less than 120 and a diastolic pressure of less than 80 (NIH)[https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults]. Because there is a strong correlation between systolic and diastolic blood pressure, we look at systolic in comparison to other variables: `cholesterol`, `age` and `bmi.`  
+
+*Systolic BP vs Cholesterol*
+* In the normal and above normal cholesterol groups, patients with cardiovascular disease tend to have systolic blood pressure at or above 120, whereas patients without cardiovascular disease have higher density at healthy systolic levels.
+* In the well above normal cholesterol group, the systolic blood pressure distribution was similar in patients with and without cardiovascular disease.
+
+*Systolic BP vs Age*
+* There does not appear to be linear relationship between systolic blood pressure and age, however we can see that younger patients with normal blood pressure are less likely to have cardiovascular disease than older patients with elevated blood pressure.
+
+*Systolic BP vs BMI*
+* There does not appear to be a linear relationship between systolic blood pressure and BMI, however patients with lower BMI and blood pressure are less likely to have cardiovascular disease than patients with higher BMI and elevated blood pressure.
+
+### Is there a relationship between cholesterol and other variables in patients with cardiovascular disease?
+```{r, results='markup'}
+
+chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Age vs Cholesterol") +
+  xlab("Cholesterol") + ylab("Age") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+chol1
+
+chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "BMI vs Cholesterol") +
+  xlab("Cholesterol") + ylab("BMI") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+chol2
+
+```
+### Is there a relationship between age and other variables in patients with cardiovascular disease?
+```{r, results='markup'}
+age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
+  geom_point(size=1,alpha=0.7) + 
+  labs(title = "BMI vs Age") + 
+  xlab("Age") + ylab("BMI") +
+  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present"))
+ggMarginal(age1, type = "density", groupFill = TRUE)
+```
+
+### How do lifestyle choices influence cardiovascular disease with other variables?
+*Smoking*
+```{r, results='markup'}
+
+smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Smoke") +
+  xlab("Smoke") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) + 
+  geom_hline(yintercept = 120, linetype = 'dashed')
+smoke1
+
+smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Age vs Smoke") +
+  xlab("Smoke") + ylab("Age") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+smoke2
+
+smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "BMI vs Smoke") +
+  xlab("Smoke") + ylab("BMI") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+smoke3
+
+```
+*Alcohol*
+
+```{r, results='markup'}
+
+alco1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Alcohol") +
+  xlab("Alcohol") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) +
+  geom_hline(yintercept = 120, linetype = 'dashed')
+
+alco1
+
+alco2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Age vs Alcohol") +
+  xlab("Alcohol") + ylab("Age") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+alco2
+
+alco3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "BMI vs Alcohol") +
+  xlab("Alcohol") + ylab("BMI") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+alco3
+
+```
+
+*Physical Activity*
+```{r, results='markup'}
+
+active1 <- ggplot(cardio_clean_final,aes(x = active , y = ap_hi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Activity") +
+  xlab("Activity") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))+
+  geom_hline(yintercept = 120, linetype = 'dashed')
+
+active1
+
+active2 <- ggplot(cardio_clean_final,aes(x = active , y = age, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Age vs Activity") +
+  xlab("Activity") + ylab("Age") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+active2
+
+active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "BMI vs Activity") +
+  xlab("Activity") + ylab("BMI") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+active3
+
+```
+
+*Blood Glucose*
+```{r, results='markup'}
+
+gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Blood Glucose") +
+  xlab("Blood Glucose") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
+  geom_hline(yintercept = 120, linetype = 'dashed')
+
+gluc1
+
+gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "Age vs Blood Glucose") +
+  xlab("Blood Glucose") + ylab("Age") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+gluc2
+
+gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
+  geom_violin() + 
+  labs(title = "BMI vs Blood Glucose") +
+  xlab("Blood Glucose") + ylab("BMI") + 
+  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+gluc3
+
+```
 
 ## Classification Tree  -----Chenxu Wang
 
