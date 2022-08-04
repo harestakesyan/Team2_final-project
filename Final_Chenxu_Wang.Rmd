@@ -322,7 +322,7 @@ for (deep in 2:8) {
 unloadPkg("caret")
 ```
 
-As we can see from the results, the accuracy of different depths is almost same. Therefore, we chosen someone to build the tree model. 
+As we can see from the results,from the depths 4, the accuracy of different depths is almost same. Therefore, we choosed the depths 6 to build the tree model.
 ```{r , results="asis", results=TRUE}
 xkabledply(confusionMatrixResultDf, title="Cardio Classification Trees summary with varying MaxDepth")
 ```
