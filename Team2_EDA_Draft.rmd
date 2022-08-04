@@ -462,7 +462,7 @@ ap3
 
 ## Classification Tree  -----Chenxu Wang
 
-This model is Classification Tree model. We could use the classification tree model to predict the Top 3 factors visually. It is very convenient. And we will discuss the performance of this model below.
+This model is Classification Tree model. We could use the classification tree model to predict the absence and presence of disease visually. It is very convenient. And we will discuss the performance of this model below.
 
 First step, cleaning the dataset for preparing to build the model. Ensure the variavles are all numerical variables. And delete the ID, which has no relationship to the results.
 
