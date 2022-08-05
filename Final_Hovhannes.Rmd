@@ -398,20 +398,101 @@ summary(train)
 ```{r}
 #Fit the logistic regression model
 
-logit_reg_model <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=train)
+logit_reg_model <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
 
 #disable scientific notation for model summary
 options(scipen = 999)
 
 #view model summary
 summary(logit_reg_model)
+```
+```{r}
+#Remove gender, bmi and gluc from the modeling because they do not any effect on cardio
 
-#confusion matrix
+logit_reg_model_cleaned <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, family="binomial", data=cardio_clean_final)
 
+#disable scientific notation for model summary
+options(scipen = 999)
 
+#view model summary
+summary(logit_reg_model_cleaned)
+```
+### Coefficient Exponential 
+```{r exp, results=T}
+expcoeff1 = exp(coef(logit_reg_model_cleaned))
+summary(expcoeff1)
+xkabledply( as.table(expcoeff1), title = "Exponential of coefficients in cardio" )
 
 ```
+For exponential of coefficients, there are five variables having positive effect on dependent variables `Churn`, and six having negative effect. For example, if people have tech support, they will have more possibility to remain instead of leaving.
 
+### Confusion matrix 
+```{r confusionMatrix, results='markup'}
+loadPkg("regclass")
+confusion_matrix(logit_reg_model_cleaned)
+xkabledply( confusion_matrix(logit_reg_model_cleaned), title = "Confusion matrix from Logit Model" )
+unloadPkg("regclass")
+```
+
+```{r confusion matrix, results=F}
+loadPkg("regclass")
+cfmatrix1 = confusion_matrix(logit_reg_model_cleaned)
+accuracy1 <- (cfmatrix1[1,1]+cfmatrix1[2,2])/cfmatrix1[3,3]
+precision1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[1,2])
+recall1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[2,1])
+specificity1 <- cfmatrix1[1,1]/(cfmatrix1[1,1]+cfmatrix1[1,2])
+F1_score1 <- 2*(precision1)*(recall1)/(precision1 + recall1)
+accuracy1
+precision1
+recall1
+specificity1
+F1_score1
+```
+From confusion matrix, we can conclude that 
+
+ - Accuracy =`r accuracy1`
+ - Precision=`r precision1`
+ - Recall=`r recall1`
+ - Specificity=`r specificity1`
+ - F1 score=`r F1_score1`
+
+### ROC and AUC
+```{r roc_auc, results=T}
+loadPkg("pROC") 
+prob=predict(logit_reg_model_cleaned, type = "response" )
+logit_reg_model_cleaned$prob=prob
+h = roc(cardio~prob, data=cardio_clean_final)
+auc(h) 
+plot(h)
+```
+We have here the area-under-curve of `r auc(h)`, which is greater than 0.8. The model is considered a good fit.
+
+### McFadden
+```{r McFadden, results=T}
+loadPkg("pscl")
+cardio_logit_reg = pR2(logit_reg_model_cleaned)
+cardio_logit_reg
+unloadPkg("pscl") 
+```
+With the McFadden value of `r ChurnLogitpr2['McFadden']`, which is analogous to the coefficient of determination $R^2$, only about 27.8% of the variations in y is explained by the explanatory variables in the model.
+
+
+
+
+
+
+
+
+
+
+
+
+#sample project
+```{r}
+expcoeff1 = exp(coef(logistic))
+summary(expcoeff1)
+xkabledply( as.table(expcoeff1), title = "Exponential of coefficients in Churn" )
+```
 The first model we tried is logistic regression. The dataset has 13 variables, and first thing to do is feature selection. Firstly, we tried to use best glm to select out significant variables, but the variable within the dataset is more than 15. Therefore, we used logistic regression to remove the variables one by one instead of using best glm. We set alpha equals 0.1 which means we would remove the variables with p-value bigger than 0.1. Here is the first table after covering all variables. 
 ```{r 1.1Logistic Regression}
 logistic_all = glm(cvd ~ gender + SeniorCitizen + Partner + Dependents + tenure
