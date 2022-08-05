@@ -94,25 +94,29 @@ Variable | Type | Definition
 
 ```{r cat.graphs, results='markup'}
 require(patchwork)
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
 
 #cholesterol
 cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Cholesterol", y = "", x = "",
         fill = "Cholesterol Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
   theme_minimal()
 
 #Glucose
 gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Glucose", y = "", x = "",
         fill = "Glucose Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
   theme_minimal()
 
 #Gender
@@ -120,7 +124,7 @@ cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1",
 
 gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Gender",
         y = "", x = "", fill = "") +
@@ -132,7 +136,7 @@ cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "
 
 smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -143,7 +147,7 @@ smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
 
 alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -154,7 +158,7 @@ cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1",
 
 active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -163,10 +167,17 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
 
-According to the graphs, how do CVD patients differ from non-CVD  patients with respect to the categorical variables? 
+By exploring the data, we found that the most noticeable differences between people who have cardiovascular disease and people who do not have cardiovascular disease were in cholesterol and glucose. `r 100 - (sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100))`% of people with cardiovascular disease have above normal cholesterol levels, while only xx% of people **without** the disease have above normal cholesterol.
+
+`r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
 
 ## Chi-Squared Test
-What was the purpose of the chi-squared test?
+What was the purpose of the chi-squared test? We use a chi-square test to evaluate
 
 Categorical Variable | Chi-Square | P-Value | df  
   :-     |  :- |  :-| :-
@@ -177,6 +188,9 @@ Categorical Variable | Chi-Square | P-Value | df
   `alco` | 7 | 0.006 | 1
   `active` | 81 | <2e-16 | 1
 ```{r chi}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+
 #Gender
 cardio_vs_gender = table(cardio_clean_final$cardio, cardio_clean_final$gender)
 chi_gender = chisq.test(cardio_vs_gender)
@@ -311,7 +325,7 @@ According to the graphs, how do CVD patients differ from non-CVD  patients with 
 ## Welch Two-Sample T-Test
 What is the purpose of the  t-test? 
 
-Continuous Variable | CVD Avg. | Healthy Avg. | t | p-value
+Continuous Variable | CVD Avg. | No CVD Avg. | t | p-value
 :- | :- | :- | :- | :-
 `age` | 55 | 51.8 | 61 | <2e-16
 `height` | 165 | 165 | -4 | 1e-04
