@@ -750,7 +750,7 @@ ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
   geom_point(size = 3, color = "blue") + 
   labs(title = "Total.Accuracy vs K")
 ```  
-#### Modeling results with the best K value  
+#### Modeling results with the best K value (K = 19)  
 
 Detailed results and the confusion matrix using K=19 were shown below. The following information can be calculated from the confusion matrix:  
 * Accuracy = 0.717  
@@ -812,7 +812,7 @@ ggplot(ResultDf2, aes(x=k, y=Total.Accuracy)) +
   labs(title = "Total.Accuracy vs K")
 ```  
 
-#### Modeling results with the best K value
+#### Modeling results with the best K value (K = 29)
 Detailed results and the confusion matrix using K=29 were shown below. The following information can be calculated from the confusion matrix:  
 * Accuracy = 0.722  
 * Precision = 0.740  
@@ -828,7 +828,70 @@ Detailed results and the confusion matrix using K=29 were shown below. The follo
   print( paste("Accuracy_K_29 = ", cmaccu2 ) )
 ```
                 
-**After remove `gender` and `bmi`, the Accuracy increased from 0.717 to 0.722, Precision increased from 0.732 to 0.74, the Specification increased from 0.757 ti 0.766, and the F1 Score increased from 0.703 to 0.753, while the Recall value remained unchanged. These results suggesting remove these two variables can slightly improve the modeling performance, especially improved its ability in predicting the absence of the cardiovascular diseases.**
+
+### **KNN modeling using only `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo`.**  
+#### Train / Test split:  
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). Only `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` were used for the modeling. 
+```{r}
+cardio_scale3 <- cardio_scale[c(1, 5:7, 12:13)]
+cardio_scale3
+set.seed(42)
+cardio_sample3 <- sample(2, nrow(cardio_scale3), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x3 <- cardio_scale3[cardio_sample3==1, 1:5]
+cardio_test_x3 <- cardio_scale3[cardio_sample3==2, 1:5]
+cardio_training_y3 <- cardio_scale3[cardio_sample3==1, 6]
+cardio_test_y3 <- cardio_scale3[cardio_sample3==2, 6]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 31 is the best K value for the KNN modeling.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf3 = data.frame()
+for (k_v in K_test) {
+  cardio_pred3 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=k_v)
+  cardio_PRED_Cross3 <- CrossTable(cardio_test_y3, cardio_pred3, prop.chisq = FALSE)
+  
+  cm3 = confusionMatrix(cardio_pred3, reference = cardio_test_y3 )
+  
+  cmaccu3 = cm3$overall['Accuracy']
+
+  cmt3 = data.frame(k=k_v, Total.Accuracy = cmaccu3, row.names = NULL ) 
+  
+  ResultDf3 = rbind(ResultDf3, cmt3)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf3, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf3, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+
+#### Modeling results with the best K value (K = 31)  
+
+Detailed results and the confusion matrix using K=31 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.721  
+* Precision = 0.737  
+* Recall = 0.680  
+* Specification = 0.761  
+* F1 Score = 0.707  
+
+```{r results='markup'}
+  cardio_pred_31 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=31)
+  cardio_PRED_Cross3 <- CrossTable(cardio_test_y3, cardio_pred_31, prop.chisq = FALSE)
+  cm3 = confusionMatrix(cardio_pred_31, reference = cardio_test_y3 )
+  cmaccu3 = cm3$overall['Accuracy']
+  print( paste("Accuracy_K_31 = ", cmaccu3 ) )
+```
+**After remove `gender` and `bmi`, the Accuracy increased from 0.717 to 0.722, Precision increased from 0.732 to 0.74, the Specification increased from 0.757 ti 0.766, and the F1 Score increased from 0.703 to 0.753, while the Recall value remained unchanged. These results suggesting remove these two variables can slightly improve the modeling performance, especially improved its ability in predicting the absence of the cardiovascular diseases.  
+Compared to the models that with or without `gender` and `bmi`, the model only use `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo`did not make too much improvement. The only advantage is the Recall value increased from 0.676 to 0.680. If we are looking for models that can better predict disease present, this model is more appropriate. But considering the tiny increase 0.4%, the difference might not very significant. **
 
 
 
