@@ -167,7 +167,7 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
 
-By exploring the data, we found that the most noticeable differences between people who have cardiovascular disease and people who do not have cardiovascular disease were in cholesterol and glucose. `r 100 - (sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100))`% of people with cardiovascular disease have above normal cholesterol levels, while only xx% of people **without** the disease have above normal cholesterol.
+By exploring the data, we found that the most noticeable differences between people who have cardiovascular disease and people who do not have cardiovascular disease were in cholesterol and glucose. xx% of people with cardiovascular disease have above normal cholesterol levels, while only xx% of people **without** the disease have above normal cholesterol.
 
 `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
 we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.

@@ -449,7 +449,8 @@ ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
   xlab("Diastolic BP ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
 ap_hi_lo
 
@@ -459,7 +460,8 @@ ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = card
   labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
   xlab("Cholesterol") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap1_hi
 
@@ -467,7 +469,8 @@ ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
   xlab("Age ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap2
 #ggMarginal(ap2, type = "density", groupFill = TRUE)
@@ -476,7 +479,8 @@ ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
   geom_point(size=1.5,alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
   xlab("BMI ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap3
 #ggMarginal(ap3, type = "density", groupFill = TRUE)
@@ -504,7 +508,8 @@ chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)
   labs(title = "Age vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 chol1
 
 chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
@@ -513,7 +518,8 @@ chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)
   labs(title = "BMI vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 chol2
 
 ```
@@ -523,7 +529,8 @@ age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
   geom_point(size=1,alpha=0.5) + 
   labs(title = "BMI vs Age", color="Has CVD") + 
   xlab("Age") + ylab("BMI") +
-  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  theme_minimal()
 age1
 #ggMarginal(age1, type = "density", groupFill = TRUE)
 ```
@@ -538,7 +545,8 @@ smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) +
   labs(title = "Systolic Blood Pressure vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 smoke1
 
@@ -548,7 +556,8 @@ smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) +
   labs(title = "Age vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 smoke2
 
 smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
@@ -557,7 +566,8 @@ smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 smoke3
 
 ```
@@ -625,7 +635,8 @@ active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 active3
 
 ```
@@ -639,7 +650,8 @@ gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  geom_hline(yintercept = 120, linetype = 'dashed') +
+  theme_minimal()
 
 gluc1
 
@@ -658,7 +670,8 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 gluc3
 ```
 
@@ -748,7 +761,8 @@ library(ggplot2)
 ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
   geom_line(color = "skyblue", size = 1.5) +
   geom_point(size = 3, color = "blue") + 
-  labs(title = "Total.Accuracy vs K")
+  labs(title = "Total Accuracy vs K") +
+  theme_minimal()
 ```  
 #### Modeling results with the best K value (K = 19)  
 
