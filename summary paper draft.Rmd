@@ -158,7 +158,7 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
-  theme_minimal()
+  theme_minimal() 
 
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
