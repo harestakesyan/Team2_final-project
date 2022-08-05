@@ -437,42 +437,53 @@ cardio_clean_cor <- cardio_clean[, col_order]
 cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
-We see that cardiovascular disease has the strongest correlation with blood pressure (`ap_hi` & `ap_lo`), `cholesterol`, `age`, and `BMI.`
+We see that cardiovascular disease has the strongest correlation with blood pressure (`ap_hi` & `ap_lo`), `cholesterol`, `age`, and `bmi.`
 
 ### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?
 ```{r, results='markup'}
-#library(patchwork)
+library(patchwork)
 #install.packages("ggExtra")
-library(ggExtra)
+#library(ggExtra)
 
-ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Cholesterol") +
+ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
+  geom_point(size = 1.5, alpha=0.7) + 
+  labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
+  xlab("Diastolic BP ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
+ap_hi_lo
+
+ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
+  geom_violin(scale="width", width=1, alpha=.5) + 
+  geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
   xlab("Cholesterol") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
-ap1
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap1_hi
 
 ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
-  labs(title = "Systolic Blood Pressure vs Age") + 
+  labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
   xlab("Age ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) +
-  geom_hline(yintercept = 120, linetype = 'dashed')
-#ap2
-ggMarginal(ap2, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap2
+#ggMarginal(ap2, type = "density", groupFill = TRUE)
 
 ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
   geom_point(size=1.5,alpha=0.7) + 
-  labs(title = "Systolic Blood Pressure vs BMI") + 
+  labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
   xlab("BMI ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
-#ap3
-ggMarginal(ap3, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap3
+#ggMarginal(ap3, type = "density", groupFill = TRUE)
+
+#ap_hi_lo/ (ap1_hi+ap3) + plot_annotation(title = 'Blood Pressure Plots')
 ```  
-Normal blood pressure for most adults is defined as a systolic pressure of less than 120 and a diastolic pressure of less than 80 (NIH)[https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults]. Because there is a strong correlation between systolic and diastolic blood pressure, we look at systolic in comparison to other variables: `cholesterol`, `age` and `bmi.`  
+Normal blood pressure for most adults is defined as a systolic pressure of less than 120 and a diastolic pressure of less than 80, elevated blood pressure is defined as a systolic pressure between 120 and 129 with a diastolic pressure of less than 80, high blood pressure is defined as 130 or higher for the first number, or 80 or higher for the second number. (NIH)[https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults]. Because there is a strong correlation between systolic and diastolic blood pressure, we look at systolic in comparison to other variables: `cholesterol`, `age` and `bmi.`  
 
 *Systolic BP vs Cholesterol*
 * In the normal and above normal cholesterol groups, patients with cardiovascular disease tend to have systolic blood pressure at or above 120, whereas patients without cardiovascular disease have higher density at healthy systolic levels.
@@ -488,18 +499,20 @@ Normal blood pressure for most adults is defined as a systolic pressure of less 
 ```{r, results='markup'}
 
 chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Cholesterol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 chol1
 
 chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Cholesterol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
+  labs(title = "BMI vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 chol2
 
@@ -507,11 +520,12 @@ chol2
 ### Is there a relationship between age and other variables in patients with cardiovascular disease?
 ```{r, results='markup'}
 age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
-  geom_point(size=1,alpha=0.7) + 
-  labs(title = "BMI vs Age") + 
+  geom_point(size=1,alpha=0.5) + 
+  labs(title = "BMI vs Age", color="Has CVD") + 
   xlab("Age") + ylab("BMI") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present"))
-ggMarginal(age1, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))
+age1
+#ggMarginal(age1, type = "density", groupFill = TRUE)
 ```
 
 ### How do lifestyle choices influence cardiovascular disease with other variables?
@@ -519,28 +533,31 @@ ggMarginal(age1, type = "density", groupFill = TRUE)
 ```{r, results='markup'}
 
 smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Smoke") +
+  geom_violin(width=1, alpha=0.5, scale='width') + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 smoke1
 
 smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Smoke") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 smoke2
 
 smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Smoke") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 smoke3
 
 ```
@@ -549,29 +566,32 @@ smoke3
 ```{r, results='markup'}
 
 alco1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Alcohol") +
+  geom_violin(width=1, alpha=0.5, scale="width") + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) +
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 
 alco1
 
 alco2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Alcohol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 alco2
 
 alco3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Alcohol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 alco3
 
 ```
@@ -580,29 +600,32 @@ alco3
 ```{r, results='markup'}
 
 active1 <- ggplot(cardio_clean_final,aes(x = active , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Activity") +
+  geom_violin(width=1, alpha=0.5, scale="count") + # Scale maximum width proportional to sample size
+  geom_boxplot(width=.1, cex=1, position=position_dodge(.5))+
+  labs(title = "Systolic Blood Pressure vs Activity (Count Scaled)", fill="Has CVD") +
   xlab("Activity") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))+
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 
 active1
 
 active2 <- ggplot(cardio_clean_final,aes(x = active , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Activity") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 active2
 
 active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Activity") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 active3
 
 ```
@@ -621,22 +644,256 @@ gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) +
 gluc1
 
 gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Blood Glucose") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 gluc2
 
 gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Blood Glucose") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 gluc3
-
 ```
+
+## Feature selection  
+In the EDA, t-tests and Chi-square tests were used to compare whether the response variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` have effects on the predictor variable `cardio`, and the p-values of the tests were shown in the table below:  
+```{r results='markup'}
+tab <- matrix(c( '<2e-16','0.6', '8e-07', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '1e-06', '0.006', '<2e-16', '<2e-16'), ncol=12, byrow = TRUE)
+rownames(tab) <- "p_value"
+colnames(tab) <- c("Age_year", "Gender", "Height","Weight","Systolic(ap_hi)", "Diastolic(ap_low)", "Cholesterol","Glucose","smoke", "Alcohol", "Physical_activity","BMI")
+tab <- as.table(tab)
+xkabledply(tab, "p-value Comparison")  
+```
+
+**From the above table, we found that all the response variables have relationship with the predictor variable `cardio` except the `gender` variable. Next we further confirmed this and tested the strength of the relationships with the `bestglm` function.  
+
+```{r bestglm, results='markup'}
+loadPkg("bestglm")
+loadPkg("leaps")
+loadPkg("ggplot2")
+cardio_clean_final_glm <- cardio_clean_final
+colnames(cardio_clean_final_glm)[12] <- "y"
+cardio_clean_final_glm <- cardio_clean_final_glm[c("age", "gender", "height", "weight","ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "y")]
+
+res.bestglm <- bestglm(Xy = cardio_clean_final_glm, family = binomial,
+            IC = "AIC", method = "exhaustive")
+summary(res.bestglm)
+res.bestglm$BestModels
+summary(res.bestglm$BestModels)
+unloadPkg("bestglm") 
+unloadPkg("leaps") 
+```
+`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, `gender` was voted as `FALSE` three time, while `bmi` was only voted twice, so we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances.   
+
+## **K-Nearest Neighbor (KNN)**   
+### **Convert factors into numeric, and Scale/center the data**   
+```{r results='markup'}
+cardio_num <- cardio_clean_final_glm
+colnames(cardio_num)[13] <- "cardioi"
+cardio_num[1:12] <- sapply(cardio_num[1:12],as.numeric)
+cardio_scale <- cardio_num
+cardio_scale[1:12] <- as.data.frame(scale(cardio_num[1:12], center = TRUE, scale = TRUE))
+str(cardio_scale)
+```  
+Dataframe structure after pre-modeling treatment was shown in the above table. All the response variables were converted in to nueric, and were scaled and centered. They are ready for KNN modeling.  
+
+### **KNN modeling using variables with all 13 variables.**  
+#### Train / Test split:  
+
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe).  
+```{r}
+set.seed(42)
+cardio_sample <- sample(2, nrow(cardio_scale), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x <- cardio_scale[cardio_sample==1, 1:12]
+cardio_test_x <- cardio_scale[cardio_sample==2, 1:12]
+cardio_training_y <- cardio_scale[cardio_sample==1, 13]
+cardio_test_y <- cardio_scale[cardio_sample==2, 13]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were test one by one to get the best K value. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 19 is the best K value if we use all the 13 variables for modeling.  
+
+```{r}
+loadPkg("FNN")
+loadPkg("gmodels")
+loadPkg("caret")
+K_test <- seq(3, 40, by = 2)
+ResultDf = data.frame()
+for (k_v in K_test) {
+  cardio_pred <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=k_v)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y, cardio_pred, prop.chisq = FALSE)
+  
+  cm = confusionMatrix(cardio_pred, reference = cardio_test_y )
+  
+  cmaccu = cm$overall['Accuracy']
+
+  cmt = data.frame(k=k_v, Total.Accuracy = cmaccu, row.names = NULL ) 
+  
+  ResultDf = rbind(ResultDf, cmt)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+#### Modeling results with the best K value (K = 19)  
+
+Detailed results and the confusion matrix using K=19 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.717  
+* Precision = 0.732  
+* Recall = 0.676  
+* Specification = 0.757  
+* F1 Score = 0.703  
+The overall performance is acceptable, but we still want to see whether remove `gender` and `bmi` can improve the modeling.  
+
+```{r results='markup'}
+  cardio_pred_19 <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=19)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y, cardio_pred_19, prop.chisq = FALSE)
+  cm = confusionMatrix(cardio_pred_19, reference = cardio_test_y)
+  cmaccu = cm$overall['Accuracy']
+  print( paste("Accuracy_K_19 = ", cmaccu ) )
+```
+### **KNN modeling using variables without `gender` and `bmi`.**  
+#### Train / Test split:  
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
+```{r}
+cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
+cardio_scale2
+set.seed(42)
+cardio_sample2 <- sample(2, nrow(cardio_scale2), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x2 <- cardio_scale2[cardio_sample2==1, 1:10]
+cardio_test_x2 <- cardio_scale2[cardio_sample2==2, 1:10]
+cardio_training_y2 <- cardio_scale2[cardio_sample2==1, 11]
+cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf2 = data.frame()
+for (k_v in K_test) {
+  cardio_pred2 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=k_v)
+  cardio_PRED_Cross2 <- CrossTable(cardio_test_y2, cardio_pred2, prop.chisq = FALSE)
+  
+  cm2 = confusionMatrix(cardio_pred2, reference = cardio_test_y2 )
+  
+  cmaccu2 = cm2$overall['Accuracy']
+
+  cmt2 = data.frame(k=k_v, Total.Accuracy = cmaccu2, row.names = NULL ) 
+  
+  ResultDf2 = rbind(ResultDf2, cmt2)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf2, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf2, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+
+#### Modeling results with the best K value (K = 29)
+Detailed results and the confusion matrix using K=29 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.722  
+* Precision = 0.740  
+* Recall = 0.676  
+* Specification = 0.766  
+* F1 Score = 0.753  
+
+```{r results='markup'}
+  cardio_pred_29 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=29)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y2, cardio_pred_29, prop.chisq = FALSE)
+  cm2 = confusionMatrix(cardio_pred_29, reference = cardio_test_y2 )
+  cmaccu2 = cm2$overall['Accuracy']
+  print( paste("Accuracy_K_29 = ", cmaccu2 ) )
+```
+                
+
+### **KNN modeling using only `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo`.**  
+#### Train / Test split:  
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). Only `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` were used for the modeling. 
+```{r}
+cardio_scale3 <- cardio_scale[c(1, 5:7, 12:13)]
+cardio_scale3
+set.seed(42)
+cardio_sample3 <- sample(2, nrow(cardio_scale3), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x3 <- cardio_scale3[cardio_sample3==1, 1:5]
+cardio_test_x3 <- cardio_scale3[cardio_sample3==2, 1:5]
+cardio_training_y3 <- cardio_scale3[cardio_sample3==1, 6]
+cardio_test_y3 <- cardio_scale3[cardio_sample3==2, 6]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 31 is the best K value for the KNN modeling.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf3 = data.frame()
+for (k_v in K_test) {
+  cardio_pred3 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=k_v)
+  cardio_PRED_Cross3 <- CrossTable(cardio_test_y3, cardio_pred3, prop.chisq = FALSE)
+  
+  cm3 = confusionMatrix(cardio_pred3, reference = cardio_test_y3 )
+  
+  cmaccu3 = cm3$overall['Accuracy']
+
+  cmt3 = data.frame(k=k_v, Total.Accuracy = cmaccu3, row.names = NULL ) 
+  
+  ResultDf3 = rbind(ResultDf3, cmt3)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf3, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf3, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+
+#### Modeling results with the best K value (K = 31)  
+
+Detailed results and the confusion matrix using K=31 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.721  
+* Precision = 0.737  
+* Recall = 0.680  
+* Specification = 0.761  
+* F1 Score = 0.707  
+
+```{r results='markup'}
+  cardio_pred_31 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=31)
+  cardio_PRED_Cross3 <- CrossTable(cardio_test_y3, cardio_pred_31, prop.chisq = FALSE)
+  cm3 = confusionMatrix(cardio_pred_31, reference = cardio_test_y3 )
+  cmaccu3 = cm3$overall['Accuracy']
+  print( paste("Accuracy_K_31 = ", cmaccu3 ) )
+```
+**After remove `gender` and `bmi`, the Accuracy increased from 0.717 to 0.722, Precision increased from 0.732 to 0.74, the Specification increased from 0.757 ti 0.766, and the F1 Score increased from 0.703 to 0.753, while the Recall value remained unchanged. These results suggesting remove these two variables can slightly improve the modeling performance, especially improved its ability in predicting the absence of the cardiovascular diseases.  
+Compared to the models that with or without `gender` and `bmi`, the model only use `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo`did not make too much improvement. The only advantage is the Recall value increased from 0.676 to 0.680. If we are looking for models that can better predict disease present, this model is more appropriate. But considering the tiny increase 0.4%, the difference might not very significant. **
+
+
 
 ## Classification Tree  -----Chenxu Wang
 
