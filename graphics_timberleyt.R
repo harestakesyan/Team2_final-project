@@ -8,6 +8,103 @@ library(tidyverse)
 cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/cardio_train_copy.csv")
 str(cardio.df)
 
+#### Categorical Variables ####
+#cholesterol
+cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Cholesterol", y = "", x = "",
+        fill = "Cholesterol Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+
+#Glucose
+gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Glucose", y = "", x = "",
+        fill = "Glucose Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  theme_minimal()
+
+#Gender
+cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1", "Women", "Men"))
+
+gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Gender",
+        y = "", x = "", fill = "") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#Smoke
+cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "Yes", "No"))
+
+smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#alcohol
+cardio_clean_final$alco.yn<- as.factor(ifelse(cardio_clean_final$alco== "1", "Yes", "No"))
+
+alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#active
+cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
+
+active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 cardio.df$id<- as.character(cardio.df$id)
 cardio.df$age<- cardio.df$age / 365
 cardio.df$gender<- as.factor(cardio.df$gender)
