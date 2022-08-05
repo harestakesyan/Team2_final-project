@@ -5,193 +5,256 @@ library(ezids)
 library(tidyverse)
 
 #Data
-cardio.df<- read.csv("C:/Users/thomp/Desktop/GWU/Summer 2022/dats6101/cardio_train_copy.csv")
-str(cardio.df)
+cardio_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
+str(cardio_orig)
 
-cardio.df$id<- as.character(cardio.df$id)
-cardio.df$age<- cardio.df$age / 365
-cardio.df$gender<- as.factor(cardio.df$gender)
-cardio.df$cholesterol<- factor(cardio.df$cholesterol, levels = c("1", "2", "3"))
-cardio.df$gluc<- factor(cardio.df$gluc, levels = c("1", "2", "3"))
-cardio.df$smoke<- as.factor(cardio.df$smoke)
-cardio.df$alco<- as.factor(cardio.df$alco)
-cardio.df$active<- as.factor(cardio.df$active)
-cardio.df$cardio<- as.factor(cardio.df$cardio)
-cardio.df$cardio.yn<- as.factor(ifelse(cardio.df$cardio == "0", "No", "Yes"))
-cardio.df$active.yn<- as.factor(ifelse(cardio.df$active == "0", "No", "Yes"))
-cardio.df$bmi<- cardio.df$weight / ((cardio.df$height / 100)**2)
-str(cardio.df)
+cardio = cardio_orig[-c(1)] #get rid of id
+cardio$age = cardio$age/365 # transfer days to years
+cardio$bmi = cardio$weight/((cardio$height/100)**2) #add bmi variable
 
-#Remove Outliers
-summary(cardio.df)
+cardio_clean = outlierKD2(cardio, bmi, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, ap_hi, TRUE, TRUE, TRUE, TRUE) 
+cardio_clean = outlierKD2(cardio_clean, ap_lo, TRUE, TRUE, TRUE, TRUE)
+cardio_clean = na.omit(cardio_clean) #remove NA rows
 
-#cardio1<- outlierKD2(cardio.df, height, rm = TRUE, histogram = FALSE)
-#cardio2<- outlierKD2(cardio1, weight, rm = TRUE, histogram = FALSE)
-cardio3<- outlierKD2(cardio.df, bmi, rm = TRUE, histogram = FALSE)
-cardio4<- outlierKD2(cardio3, ap_hi, rm = TRUE, histogram = FALSE)
-cardio5<- outlierKD2(cardio4, ap_lo, rm = TRUE, histogram = FALSE)
+cardio_clean_final = cardio_clean
+cardio_clean_final$gender = as.factor(cardio_clean$gender)
+cardio_clean_final$cholesterol = as.factor(cardio_clean$cholesterol) 
+cardio_clean_final$gluc = as.factor(cardio_clean$gluc)
+cardio_clean_final$smoke = as.factor(cardio_clean$smoke)
+cardio_clean_final$alco = as.factor(cardio_clean$alco)
+cardio_clean_final$active = as.factor(cardio_clean$active)
+cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
 
-cardio.final <- na.omit(cardio5)
-summary(cardio.final)
-rm(cardio3, cardio4, cardio5)
 
-#### EDA Graphics: Categorical Variables ####
-
+#### Categorical Variables ####
 #cholesterol
-cholesterol.1 <- ggplot(cardio.final, aes(x=cardio, fill= cholesterol)) +
+cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
-  labs( title = "Patients with CVD Likely to Have Higher Cholesterol Levels", y = "", x = "",
+  labs( title = "Cholesterol", y = "", x = "",
         fill = "Cholesterol Level") +
   scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
   theme_minimal()
-cholesterol.1
 
-  #Glucose
-glucose.1 <- ggplot(cardio.final, aes(x=cardio, fill= gluc)) +
+#Glucose
+gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
-  labs( title = "Patients with CVD Likely to Have Higher Glucose Levels", y = "", x = "",
+  labs( title = "Glucose", y = "", x = "",
         fill = "Glucose Level") +
   scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
   theme_minimal()
-glucose.1
 
 #Gender
-cardio.final$gender.yn<- as.factor(ifelse(cardio.final$gender== "1", "Women", "Men"))
+cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1", "Women", "Men"))
 
-gender.1 <- ggplot(cardio.final, aes(x=cardio, fill= gender.yn)) +
+gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
-  labs( y = "", x = "", fill = "") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
+  labs( title = "Gender",
+        y = "", x = "", fill = "") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
   theme_minimal()
-gender.1
 
 #Smoke
-cardio.final$smoke.yn<- as.factor(ifelse(cardio.final$smoke== "1", "Yes", "No"))
+cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "Yes", "No"))
 
-smoke.1 <- ggplot(cardio.final, aes(x=cardio, fill= smoke.yn)) +
+smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
-  labs( y = "", x = "", fill = "Smoker") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
+  labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
   theme_minimal()
-smoke.1
 
-#alco
-cardio.final$alco.yn<- as.factor(ifelse(cardio.final$alco== "1", "Yes", "No"))
+#alcohol
+cardio_clean_final$alco.yn<- as.factor(ifelse(cardio_clean_final$alco== "1", "Yes", "No"))
 
-alco.1 <- ggplot(cardio.final, aes(x=cardio, fill= alco.yn)) +
+alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "Does NOT Have CVD")) +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
-  labs( y = "", x = "", fill = "Drinks Alcohol") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
+  labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
   theme_minimal()
-alco.1
 
-#### EDA Graphics: Continuous Variables ####
+#active
+cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
+
+active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#### Continuous Variables (w/ annotations) ####
+
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
 
 #age
-cvdage<- filter(cardio.final, cardio.yn == "Yes")
-mean(cvdage$age) #54.98427
+cardio_clean_final$cardio.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
 
-n.cvdage<- filter(cardio.final, cardio.yn == "No")
-mean(n.cvdage$age) #51.81747
-
-age.kde <- ggplot(cardio.final, aes(x = age, fill= cardio.yn)) + 
+age.kde <- ggplot(cardio_clean_final, aes(x = age, fill= cardio.yn)) + 
   geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$age)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$age)), color="steelblue", linetype="dashed", size=1) +
   scale_x_continuous(limits = c(30,70)) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "CVD Patients are Typically Older Than CVD Patients",
-       subtitle = "Age Distribution (Stacked)",
-       fill = "Has CVD", x = "Age", y = "Distribution") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
+  labs(title = "Age",
+       fill = "Has CVD", x = "Age", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
   theme_minimal() +
-  annotate(geom = "segment", x = 54.98, xend = 54.98, y = 0, yend = .053, size = 1, color = "steelblue") +
-  annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "text", x= 56, y =.01, label = "Patients is 55", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "segment", x = 51.81, xend = 51.81, y = 0, yend = .1, size = 1, color = "pink3") +
-  annotate(geom = "text", x= 53, y =.08, label = "Mean Age of Healthy", size = 4,
+  annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 5,
            hjust = 0, color = "pink3", fontface = 2) +
-  annotate(geom = "text", x= 53, y =.075, label = "Patients is 52", size = 4,
-           hjust = 0, color = "pink3", fontface = 2)
+  annotate(geom = "text", x= 56, y =.01, label = "Patients is 55", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 39, y =.08, label = "Mean Age of Healthy", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 39, y =.075, label = "Patients is 52", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  theme(text = element_text(size = 20))
+
 age.kde
 
-#bmi
-cvd.bmi<- filter(cardio.final, cardio.yn == "Yes")
-mean(cvd.bmi$bmi) #27.83434
-
-ncvd.bmi<- filter(cardio.final, cardio.yn == "No")
-mean(ncvd.bmi$bmi) #26.25536
-
-bmi.kde <- ggplot(cardio.final, aes(x = bmi, fill= cardio.yn)) + 
+#height
+height.kde <- ggplot(cardio_clean_final, aes(x = height, fill= cardio.yn)) + 
   geom_density(position = "stack") +
-  scale_x_continuous(breaks = c(seq(0, 40, 5))) +
+  geom_vline(aes(xintercept=mean(disease$height)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$height)), color="steelblue", linetype="dashed", size=1) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "CVD Patients  Typically Have Higher BMIs Than Non-CVD Patients",
-       subtitle = "BMI Distribution (Stacked)",
-       fill = "Has CVD", x = "BMI", y = "Distribution") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
-  theme_minimal()+
-  annotate(geom = "segment", x = 27.83, xend = 27.83, y = 0, yend = .077, size = 1, color = "steelblue") +
-  annotate(geom = "text", x= 28.5, y =.04, label = "Mean BMI of CVD", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "text", x= 28.5, y =.03, label = "Patients is 28", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "segment", x = 26.25, xend = 26.25, y = 0, yend = .175, size = 1, color = "pink3") +
-  annotate(geom = "text", x= 27, y =.185, label = "Mean Age of Healthy", size = 4,
+  labs(title = "Height",
+       fill = "Has CVD", x = "Height (cm)", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() +
+  theme(text = element_text(size = 20))
+
+height.kde
+
+#weight
+weight.kde <- ggplot(cardio_clean_final, aes(x = weight, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$weight)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$weight)), color="steelblue", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Weight",
+       fill = "Has CVD", x = "Weight (kg)", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 100, y =.025, label = "Mean Weight of CVD", size = 5,
            hjust = 0, color = "pink3", fontface = 2) +
-  annotate(geom = "text", x= 27, y =.175, label = "Patients is 26", size = 4,
-           hjust = 0, color = "pink3", fontface = 2)
+  annotate(geom = "text", x= 100, y =.02, label = "Patients is 75kg", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 30, y =.06, label = "Mean Weight of Healthy", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 30, y =.055, label = "Patients is 71kg", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  theme(text = element_text(size = 20))
+
+weight.kde
+
+
+#bmi
+bmi.kde <- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$bmi)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$bmi)), color="steelblue", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "BMI",
+       fill = "Has CVD", x = "BMI", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 28.5, y =.04, label = "Mean BMI of CVD", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 28.5, y =.03, label = "Patients is 28", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 16, y =.185, label = "Mean BMI of Healthy", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 16, y =.175, label = "Patients is 26", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  theme(text = element_text(size = 20))
 
 bmi.kde
 
-
-#height
-cvd.height<- filter(cardio.final, cardio.yn == "Yes")
-mean(cvd.height$height) #164.5428
-
-ncvd.height<- filter(cardio.final, cardio.yn == "No")
-mean(ncvd.height$height) #164.7847
-
-#weight
-cvd.weight<- filter(cardio.final, cardio.yn == "Yes")
-mean(cvd.weight$weight) #75.31369
-
-ncvd.weight<- filter(cardio.final, cardio.yn == "No")
-mean(ncvd.weight$weight) #71.27051
-
-weight.kde <- ggplot(cardio.final, aes(x = weight, fill= cardio.yn)) + 
+#systolic bp
+ap_hi.kde <- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio.yn)) + 
   geom_density(position = "stack") +
-  scale_x_continuous(breaks = c(seq(0, 40, 5))) +
+  geom_vline(aes(xintercept=mean(disease$ap_hi)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$ap_hi)), color="steelblue", linetype="dashed", size=1) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "CVD Patients  Typically Have Higher weights Than Non-CVD Patients",
-       subtitle = "weight Distribution (Stacked)",
-       fill = "Has CVD", x = "weight", y = "Distribution") +
-  scale_fill_manual(values=c("#990000", "#0000da")) +
-  theme_minimal()+
-  annotate(geom = "segment", x = 27.83, xend = 27.83, y = 0, yend = .077, size = 1, color = "steelblue") +
-  annotate(geom = "text", x= 28.5, y =.04, label = "Mean weight of CVD", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "text", x= 28.5, y =.03, label = "Patients is 28", size = 4,
-           hjust = 0, color = "steelblue", fontface = 2) +
-  annotate(geom = "segment", x = 26.25, xend = 26.25, y = 0, yend = .175, size = 1, color = "pink3") +
-  annotate(geom = "text", x= 27, y =.185, label = "Mean Age of Healthy", size = 4,
+  scale_x_continuous(breaks = c(seq(90,170,20))) +
+  labs(title = "Systolic BP",
+       fill = "Has CVD", x = "Systolic BP", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 135, y =.09, label = "Mean SBP of CVD", size = 5,
            hjust = 0, color = "pink3", fontface = 2) +
-  annotate(geom = "text", x= 27, y =.175, label = "Patients is 26", size = 4,
-           hjust = 0, color = "pink3", fontface = 2)
-#aphi
-...
+  annotate(geom = "text", x= 135, y =.08, label = "Patients is 133", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 97, y =.15, label = "Mean SBP of Healthy", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 97, y =.14, label = "Patients is 120", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  theme(text = element_text(size = 20))
 
-#aplo
+ap_hi.kde
+
+#diastolic bp
+ap_lo.kde <- ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio.yn)) + 
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept=mean(disease$ap_lo)), color="pink3", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=mean(healthy$ap_lo)), color="steelblue", linetype="dashed", size=1) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = c(seq(65,105,10))) +
+  labs(title = "Diastolic BP",
+       fill = "Has CVD", x = "Diastolic BP", y = " ") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() +
+  annotate(geom = "text", x= 86, y =.25, label = "Mean DBP of CVD", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 86, y =.22, label = "Patients is 84", size = 5,
+           hjust = 0, color = "pink3", fontface = 2) +
+  annotate(geom = "text", x= 68, y =.45, label = "Mean DBP of Healthy", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  annotate(geom = "text", x= 68, y =.42, label = "Patients is 79", size = 5,
+           hjust = 0, color = "steelblue", fontface = 2) +
+  theme(text = element_text(size = 20))
+
+ap_lo.kde
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
