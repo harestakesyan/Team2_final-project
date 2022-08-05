@@ -31,67 +31,75 @@ cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
 #cholesterol
 cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Cholesterol", y = "", x = "",
         fill = "Cholesterol Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
-  theme_minimal()
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #Glucose
 gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Glucose", y = "", x = "",
         fill = "Glucose Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
-  theme_minimal()
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"),
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #Gender
 cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1", "Women", "Men"))
 
 gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Gender",
         y = "", x = "", fill = "") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #Smoke
 cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "Yes", "No"))
 
 smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #alcohol
 cardio_clean_final$alco.yn<- as.factor(ifelse(cardio_clean_final$alco== "1", "Yes", "No"))
 
 alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #active
 cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
 
 active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "NO CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size = 20))
 
 #### Continuous Variables (w/ annotations) ####
 
