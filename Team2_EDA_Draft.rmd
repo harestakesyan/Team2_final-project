@@ -638,6 +638,176 @@ gluc3
 
 ```
 
+## Feature selection  
+In the EDA, t-tests and Chi-square tests were used to compare whether the response variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` have effects on the predictor variable `cardio`, and the p-values of the tests were shown in the table below:  
+```{r results='markup'}
+tab <- matrix(c( '<2e-16','0.6', '8e-07', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '1e-06', '0.006', '<2e-16', '<2e-16'), ncol=12, byrow = TRUE)
+rownames(tab) <- "p_value"
+colnames(tab) <- c("Age_year", "Gender", "Height","Weight","Systolic(ap_hi)", "Diastolic(ap_low)", "Cholesterol","Glucose","smoke", "Alcohol", "Physical_activity","BMI")
+tab <- as.table(tab)
+xkabledply(tab, "p-value Comparison")  
+```
+
+**From the above table, we found that all the response variables have relationship with the predictor variable `cardio` except the `gender` variable. Next we further confirmed this and tested the strength of the relationships with the `bestglm` function.  
+
+```{r bestglm, results='markup'}
+loadPkg("bestglm")
+loadPkg("leaps")
+loadPkg("ggplot2")
+cardio_clean_final_glm <- cardio_clean_final
+colnames(cardio_clean_final_glm)[12] <- "y"
+cardio_clean_final_glm <- cardio_clean_final_glm[c("age", "gender", "height", "weight","ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "y")]
+
+res.bestglm <- bestglm(Xy = cardio_clean_final_glm, family = binomial,
+            IC = "AIC", method = "exhaustive")
+summary(res.bestglm)
+res.bestglm$BestModels
+summary(res.bestglm$BestModels)
+unloadPkg("bestglm") 
+unloadPkg("leaps") 
+```
+`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, `gender` was voted as `FALSE` three time, while `bmi` was only voted twice, so we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances.   
+
+## **K-Nearest Neighbor (KNN)**   
+### **Convert factors into numeric, and Scale/center the data**   
+```{r results='markup'}
+cardio_num <- cardio_clean_final_glm
+colnames(cardio_num)[13] <- "cardioi"
+cardio_num[1:12] <- sapply(cardio_num[1:12],as.numeric)
+cardio_scale <- cardio_num
+cardio_scale[1:12] <- as.data.frame(scale(cardio_num[1:12], center = TRUE, scale = TRUE))
+str(cardio_scale)
+```  
+Dataframe structure after pre-modeling treatment was shown in the above table. All the response variables were converted in to nueric, and were scaled and centered. They are ready for KNN modeling.  
+
+### **KNN modeling using variables with all 13 variables.**  
+#### Train / Test split:  
+
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe).  
+```{r}
+set.seed(42)
+cardio_sample <- sample(2, nrow(cardio_scale), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x <- cardio_scale[cardio_sample==1, 1:12]
+cardio_test_x <- cardio_scale[cardio_sample==2, 1:12]
+cardio_training_y <- cardio_scale[cardio_sample==1, 13]
+cardio_test_y <- cardio_scale[cardio_sample==2, 13]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were test one by one to get the best K value. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 19 is the best K value if we use all the 13 variables for modeling.  
+
+```{r}
+loadPkg("FNN")
+loadPkg("gmodels")
+loadPkg("caret")
+K_test <- seq(3, 40, by = 2)
+ResultDf = data.frame()
+for (k_v in K_test) {
+  cardio_pred <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=k_v)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y, cardio_pred, prop.chisq = FALSE)
+  
+  cm = confusionMatrix(cardio_pred, reference = cardio_test_y )
+  
+  cmaccu = cm$overall['Accuracy']
+
+  cmt = data.frame(k=k_v, Total.Accuracy = cmaccu, row.names = NULL ) 
+  
+  ResultDf = rbind(ResultDf, cmt)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+#### Modeling results with the best K value  
+
+Detailed results and the confusion matrix using K=19 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.717  
+* Precision = 0.732  
+* Recall = 0.676  
+* Specification = 0.757  
+* F1 Score = 0.703  
+The overall performance is acceptable, but we still want to see whether remove `gender` and `bmi` can improve the modeling.  
+
+```{r results='markup'}
+  cardio_pred_19 <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=19)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y, cardio_pred_19, prop.chisq = FALSE)
+  cm = confusionMatrix(cardio_pred_19, reference = cardio_test_y)
+  cmaccu = cm$overall['Accuracy']
+  print( paste("Accuracy_K_19 = ", cmaccu ) )
+```
+### **KNN modeling using variables without `gender` and `bmi`.**  
+#### Train / Test split:  
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
+```{r}
+cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
+cardio_scale2
+set.seed(42)
+cardio_sample2 <- sample(2, nrow(cardio_scale2), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x2 <- cardio_scale2[cardio_sample2==1, 1:10]
+cardio_test_x2 <- cardio_scale2[cardio_sample2==2, 1:10]
+cardio_training_y2 <- cardio_scale2[cardio_sample2==1, 11]
+cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
+```
+
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf2 = data.frame()
+for (k_v in K_test) {
+  cardio_pred2 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=k_v)
+  cardio_PRED_Cross2 <- CrossTable(cardio_test_y2, cardio_pred2, prop.chisq = FALSE)
+  
+  cm2 = confusionMatrix(cardio_pred2, reference = cardio_test_y2 )
+  
+  cmaccu2 = cm2$overall['Accuracy']
+
+  cmt2 = data.frame(k=k_v, Total.Accuracy = cmaccu2, row.names = NULL ) 
+  
+  ResultDf2 = rbind(ResultDf2, cmt2)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf2, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf2, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+
+#### Modeling results with the best K value
+Detailed results and the confusion matrix using K=29 were shown below. The following information can be calculated from the confusion matrix:  
+* Accuracy = 0.722  
+* Precision = 0.740  
+* Recall = 0.676  
+* Specification = 0.766  
+* F1 Score = 0.753  
+
+```{r results='markup'}
+  cardio_pred_29 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=29)
+  cardio_PRED_Cross <- CrossTable(cardio_test_y2, cardio_pred_29, prop.chisq = FALSE)
+  cm2 = confusionMatrix(cardio_pred_29, reference = cardio_test_y2 )
+  cmaccu2 = cm2$overall['Accuracy']
+  print( paste("Accuracy_K_29 = ", cmaccu2 ) )
+```
+                
+**After remove `gender` and `bmi`, the Accuracy increased from 0.717 to 0.722, Precision increased from 0.732 to 0.74, the Specification increased from 0.757 ti 0.766, and the F1 Score increased from 0.703 to 0.753, while the Recall value remained unchanged. These results suggesting remove these two variables can slightly improve the modeling performance, especially improved its ability in predicting the absence of the cardiovascular diseases.**
+
+
+
 ## Classification Tree  -----Chenxu Wang
 
 This model is Classification Tree model. We could use the classification tree model to predict the Top 3 factors visually. It is very convenient. And we will discuss the performance of this model below.
