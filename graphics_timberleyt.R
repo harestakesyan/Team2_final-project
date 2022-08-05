@@ -237,6 +237,57 @@ ap_lo.kde <- ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio.yn)) +
 ap_lo.kde
 
 
+#### Correlations ####
+
+library(patchwork)
+#install.packages("ggExtra")
+#library(ggExtra)
+
+ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
+  geom_point(size = 1.5, alpha=0.7) + 
+  labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
+  xlab("Diastolic BP ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
+#geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
+ap_hi_lo
+
+ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
+  geom_violin(scale="width", width=1, alpha=.5) + 
+  geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
+  xlab("Cholesterol") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
+#geom_hline(yintercept = 120, linetype = 'dashed')
+ap1_hi
+
+ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
+  geom_point(size = 1.5, alpha=0.7) + 
+  labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
+  xlab("Age ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
+#geom_hline(yintercept = 120, linetype = 'dashed')
+ap2
+#ggMarginal(ap2, type = "density", groupFill = TRUE)
+
+ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
+  geom_point(size=1.5,alpha=0.7) + 
+  labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
+  xlab("BMI ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal() +
+  theme(text = element_text(size = 20))
+#geom_hline(yintercept = 120, linetype = 'dashed')
+ap3
+#ggMarginal(ap3, type = "density", groupFill = TRUE)
+
+#ap_hi_lo/ (ap1_hi+ap3) + plot_annotation(title = 'Blood Pressure Plots')
+
+require(ggpubr)
+ggarrange(ap1_hi, ap_hi_lo, ap2, ap3, common.legend = TRUE, legend = "bottom")
 
 
 
