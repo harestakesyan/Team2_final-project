@@ -437,42 +437,53 @@ cardio_clean_cor <- cardio_clean[, col_order]
 cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
-We see that cardiovascular disease has the strongest correlation with blood pressure (`ap_hi` & `ap_lo`), `cholesterol`, `age`, and `BMI.`
+We see that cardiovascular disease has the strongest correlation with blood pressure (`ap_hi` & `ap_lo`), `cholesterol`, `age`, and `bmi.`
 
 ### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?
 ```{r, results='markup'}
-#library(patchwork)
+library(patchwork)
 #install.packages("ggExtra")
-library(ggExtra)
+#library(ggExtra)
 
-ap1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Cholesterol") +
+ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
+  geom_point(size = 1.5, alpha=0.7) + 
+  labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
+  xlab("Diastolic BP ") + ylab("Systolic BP") +
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
+ap_hi_lo
+
+ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
+  geom_violin(scale="width", width=1, alpha=.5) + 
+  geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
   xlab("Cholesterol") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
-ap1
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap1_hi
 
 ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
-  labs(title = "Systolic Blood Pressure vs Age") + 
+  labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
   xlab("Age ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) +
-  geom_hline(yintercept = 120, linetype = 'dashed')
-#ap2
-ggMarginal(ap2, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap2
+#ggMarginal(ap2, type = "density", groupFill = TRUE)
 
 ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
   geom_point(size=1.5,alpha=0.7) + 
-  labs(title = "Systolic Blood Pressure vs BMI") + 
+  labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
   xlab("BMI ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
-#ap3
-ggMarginal(ap3, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
+ap3
+#ggMarginal(ap3, type = "density", groupFill = TRUE)
+
+#ap_hi_lo/ (ap1_hi+ap3) + plot_annotation(title = 'Blood Pressure Plots')
 ```  
-Normal blood pressure for most adults is defined as a systolic pressure of less than 120 and a diastolic pressure of less than 80 (NIH)[https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults]. Because there is a strong correlation between systolic and diastolic blood pressure, we look at systolic in comparison to other variables: `cholesterol`, `age` and `bmi.`  
+Normal blood pressure for most adults is defined as a systolic pressure of less than 120 and a diastolic pressure of less than 80, elevated blood pressure is defined as a systolic pressure between 120 and 129 with a diastolic pressure of less than 80, high blood pressure is defined as 130 or higher for the first number, or 80 or higher for the second number. (NIH)[https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults]. Because there is a strong correlation between systolic and diastolic blood pressure, we look at systolic in comparison to other variables: `cholesterol`, `age` and `bmi.`  
 
 *Systolic BP vs Cholesterol*
 * In the normal and above normal cholesterol groups, patients with cardiovascular disease tend to have systolic blood pressure at or above 120, whereas patients without cardiovascular disease have higher density at healthy systolic levels.
@@ -488,18 +499,20 @@ Normal blood pressure for most adults is defined as a systolic pressure of less 
 ```{r, results='markup'}
 
 chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Cholesterol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 chol1
 
 chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Cholesterol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
+  labs(title = "BMI vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 chol2
 
@@ -507,11 +520,12 @@ chol2
 ### Is there a relationship between age and other variables in patients with cardiovascular disease?
 ```{r, results='markup'}
 age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
-  geom_point(size=1,alpha=0.7) + 
-  labs(title = "BMI vs Age") + 
+  geom_point(size=1,alpha=0.5) + 
+  labs(title = "BMI vs Age", color="Has CVD") + 
   xlab("Age") + ylab("BMI") +
-  scale_color_manual(values=c("pink3", "steelblue"), labels = c("Absent", "Present"))
-ggMarginal(age1, type = "density", groupFill = TRUE)
+  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))
+age1
+#ggMarginal(age1, type = "density", groupFill = TRUE)
 ```
 
 ### How do lifestyle choices influence cardiovascular disease with other variables?
@@ -519,28 +533,31 @@ ggMarginal(age1, type = "density", groupFill = TRUE)
 ```{r, results='markup'}
 
 smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Smoke") +
+  geom_violin(width=1, alpha=0.5, scale='width') + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) + 
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 smoke1
 
 smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Smoke") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 smoke2
 
 smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Smoke") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 smoke3
 
 ```
@@ -549,29 +566,32 @@ smoke3
 ```{r, results='markup'}
 
 alco1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Alcohol") +
+  geom_violin(width=1, alpha=0.5, scale="width") + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Systolic Blood Pressure vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes")) +
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 
 alco1
 
 alco2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Alcohol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 alco2
 
 alco3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Alcohol") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 alco3
 
 ```
@@ -580,29 +600,32 @@ alco3
 ```{r, results='markup'}
 
 active1 <- ggplot(cardio_clean_final,aes(x = active , y = ap_hi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Systolic Blood Pressure vs Activity") +
+  geom_violin(width=1, alpha=0.5, scale="count") + # Scale maximum width proportional to sample size
+  geom_boxplot(width=.1, cex=1, position=position_dodge(.5))+
+  labs(title = "Systolic Blood Pressure vs Activity (Count Scaled)", fill="Has CVD") +
   xlab("Activity") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))+
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  #geom_hline(yintercept = 120, linetype = 'dashed')
 
 active1
 
 active2 <- ggplot(cardio_clean_final,aes(x = active , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Activity") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 active2
 
 active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Activity") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("0" = "no", "1" = "yes"))
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
 active3
 
 ```
@@ -621,21 +644,22 @@ gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) +
 gluc1
 
 gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "Age vs Blood Glucose") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "Age vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("Age") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 gluc2
 
 gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
-  geom_violin() + 
-  labs(title = "BMI vs Blood Glucose") +
+  geom_violin(width=1, alpha=0.5) + 
+  geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
+  labs(title = "BMI vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("BMI") + 
-  scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
 gluc3
-
 ```
 
 ## Classification Tree  -----Chenxu Wang
