@@ -112,11 +112,9 @@ xkablesummary(subset(disease, select=c(age, gender, ap_hi, ap_lo, cholesterol, b
 Here we have picked out a few factors from the summary that have significant differences between factor levels. `r xkablesummary(subset(disease, select=c(age, gender, weight, ap_hi, ap_lo, cholesterol, bmi)), title="Heart Disease Patient Attributes")` In this data set, we see that all except a few heart disease patients are `above the age of 40`.  It would  make sense that most heart disease patients are older patients. Approximately two/thirds of heart disease patients are `women`. Most heart disease patients have `higher blood pressure` and `high cholesterol` levels. The average heard disease patient is also overweight, with a `bmi` > 25.0.
 
 ## Categorical Variables
-
+With vs. Without CVD (visuals)
 ```{r, results='markup'}
 require(patchwork)
-disease <- subset(cardio_clean_final, cardio==1)
-healthy <- subset(cardio_clean_final, cardio==0)
 
 #cholesterol
 cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
@@ -188,6 +186,51 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 
 ```  
+With vs. Without CVD (Numbers)
+
+```{r}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+
+#Gender
+women.disease<- (sum(disease$gender==1)/nrow(disease)) * 100
+women.healthy<- (sum(healthy$gender==1)/nrow(healthy)) * 100
+
+women.disease - women.healthy
+
+#Cholesterol
+chol.disease<- (sum(disease$cholesterol!= "1")/nrow(disease)) * 100
+chol.healthy<- (sum(healthy$cholesterol!= "1")/nrow(healthy)) * 100
+
+chol.disease - chol.healthy
+
+#Glucose
+glu.disease<- (sum(disease$gluc!= "1")/nrow(disease)) * 100
+glu.healthy<- (sum(healthy$gluc!= "1")/nrow(healthy)) * 100
+
+glu.disease - glu.healthy
+
+#Smoke
+smo.disease<- (sum(disease$smoke==1)/nrow(disease)) * 100
+smo.healthy<- (sum(healthy$smoke==1)/nrow(healthy)) * 100
+
+smo.disease - smo.healthy
+
+#Alcohol
+alc.disease<- (sum(disease$alco==1)/nrow(disease)) * 100
+alc.healthy<- (sum(healthy$alco==1)/nrow(healthy)) * 100
+
+alc.disease - alc.healthy
+
+#Active
+act.disease<- (sum(disease$active==1)/nrow(disease)) * 100
+act.healthy<- (sum(healthy$active==1)/nrow(healthy)) * 100
+
+act.disease - act.healthy 
+  
+
+```
+
 
 **1. According to the plot above, we can draw the conclusion that**
 *It's close to half the female and male population have cardiovascular disease.
