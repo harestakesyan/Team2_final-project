@@ -980,7 +980,7 @@ Compared to the models that with or without `gender` and `bmi`, the model only u
 
 
 
-## Classification Tree  -----Chenxu Wang
+## Classification Tree 
 
 This model is Classification Tree model. We could use the classification tree model to predict the absence and presence of disease visually. It is very convenient. And we will discuss the performance of this model below.
 
@@ -1012,7 +1012,7 @@ str(cardio_tree)
 
 ```
 
-Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choosed the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
+Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choose the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
 
 ```{r Classification Tree feature selection, results=TRUE}
 library(randomForest)
