@@ -167,17 +167,16 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
 
-By exploring the data, we found that the most noticeable differences between people who have cardiovascular disease and people who do not have cardiovascular disease were in cholesterol and glucose. xx% of people with cardiovascular disease have above normal cholesterol levels, while only xx% of people **without** the disease have above normal cholesterol.
+By exploring the data, we found that the most noticeable differences between people with and without cardiovascular disease (CVD) were in cholesterol and glucose. `r sprintf("%.1f", (sum(disease$cholesterol!= "1")/nrow(disease)) * 100)`% of people with cardiovascular disease have above normal cholesterol levels, while only `r sprintf("%.1f", (sum(healthy$cholesterol!= "1")/nrow(disease)) * 100)`% of people *without* the disease have above normal cholesterol. Similarly, `r sprintf("%.1f", (sum(disease$gluc!="1")/nrow(disease)) * 100)`% of people with the disease have above normal glucose, while only `r sprintf("%.1f", (sum(healthy$gluc!="1")/nrow(disease)) * 100)`% of people *without* the disease have above normal glucose.
 
-`r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
-we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
-we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
-we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
-we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
-we found that `r sprintf("%.1f", (sum(disease$gender=="1")/nrow(disease)) * 100)`% of people with cardiovascular disease are women and `r sprintf("%.1f", (sum(healthy$gender=="1")/nrow(disease)) * 100)`% of people who *do not* have cardiovascular disease are women.
+The differences between the two groups (people with and without cardiovascular disease) are less noticeable when examining gender and lifestyle factors. The percentage of women in the "has CVD" group is nearly equal to the percentage of women in the "no CVD" group. Likewise, the percentage of alcohol drinkers is nearly the same in the "has CVD" group and the "no CVD" group.
+
+Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that xx% of people without CVD were smokers, while only xx% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
+
+
 
 ## Chi-Squared Test
-What was the purpose of the chi-squared test? We use a chi-square test to evaluate
+We performed chi-squared tests to further explore the data and determine the statistical significance of the differences we observed between the two groups.
 
 Categorical Variable | Chi-Square | P-Value | df  
   :-     |  :- |  :-| :-
@@ -383,7 +382,9 @@ What does the corrplot tell us?
 
 ** further exploration of correlations * *
 
-# III. Model Comparison
+# III. Statistical Models
+## Feature Selection
+
 ## Logistic Model
 How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
 
@@ -391,7 +392,7 @@ How did the EDA influence your choices when developing this model? (For example:
 
 What do the results of the regression model tell us?
 
-### Model Evaluation
+### Logistic Model Evaluation
 
 **Confusion Matrix**  
 describe/explain results
@@ -413,7 +414,7 @@ How did the EDA influence your choices when developing this model? (For example:
 
 What do the results tell us?
 
-### Model Evaluation
+### KNN Model Evaluation
 ...
 
 **Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses? How does it compare to the logistic model?
@@ -425,10 +426,14 @@ How did the EDA influence your choices when developing this model? (For example:
 
 What do the results tell us?
 
-### Model Evaluation
+### Classification Tree Model Evaluation
 ...
 
 **Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses? How does it compare to the logistic and KNN models?
+
+##Model Comparison
+
+-- insert model comparison chart --
 
 
 # IV. Conclusion
@@ -447,13 +452,12 @@ Provide an answer. Use the results of our analysis to support the answer.
 Discuss the limitations of the dataset and our analysis. Discuss what can be done to improve research in this area.
 
 # References
-World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 Cleveland Clinic medical professional (Ed.). (2021, October 5). *Cardiovascular disease: Heart disease causes and symptoms.* Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
 
+FDA Center for Tobacco Products. (2021, November 9). *How smoking affects heart health*. U.S. Food and Drug Administration. Retrieved August 5, 2022, from https://www.fda.gov/tobacco-products/health-effects-tobacco-use/how-smoking-affects-heart-health#References 
 
-
-
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 
 
