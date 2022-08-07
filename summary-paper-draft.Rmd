@@ -383,17 +383,20 @@ We examined correlations between each of the variables to determine if a linear 
 ```{r corrplot}
 loadPkg("corrplot")
 
+col_order <- c("age", "gender", "height", "weight", "ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active", "bmi", "cardio")
+cardio_clean_cor <- cardio_clean[, col_order]
 
 # corrplot with spearman method for categorical variables
-cardio.cor.1 <- cor(cardio_clean, method="spearman")
-corrplot(cardio.cor.1, order = "hclust", type="lower", addCoef.col="darkred", number.cex=0.6, tl.cex=1,title="Correlation Matrix", mar=c(0,0,1,0))
+cardio_cor <- cor(cardio_clean_cor, method="spearman")
+corrplot(cardio_cor, type="lower", addCoef.col="darkred", number.cex=0.6, tl.cex=1,title="Correlation Matrix", mar=c(0,0,1,0))
+```  
 ```
 
 The correlation coefficient for each pair of variables is displayed in the correlation matrix. The coefficient ranges from 1 to -1, indicating a positive or negative correlation. The further away the correlation coefficient is from zero, the stronger the relationship between the two variables. 
 
 The factors most strongly correlated with cardiovascular disease are `ap_hi`, `ap_low`, `cholesterol`, `age` and `bmi.` There is also a strong correlation between `height` and `gender`, `ap_hi` and `ap_low`, and `cholesterol` and `gluc`.  
 
-Some of these correlations are expected, for instance systolic blood pressure and diastolic blood pressure typically increase and decrease together. Height and gender are also correlated, which makes sense as men are typically taller than women.  While the correlation matrix does not show how the relationship between variables impacts CVD, it is important to keep these relationships in mind when we begin building models.   
+Some of these correlations are expected, for instance systolic blood pressure and diastolic blood pressure typically increase and decrease together. Height and gender are also correlated, which makes sense as men are taller than women on average.  While the correlation matrix does not show how the relationship between variables impacts the presence or absence of CVD, it is important to keep these relationships in mind when we begin building models.   
 
 #### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?  
 ```{r, results='markup'}
@@ -434,6 +437,14 @@ ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
 ggarrange(ap_hi_lo, ap1_hi, ap2, ap3, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom", heights=c(2,2))
 ```  
 
+We can see a strong correlation between systolic and diastolic blood pressure, as these two measurements are known to be physiologically related. According to the NIH, for most adults:
+* Normal blood pressure is systolic BP < 120 and diastolic BP < 80
+* Elevated blood pressure is systolic BP between 120 and 129 and diastolic BP < 80
+* High blood pressure is systolic BP is 130 or higher and diastolic BP 80 or higher
+The incidence of CVD increases as both systolic and diastolic BP increase. 
+
+Due to the relationship between systolic and diastolic BP, we chose to use only systolic BP to investigate relationships between BP and other variables. We found that there is not a strong correlation between BP and cholesterol, age or BMI. However, across all cholesterol, age and BMI groups, CVD patients have higher BP than non-CVD patients. They also tend to be older and have higher BMI.
+
 #### Is there a relationship between cholesterol, bmi, and age in patients with cardiovascular disease?  
 ```{r, results='markup'}
 
@@ -467,6 +478,10 @@ age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
 
 ((chol1 + theme(legend.position = "none")) + (chol2 + theme(legend.position = "none"))) / age1 + plot_layout(guides = 'collect')
 ```  
+
+Violin plots combine blox plots and density plots to show summary statistics and where the values are clustered. These plots show that there is a positive trend between `age` and `cholesterol`, as well as `bmi` and `cholesterol.` We can also see an increase in age and BMI between the CVD and non-CVD groups in each cholesterol group. 
+
+The scatterplot of BMI vs age does not indicate that there is a correlation between these variables. However, patients with higher BMI and age more likely to have CVD. Also, there appears to be a higher incidence of CVD in older people with low BMI than younger people with high BMI, indicating that age may have more of an effect on CVD than body mass.
 
 #### How do lifestyle choices influence cardiovascular disease with other variables?  
 
