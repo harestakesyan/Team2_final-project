@@ -49,25 +49,24 @@ cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
 ```
 # I. Background
 
-Cardiovascular disease is the leading cause of death globally, killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
+Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
-The World Health Organization asserts that an unhealthy diet, physical inactivity, tobacco use and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to raised blood pressure, raised blood glucose... and obesity (World Health Organization).
+The World Health Organization asserts that an "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
 
 This research paper is an investigation of The World Health Organization's statements. The research team analyzed data on cardiovascular disease to determine the risk factors of the disease and recommend a model to predict cardiovascular disease in patients.
 
 ## SMART Questions
-Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
+Specifically, the research team answered the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
 
   1. How accurately can the model predict the probability that a patient has cardiovascular disease?
   2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
   3. Is there any association between an individual's sex and whether they have 
-cardiovascular disease? Are men more prone to cardiovascular diseases as compared to
-women?
+cardiovascular disease? Are men more prone to cardiovascular diseases than women?
 
 
 ## Dataset Description
 
-Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset).  We cleaned the data according to the following pre-processing steps: generated a `bmi` variable from `height` and `weight`, removed outliers for `bmi`, `ap_hi` and `ap_lo`, and converted variables to factors where appropriate. The final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following `r ncol(cardio_clean_final)` variables:
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset).  To clean the data, we generated a `bmi` variable from `height` and `weight`, removed outliers for `bmi`, `ap_hi` and `ap_lo`, then converted variables to factors where appropriate. The final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following `r ncol(cardio_clean_final)` variables:
 
 ### Variables
 
@@ -87,7 +86,7 @@ Variable | Type | Definition
 `active` |Factor w/ 2 levels| Whether patient is physically active or not (0: no, 1: yes)
 `cardio` |Factor w/ 2 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
-A summary of the cleaned dataset with basic statistics is presented below.  
+Summary statistics for the cleaned dataset are presented below.  
 ```{r summary, results='markup'}
 xkablesummary(cardio_clean_final, title = "Cardiovascular Disease Dataset Summary" )
 ```
@@ -174,12 +173,12 @@ By exploring the data, we found that the most noticeable differences between peo
 
 The differences between the two groups (people with and without cardiovascular disease) are less noticeable when examining gender and lifestyle factors. The percentage of women in the "has CVD" group is nearly equal to the percentage of women in the "no CVD" group. Likewise, the percentage of alcohol drinkers is nearly the same in the "has CVD" group and the "no CVD" group.
 
-Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that xx% of people without CVD were smokers, while only xx% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
+Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that `r sprintf("%.1f", (sum(healthy$smoke= "1")/nrow(healthy)) * 100)`% of people without CVD were smokers, while only `r sprintf("%.1f", (sum(disease$smoke= "1")/nrow(disease)) * 100)`% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
 
 
 
 ## Chi-Squared Tests
-We performed $\chi^2$ tests to further explore the data and determine if differences we observed between the "CVD" and "no CVD" groups were statistically significant.
+We performed $\chi^2$ tests to further explore the data and determine if the differences we observed between the "CVD" and "no CVD" groups were statistically significant.
 
 ```{r chi}
 disease <- subset(cardio_clean_final, cardio==1)
@@ -226,11 +225,11 @@ We use these results to test the following hypothesis for each variable:
   $H_0$: They are independent.  
   $H_1$: They are not independent. 
 
-The p-value for `gender` is greater than 0.05, so we can conclude that gender is independent of cardiovascular disease and may not have a significant impact on whether a patient has CVD or not. The p-values for all other variables are less than 0.01, in fact `cholesterol`, `glucose`, `smoke` and `active` are almost 0, so we reject the null hypothesis and conclude that these variables are related to cardiovascular disease. 
+The p-value for `gender` is greater than 0.05, so we can conclude that gender is independent of cardiovascular disease and may not have a significant impact on whether a patient has CVD. The p-values for all other variables are less than 0.01; in fact, `cholesterol`, `glucose`, `smoke` and `active` are almost 0. Thus, we reject the null hypothesis and conclude that these variables are related to cardiovascular disease. 
 
-The $\chi^2$ tests agree with the observations from the box plots. The factors with the smallest p-values (cholesterol and glucose) are the same ones that had the most obvious differences in their plots.
+The $\chi^2$ tests corroborate the observations from the bar graphs. The variables with the smallest p-values (cholesterol and glucose) are the same ones that had the most obvious differences in their bar graphs.
 
-## Continuous Variables
+## Quantitative Variables
 
 ```{r cont.graphs}
 disease <- subset(cardio_clean_final, cardio==1)
@@ -330,12 +329,12 @@ ggarrange(age.kde, height.kde, weight.kde, bmi.kde, ap_hi.kde, ap_lo.kde, ncol=2
 
 ```
 
-Density plots are used to show the distribution of a continuous/quantitative variable in the dataset. Dashed lines were added to the plots to indicate the mean of the CVD (red) and non-CVD (blue) groups.  
+We used density plots to show the distribution of the quantitative variables in the dataset. Dashed lines were added to the plots to indicate the means for the CVD group (pink line) and the means for the non-CVD  groups (blue line).  
 
-We see from the plots that the distribution of patients with CVD is different from non-CVD patients for all variables except for `height`.  In general, patients with CVD are more likely to be older and weigh more than the "no CVD" cohort.  Both systolic and diastolic blood pressure tend to be higher in the "has CVD" group as well. 
+The plots indicate that the CVD distribution differs from the non-CVD distribution for all variables except for `height`. Patients with CVD are likely to be older and heavier than "no CVD" patients. The "has CVD" group also tends to have higher systolic and diastolic blood pressure.
 
 ## Welch Two-Sample T-Test
-Two-sample t-tests are used to test whether the mean of the "CVD" and "no CVD" groups is different for each of the quantitative variables.
+We used two-sample t-tests to test whether there was a statistically significant difference in means between the "CVD" and "no CVD" groups for each quantitative variable.
 
 ```{r ttest}
 
@@ -373,12 +372,12 @@ Continuous Variable | CVD mean | No CVD mean | t | p-value
 `ap_hi` | `r format(ttest_ap_hi$estimate[1], digits=3)` | `r format(ttest_ap_hi$estimate[2], digits=3)` | `r format(ttest_ap_hi$statistic)` | `r format(ttest_ap_hi$p.value, digits=3)`
 `ap_lo` | `r format(ttest_ap_lo$estimate[1], digits=3)` | `r format(ttest_ap_lo$estimate[2], digits=3)` | `r format(ttest_ap_lo$statistic)` | `r format(ttest_ap_lo$p.value, digits=3)`
 
-We use these results to test the following hypothesis for each variable:  
+We used these results to test the following hypothesis for each variable:  
 **Is the variable mean different in CVD vs non-CVD patients?**  
   $H_0$: The mean is the same  
   $H_1$: The mean is not the same 
 
-The p-value for all continuous variables was 0, except for `height`, indicating that there is a statistically significant difference in the average `age`, `weight`, `bmi`, `ap_hi` and `ap_lo` of CVD and non-CVD patients. The p-value for height was very low as well, most probably due to the large sample size, because the rounded mean of both "CVD" and "no CVD" groups was 165cm.
+The p-value was 0 for all quantitative variables except for `height`, indicating that there is a statistically significant difference in the average `age`, `weight`, `bmi`, `ap_hi` and `ap_lo` of CVD and non-CVD patients. ***The p-value for height was very low as well, most likely because of the large sample size, because the rounded mean of both "CVD" and "no CVD" groups was 165cm.***
 
 For all of the continuous variables, we reject the null hypothesis and accept that there is a difference between the means of the CVD and non-CVD groups.  The t-tests tests agree with the observations from the density plots, as there was a noticeable difference in the means of all continuous variables except height.  
 
