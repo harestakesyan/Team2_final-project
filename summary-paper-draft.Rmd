@@ -773,8 +773,219 @@ cardio_training_y2 <- cardio_scale2[cardio_sample2==1, 11]
 cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
 ```
 
+<<<<<<< Updated upstream
 **Finding the Best K-Value** 
 Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values are shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+=======
+#### Looking for the best K value:  
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+>>>>>>> Stashed changes
+
+What do the results of the regression model tell us?
+
+## Logistic Regression Model
+
+The second model we used for the disease prediction is logistic regression. Logistic regression , aslo called a logit model, is used to model dichotomous outcome variables. In the logut model the log odds of the outcome is modeled as a linear combination of the predictor variables. The data set has 13 variables. In contrast to KNN modeling, here we used logistic regression to remove variables one by one. The alpha value was set equal to 0.1. This means that p-values greater than 0.1 will be removed.
+
+```{r results='markup'}
+#load dataset
+data <- cardio_clean_final
+
+#view summary of dataset
+summary(data)
+
+ #find total observations in dataset
+nrow(data)
+
+```
+
+### Data Splitting
+
+For consistency between models used in this study we used 70% of data set as training data set, and the remaining 30% as testing data set. The seed point was set to 42.
+
+```{r results='markup'}
+
+#Create Training and Test Samples
+
+#make this example reproducible
+set.seed(42)
+
+#Use 30% of dataset as training set and remaining 70% as testing set
+sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7 , 0.3))
+train <- data[sample, ]
+test <- data[!sample, ]
+
+#view train summary
+summary(train)
+
+```
+
+
+### Logistic Regression Modeling
+
+In this study we built 4 logistic regression models based on the variables that have significant affect on the prediction.
+
+#### Logistic Regression Model 1
+
+For the 1st model we use all 13 variables.
+
+```{r}
+#Fit the logistic regression model including all variables
+
+logit_reg_model_ALL <- glm(cardio ~ gender + age + bmi + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
+
+#disable scientific notation for model summary
+options(scipen = 999)
+
+#view model summary
+summary(logit_reg_model_ALL)
+
+```
+
+According to the first model variables such as gender, bmi, height, weight and gluc do not have significant affect.
+
+#### Logistic Regression Model 2
+
+For the second model we included all variables but gender
+
+```{r}
+#Fit the logistic regression model excluding gender
+
+logit_reg_model_wogender <- glm(cardio ~ age + bmi + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
+
+#disable scientific notation for model summary
+options(scipen = 999)
+
+#view model summary
+summary(logit_reg_model_wogender)
+
+```
+
+The results showed that the bmi, height, weight and gluc are still remaining not detrimental for the disease prediction.
+
+#### Logistic Regression Model 3
+
+Next we excluded gender and bmi to build the third model.
+
+```{r}
+#Fit the logistic regression model excluding gender and bmi
+
+logit_reg_model_wogenderbmi <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
+
+#disable scientific notation for model summary
+options(scipen = 999)
+
+#view model summary
+summary(logit_reg_model_wogenderbmi)
+
+```
+
+Interestingly when we removed bmi variable from the model height and weight started to show significant impact on disease prediction, however gluc2 is still not significant.
+
+#### Logistic Regression Model 4
+
+For the last model we excluded gluc2 variable from our dataset.
+
+```{r}
+#Remove gender, bmi and gluc from the modeling because they do not any effect on cardio
+
+logit_reg_model_cleaned <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, family="binomial", data=cardio_clean_final)
+
+#disable scientific notation for model summary
+options(scipen = 999)
+
+#view model summary
+summary(logit_reg_model_cleaned)
+```
+
+As we can see from the above presented outcome of the Model 4, all remaining 10 variables have an significant effect on disease prediction. Therefore for the further evaluation we will use Model 4.
+
+### Coefficient Exponential 
+
+To confirm which variable have positive or negative impact on disease prediction we calculated the coefficient exponential for all variables from Model 4.
+
+```{r exp, results=T}
+expcoeff1 = exp(coef(logit_reg_model_cleaned))
+summary(expcoeff1)
+xkabledply( as.table(expcoeff1), title = "Exponential of coefficients in cardio" )
+
+```
+For exponential of coefficients, there are five variables having positive effect on dependent variables `cardio`, and four having negative effect. For example, if person smoke, they will have more possibility to develop cardiovascular diseases.
+
+### Confusion matrix
+
+Confusion matrix is a table that will categorize the predictions against the actual values. It includes two dimensions, among them one will indicate the predicted values and another one will represent the actual values.
+```{r confusionMatrix, results='markup'}
+loadPkg("regclass")
+confusion_matrix(logit_reg_model_cleaned)
+xkabledply( confusion_matrix(logit_reg_model_cleaned), title = "Confusion matrix from Logit Model" )
+unloadPkg("regclass")
+```
+
+```{r confusion matrix, results=F}
+loadPkg("regclass")
+cfmatrix1 = confusion_matrix(logit_reg_model_cleaned)
+accuracy1 <- (cfmatrix1[1,1]+cfmatrix1[2,2])/cfmatrix1[3,3]
+precision1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[1,2])
+recall1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[2,1])
+specificity1 <- cfmatrix1[1,1]/(cfmatrix1[1,1]+cfmatrix1[1,2])
+F1_score1 <- 2*(precision1)*(recall1)/(precision1 + recall1)
+accuracy1
+precision1
+recall1
+specificity1
+F1_score1
+```
+From confusion matrix, we can conclude that 
+
+ - Accuracy =`r accuracy1`
+ - Precision=`r precision1`
+ - Recall=`r recall1`
+ - Specificity=`r specificity1`
+ - F1 score=`r F1_score1`
+ 
+ Now let us explain what each value means:
+ 
+ The success rate or the accuracy of the model can be easily calculated using 2x2 confusion matrix. The accuracy score reads as 72.3% for the given data and observations. It is straightforward that the error rate will be 27.7%.
+ Precision is a measure of how many of the positive predictions made are correct (true positives). It is 75.2% for our model.
+ Recall is a measure of how many of the positive cases the classifier correctly predicted, over all the positive cases in the data. It is sometimes also referred to as Sensitivity. For our model it is 65.6%.
+ Specificity is a measure of how many negative predictions made are correct (true negatives). The value for our model is 78.9%.
+ F1-Score is a measure combining both precision and recall. It is generally described as the harmonic mean of the two. Harmonic mean is just another way to calculate an "average" of values, geneerally described as more suitable for ratios (such as precision and recall) than the traditional arithmetic mean. F1-Score for our model is 0.7 which is 70% and pretty high number.
+
+### ROC and AUC
+
+The Are Under the ROC Curve (AUC) is an aggregated metric that evaluates how well a logistic regression model classifies positive and negative outcomes at all possible cutoffs. It can range from 0.5 to 1, and the larger is the number it is better. AUC represents the probability that a random positive example is positioned to the right of a random negative example. A model whose predictions are 100% wrong has an AUC of 0.0; one whose predictions are 100% correct has an AUC of 1.0.
+
+```{r roc_auc, results=T}
+loadPkg("pROC") 
+prob=predict(logit_reg_model_cleaned, type = "response" )
+logit_reg_model_cleaned$prob=prob
+h = roc(cardio~prob, data=cardio_clean_final)
+auc(h) 
+plot(h)
+```
+We have here the area-under-curve of `r auc(h)`, which is greater than 0.5. This means that the proposed model (Model 4) is considered a good fit.
+
+### McFadden
+
+In typical linear regression, we use R-squared as a way to assess how well a model fits the data. this number ranges from 0 to 1, with higher values indicating better model fit. However, there is no such R-squared value for logistic regression. Instead, we can compute a metric known as McFadden's R-squared or pseudo-R-squared, which ranges from 0 to just under 1. Values close to 0 indicate that the model fits the data very well.
+
+```{r McFadden, results=T}
+loadPkg("pscl")
+cardio_logit_reg = pR2(logit_reg_model_cleaned)
+cardio_logit_reg
+unloadPkg("pscl") 
+```
+With the McFadden value of 0.189, which is analogous to the coefficient of determination $R^2$, only about 18.9% of the variations in y is explained by the explanatory variables in the model.
+
+**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
+
+Overall the Logistic Regression Model 4 is considered a good model. The model has correctly predicted 72.3% for the given data. precision of the model is 75.2%. Specificity of correct negative predictions is 78.9%, with the F1-Score of 70%. The only limitation of the model is relatively low McFadden value (0.189)
+
+
+## KNN
+How did the EDA influence your choices when developing this model? (For example: Why is a KNN model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
+>>>>>>> Stashed changes
 
 -- INSERT CODE FOR TABLE AND GRAPH--
 
