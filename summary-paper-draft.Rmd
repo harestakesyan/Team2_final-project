@@ -49,11 +49,11 @@ cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
 ```
 # I. Background
 
-Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
+Cardiovascular disease is the leading cause of death globally, killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
-The World Health Organization asserts that an "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+The World Health Organization asserts that an unhealthy diet, physical inactivity, tobacco use and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to raised blood pressure, raised blood glucose... and obesity (World Health Organization).
 
-This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
+This research paper is an investigation of The World Health Organization's statements. The research team analyzed data on cardiovascular disease to determine the risk factors of the disease and recommend a model to predict cardiovascular disease in patients.
 
 ## SMART Questions
 Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
@@ -61,20 +61,18 @@ Specifically, the research team answers the following Specific, Measurable, Achi
   1. How accurately can the model predict the probability that a patient has cardiovascular disease?
   2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
   3. Is there any association between an individual's sex and whether they have 
-cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
+cardiovascular disease? Are men more prone to cardiovascular diseases as compared to
 women?
-  4. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
 
 
 ## Dataset Description
 
-Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following variables:
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset).  We cleaned the data according to the following pre-processing steps: generated a `bmi` variable from `height` and `weight`, removed outliers for `bmi`, `ap_hi` and `ap_lo`, and converted variables to factors where appropriate. The final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following `r ncol(cardio_clean_final)` variables:
 
 ### Variables
 
 Variable | Type | Definition  
   :-     |  :-- |  :----
-`id`	 | Character | ID number
 `age`	 | Number | Age in years
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
 `height` | Number | Height in centimeters (cm)
