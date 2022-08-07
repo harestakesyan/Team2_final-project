@@ -341,8 +341,6 @@ cardio_neg = subset(cardio_clean_final, cardio_clean_final$cardio == 0)
 
 #age
 ttest_age = t.test(cardio_pos$age, cardio_neg$age)
-str(ttest_age)
-format(ttest_age$estimate[1], digits=3)
 
 #height
 ttest_height = t.test(cardio_pos$height, cardio_neg$height)
@@ -375,9 +373,9 @@ We used these results to test the following hypothesis for each variable:
   $H_0$: The mean is the same  
   $H_1$: The mean is not the same 
 
-The p-value was 0 for all quantitative variables except for `height`, indicating that there is a statistically significant difference in the average `age`, `weight`, `bmi`, `ap_hi` and `ap_lo` of CVD and non-CVD patients. ***The p-value for height was very low as well, most likely because of the large sample size, because the rounded mean of both "CVD" and "no CVD" groups was 165cm.***
+The p-value was very low for all quantitative variables indicating that there is a statistically significant difference in the average `age`, `height`, `weight`, `bmi`, `ap_hi` and `ap_lo` of CVD and non-CVD patients. For all of the continuous/quantitative variables, we reject the null hypothesis and accept that there is a difference between the means of the CVD and non-CVD groups.  
 
-For all of the continuous variables, we reject the null hypothesis and accept that there is a difference between the means of the CVD and non-CVD groups.  The t-tests tests align with the observations from the density plots, as there was a noticeable difference in the means of all continuous variables except height.  
+It is worth noting that when using t-tests with large sample sizes, the hypothesis tests are able to detect even small differences, as was the case for height. The mean for both CVD and non-CVD patients was 165cm, with a `r ttest_height$conf.int[1]` cm to `r ttest_height$conf.int[2]` cm difference at 95% confidence. The t-tests tests align with the observations from the density plots, as there was a noticeable difference in the means of all continuous variables except height.  
 
 ## Correlations
 We examined correlations between each of the variables to determine if a linear relationship exists with cardiovascular disease or any other variables. Because a number of variables are factors, we used the Spearman method to generate the correlation coefficients.
