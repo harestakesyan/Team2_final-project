@@ -390,13 +390,12 @@ cardio_clean_cor <- cardio_clean[, col_order]
 cardio_cor <- cor(cardio_clean_cor, method="spearman")
 corrplot(cardio_cor, type="lower", addCoef.col="darkred", number.cex=0.6, tl.cex=1,title="Correlation Matrix", mar=c(0,0,1,0))
 ```  
-```
 
 The correlation coefficient for each pair of variables is displayed in the correlation matrix. The coefficient ranges from 1 to -1, indicating a positive or negative correlation. The further away the correlation coefficient is from zero, the stronger the relationship between the two variables. 
 
 The factors most strongly correlated with cardiovascular disease are `ap_hi`, `ap_low`, `cholesterol`, `age` and `bmi.` There is also a strong correlation between `height` and `gender`, `ap_hi` and `ap_low`, and `cholesterol` and `gluc`.  
 
-Some of these correlations are expected, for instance systolic blood pressure and diastolic blood pressure typically increase and decrease together. Height and gender are also correlated, which makes sense as men are taller than women on average.  While the correlation matrix does not show how the relationship between variables impacts the presence or absence of CVD, it is important to keep these relationships in mind when we begin building models.   
+Some of these correlations are expected, for instance systolic blood pressure and diastolic blood pressure typically increase and decrease together. Weight and BMI are also strongly correlated, which makes sense because BMI is a measurement of body stature that heavily relies on weight.  While the correlation matrix does not show how the relationship between variables impacts the presence or absence of CVD, it is important to keep these relationships in mind when we begin building models.   
 
 #### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?  
 ```{r, results='markup'}
@@ -437,11 +436,13 @@ ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
 ggarrange(ap_hi_lo, ap1_hi, ap2, ap3, ncol=2, nrow=2, common.legend = TRUE, legend = "bottom", heights=c(2,2))
 ```  
 
-We can see a strong correlation between systolic and diastolic blood pressure, as these two measurements are known to be physiologically related. According to the NIH, for most adults:
-* Normal blood pressure is systolic BP < 120 and diastolic BP < 80
-* Elevated blood pressure is systolic BP between 120 and 129 and diastolic BP < 80
-* High blood pressure is systolic BP is 130 or higher and diastolic BP 80 or higher
-The incidence of CVD increases as both systolic and diastolic BP increase. 
+We can see a strong correlation between systolic and diastolic blood pressure, as these two measurements are known to be physiologically related. According to the NIH, for most adults:  
+
+* Normal blood pressure is systolic BP < 120 and diastolic BP < 80  
+* Elevated blood pressure is systolic BP between 120 and 129 and diastolic BP < 80  
+* High blood pressure is systolic BP is 130 or higher and diastolic BP 80 or higher  
+
+The incidence of CVD increases as both systolic and diastolic BP increase.  
 
 Due to the relationship between systolic and diastolic BP, we chose to use only systolic BP to investigate relationships between BP and other variables. We found that there is not a strong correlation between BP and cholesterol, age or BMI. However, across all cholesterol, age and BMI groups, CVD patients have higher BP than non-CVD patients. They also tend to be older and have higher BMI.
 
@@ -613,9 +614,13 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
   theme_minimal()
 
-(smoke3 + theme(legend.position = "none")) + (active3 + theme(legend.position = "none")) + (gluc3 + theme(legend.position = "none")) + (alco3 + theme(legend.position = "none")) + alco1 + guide_area() + plot_layout(guides = 'collect')
-```
+#(smoke3 + theme(legend.position = "none")) + (active3 + theme(legend.position = "none")) + (gluc3 + theme(legend.position = "none")) + (alco3 + theme(legend.position = "none")) + alco1 + guide_area() + plot_layout(guides = 'collect')
 
+(smoke3 + theme(legend.position = "none")) + (gluc3 + theme(legend.position = "none")) + (alco3 + theme(legend.position = "none")) + alco1 + plot_layout(guides = 'collect')
+```  
+Lastly, we looked at lifestyle choices to assess their relationship with other variables in the presence or absence of cardiovascular disease. The main measurement that was impacted by lifestyle is `bmi.`  BMI tends to decrease with smoking, but increase with blood glucose and alcohol. Because BMI is correlated with cardiovascular disease, it appears that diet and alcohol may help to predict CVD as well.  
+
+Alcohol consumption also impacted systolic blood pressure. Blood pressure was higher among people who consume alcohol, and the difference between CVD and non-CVD patients was more dramatic in alcohol drinkers. This indicates tht alcohol may also impact the presence of CVD.
 
 # III. Statistical Models
 ## Feature selection  
