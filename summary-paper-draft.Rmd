@@ -55,7 +55,9 @@ The World Health Organization asserts that an "unhealthy diet, physical inactivi
 
 This research paper is an investigation of The World Health Organization's statements. The research team analyzed data on cardiovascular disease to determine the risk factors of the disease and recommend a model to predict cardiovascular disease in patients.
 
+
 ## SMART Questions
+
 Specifically, the research team answered the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
 
   1. How accurately can the model predict the probability that a patient has cardiovascular disease?
@@ -67,6 +69,7 @@ cardiovascular disease? Are men more prone to cardiovascular diseases than women
 ## Dataset Description
 
 Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset).  To clean the data, we generated a `bmi` variable from `height` and `weight`, removed outliers for `bmi`, `ap_hi` and `ap_lo`, then converted variables to factors where appropriate. The final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following `r ncol(cardio_clean_final)` variables:
+
 
 ### Variables
 
@@ -86,10 +89,12 @@ Variable | Type | Definition
 `active` |Factor w/ 2 levels| Whether patient is physically active or not (0: no, 1: yes)
 `cardio` |Factor w/ 2 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
+
 Summary statistics for the cleaned dataset are presented below.  
 ```{r summary, results='markup'}
 xkablesummary(cardio_clean_final, title = "Cardiovascular Disease Dataset Summary" )
 ```
+
 
 # II. Exploratory Data Analysis
 ## Categorical Variables
@@ -173,8 +178,7 @@ By exploring the data, we found that the most noticeable differences between peo
 
 The differences between the two groups (people with and without cardiovascular disease) are less noticeable when examining gender and lifestyle factors. The percentage of women in the "has CVD" group is nearly equal to the percentage of women in the "no CVD" group. Likewise, the percentage of alcohol drinkers is nearly the same in the "has CVD" group and the "no CVD" group.
 
-Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that `r sprintf("%.1f", (sum(healthy$smoke= "1")/nrow(healthy)) * 100)`% of people without CVD were smokers, while only `r sprintf("%.1f", (sum(disease$smoke= "1")/nrow(disease)) * 100)`% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
-
+Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that `r sprintf("%.1f", (sum(healthy$smoke==1)/nrow(healthy)) * 100)`% of people without CVD were smokers, while only `r sprintf("%.1f", (sum(disease$smoke== 1)/nrow(disease)) * 100)`% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
 
 
 ## Chi-Squared Tests
@@ -379,7 +383,7 @@ We used these results to test the following hypothesis for each variable:
 
 The p-value was 0 for all quantitative variables except for `height`, indicating that there is a statistically significant difference in the average `age`, `weight`, `bmi`, `ap_hi` and `ap_lo` of CVD and non-CVD patients. ***The p-value for height was very low as well, most likely because of the large sample size, because the rounded mean of both "CVD" and "no CVD" groups was 165cm.***
 
-For all of the continuous variables, we reject the null hypothesis and accept that there is a difference between the means of the CVD and non-CVD groups.  The t-tests tests agree with the observations from the density plots, as there was a noticeable difference in the means of all continuous variables except height.  
+For all of the continuous variables, we reject the null hypothesis and accept that there is a difference between the means of the CVD and non-CVD groups.  The t-tests tests align with the observations from the density plots, as there was a noticeable difference in the means of all continuous variables except height.  
 
 ## Correlations
 We examined correlations between each of the variables to determine if a linear relationship exists with cardiovascular disease or any other variables. Because a number of variables are factors, we used the Spearman method to generate the correlation coefficients.
@@ -400,77 +404,76 @@ The factors most strongly correlated with cardiovascular disease are `ap_hi`, `a
 Some of these correlations are expected, for instance systolic blood pressure and diastolic blood pressure typically increase and decrease together. Height and gender are also correlated, which makes sense as men are typically taller than women.  While the correlation matrix does not show how the relationship between variables impacts CVD, it is important to keep these relationships in mind when we begin building models.   
 
 ### Is there a relationship between blood pressure and other variables in patients with cardiovascular disease?  
-```{r, results='markup'}
+```{r bp corr, results='markup'}
 library(patchwork)
-#install.packages("ggExtra")
-#library(ggExtra)
 
+#sbp vs dbp
 ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
   xlab("Diastolic BP ") + ylab("Systolic BP") +
   scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
   theme_minimal()
-  #geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
 ap_hi_lo
 
+#sbp v cholesterol
 ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = cardio)) + 
   geom_violin(scale="width", width=1, alpha=.5) + 
   geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
   labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
   xlab("Cholesterol") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
   theme_minimal()
-  #geom_hline(yintercept = 120, linetype = 'dashed')
 ap1_hi
 
+#sbp v age
 ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
   xlab("Age ") + ylab("Systolic BP") +
   scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
   theme_minimal()
-  #geom_hline(yintercept = 120, linetype = 'dashed')
 ap2
-#ggMarginal(ap2, type = "density", groupFill = TRUE)
 
+#sbp v bmi
 ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
   geom_point(size=1.5,alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
   xlab("BMI ") + ylab("Systolic BP") +
   scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
   theme_minimal()
-  #geom_hline(yintercept = 120, linetype = 'dashed')
 ap3
-#ggMarginal(ap3, type = "density", groupFill = TRUE)
+
 
 ap_hi_lo/ (ap1_hi+ap3) + plot_annotation(title = 'Blood Pressure Plots')
 ```  
 
 ### Is there a relationship between cholesterol, bmi, and age in patients with cardiovascular disease?  
-```{r, results='markup'}
-
+```{r num corr, results='markup'}
+#age v cholesterol
 chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5) + 
   geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
   labs(title = "Age vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
   theme_minimal()
 chol1
 
+#bmi v cholesterol
 chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5) + 
   geom_boxplot(width=.1, cex=.5, position=position_dodge(1))+
   labs(title = "BMI vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
   theme_minimal()
 chol2
 
+#bmi v age
 age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
   geom_point(size=1,alpha=0.5) + 
   labs(title = "BMI vs Age", color="Has CVD") + 
@@ -481,8 +484,8 @@ age1
 ```  
 
 ### How do lifestyle choices influence cardiovascular disease with other variables?  
-*Smoking*
-```{r, results='markup'}
+**Smoking**
+```{r smoke corr, results='markup'}
 
 smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5, scale='width') + 
@@ -492,7 +495,6 @@ smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) +
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
   scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
   theme_minimal()
-  #geom_hline(yintercept = 120, linetype = 'dashed')
 smoke1
 
 smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
@@ -516,19 +518,18 @@ smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) +
 smoke3
 
 ```
-*Alcohol*
+**Alcohol**
 
-```{r, results='markup'}
+```{r alco corr, results='markup'}
 
 alco1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5, scale="width") + 
   geom_boxplot(width=.1, cex=1, position=position_dodge(1))+
   labs(title = "Systolic Blood Pressure vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Systolic BP") + 
-  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
-  #geom_hline(yintercept = 120, linetype = 'dashed')
-
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 alco1
 
 alco2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) + 
@@ -537,7 +538,8 @@ alco2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) +
   labs(title = "Age vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 alco2
 
 alco3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
@@ -546,23 +548,23 @@ alco3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) + 
+  theme_minimal()
 alco3
 
 ```
 
-*Physical Activity*
-```{r, results='markup'}
+**Physical Activity**
+```{r phys corr, results='markup'}
 
-active1 <- ggplot(cardio_clean_final,aes(x = active , y = ap_hi, fill = cardio)) + 
+active1 <- ggplot(cardio_clean_final,aes(x = active , y = ap_hi, fill = cardio)) +
   geom_violin(width=1, alpha=0.5, scale="count") + # Scale maximum width proportional to sample size
   geom_boxplot(width=.1, cex=1, position=position_dodge(.5))+
   labs(title = "Systolic Blood Pressure vs Activity (Count Scaled)", fill="Has CVD") +
   xlab("Activity") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
-  #geom_hline(yintercept = 120, linetype = 'dashed')
-
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 active1
 
 active2 <- ggplot(cardio_clean_final,aes(x = active , y = age, fill = cardio)) + 
@@ -571,7 +573,8 @@ active2 <- ggplot(cardio_clean_final,aes(x = active , y = age, fill = cardio)) +
   labs(title = "Age vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 active2
 
 active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) + 
@@ -586,18 +589,17 @@ active3
 
 ```
 
-*Blood Glucose*
-```{r, results='markup'}
+**Blood Glucose**
+```{r glu corr, results='markup'}
 
 gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) + 
   geom_violin() + 
   labs(title = "Systolic Blood Pressure vs Blood Glucose") +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal"))+
   geom_hline(yintercept = 120, linetype = 'dashed') +
   theme_minimal()
-
 gluc1
 
 gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) + 
@@ -606,7 +608,7 @@ gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) +
   labs(title = "Age vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal"))
 gluc2
 
 gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
@@ -615,27 +617,16 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
   theme_minimal()
 gluc3
 ```
 
-<<<<<<< Updated upstream
+
 # III. Statistical Models
-## Feature Selection
-
-## Logistic Model
-How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
-
---insert logistic model table--
-=======
-# III. Model Comparison
-=======
-# III. Statistical Models
-
 ## Feature selection  
-In the EDA, t-tests and Chi-square tests were used to compare whether the response variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` have effects on the predictor variable `cardio`, and the p-values of the tests were shown in the table below:  
-```{r results='markup'}
+In the EDA, t-tests and $\chi^2$ tests were used to determine whether the independent variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` had effects on the response variable `cardio`. The p-values of the tests are shown in the table below:  
+```{r pval table, results='markup'}
 tab <- matrix(c( '<2e-16','0.6', '8e-07', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '1e-06', '0.006', '<2e-16', '<2e-16'), ncol=12, byrow = TRUE)
 rownames(tab) <- "p_value"
 colnames(tab) <- c("Age_year", "Gender", "Height","Weight","Systolic(ap_hi)", "Diastolic(ap_low)", "Cholesterol","Glucose","smoke", "Alcohol", "Physical_activity","BMI")
@@ -643,7 +634,7 @@ tab <- as.table(tab)
 xkabledply(tab, "p-value Comparison")  
 ```
 
-**From the above table, we found that all the response variables have relationship with the predictor variable `cardio` except the `gender` variable. Next we further confirmed this using the `bestglm` function.  
+The p-values suggest that all the independent variables, except for `gender`, have a relationship with `cardio`. We used the `bestglm` function to further confirm this.
 
 ```{r bestglm, results='markup'}
 loadPkg("bestglm")
@@ -661,11 +652,36 @@ summary(res.bestglm$BestModels)
 unloadPkg("bestglm") 
 unloadPkg("leaps") 
 ```  
-`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three time, while `bmi` was only voted twice. So we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the valuables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefference values with `cardio`, we also performed the KNN modeling with these 5 valuables.    
+`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three time, while `bmi` was only voted twice. So we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the valuables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefference values with `cardio`, we also performed the KNN modeling with these 5 valuables.   
+
+## Logistic Model
+How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
+
+--insert logistic model table--
+
+What do the results of the regression model tell us?
+
+### Logistic Model Evaluation
+
+**Confusion Matrix**  
+describe/explain results
+
+**ROC & AUC **  
+describe/explain results
+
+**McFadden Value**  
+describe/explain results
+
+**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
+
 
 ## K-Nearest Neighbor (KNN)     
-### Convert factors into numeric, and Scale/center the data       
+### Data Preperation 
+Before KNN modeling, all the predictor variables were converted to numeric, and were scaled and centered. The dataframe structure after the pre-modeling treatment is shown in the table below.
 ```{r results='markup'}
+
+#Data Prep
+#Scale and center data
 cardio_num <- cardio_clean_final_glm
 colnames(cardio_num)[13] <- "cardioi"
 cardio_num[1:12] <- sapply(cardio_num[1:12],as.numeric)
@@ -673,11 +689,11 @@ cardio_scale <- cardio_num
 cardio_scale[1:12] <- as.data.frame(scale(cardio_num[1:12], center = TRUE, scale = TRUE))
 str(cardio_scale)
 ```  
-Dataframe structure after pre-modeling treatment was shown in the above table. All the response variables were converted in to numeric, and were scaled and centered. They are ready for KNN modeling.  
 
-### KNN modeling using variables with all 13 variables (Model 1)  
-#### Train / Test split:  
-The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe).  
+
+### Model 1: All 13 variables  
+**Train/Test Split**  
+The dataframe was split into a training subset (70% of the total dataframe) and a test subset (30% of the total dataframe).  
 ```{r}
 set.seed(42)
 cardio_sample <- sample(2, nrow(cardio_scale), replace=TRUE, prob=c(0.7, 0.3))
@@ -687,8 +703,8 @@ cardio_training_y <- cardio_scale[cardio_sample==1, 13]
 cardio_test_y <- cardio_scale[cardio_sample==2, 13]
 ```
 
-#### Looking for the best K value:  
-Odd numbers from 3 to 40 were test one by one to get the best K value. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 19 is the best K value for Model 1.  
+**Finding the Best K-Value**
+Odd numbers from 3 to 40 were tested one by one to get the best K value. The accuracy values from the model that used these K values are shown in the table and the line graph.
 
 ```{r}
 loadPkg("FNN")
@@ -708,18 +724,24 @@ for (k_v in K_test) {
   ResultDf = rbind(ResultDf, cmt)
 }
 ```
+
 ```{r results='markup'}
 xkabledply(ResultDf, "Total Accuracy Summary for KNN Model 1")
 ```
 
 ```{r}
 library(ggplot2)
+
 ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
   geom_line(color = "skyblue", size = 1.5) +
   geom_point(size = 3, color = "blue") + 
-  labs(title = "Total.Accuracy vs K (Model 1)")
+  labs(title = "Total Accuracy vs K (Model 1)") +
+  theme_minimal()
 ```  
-#### Modeling results with the best K value (Model 1, K = 19)  
+
+According the results, K = 19 is the best K value for Model 1.  
+
+**Modeling Results with the Best K Value (K = 19)**  
 
 Detailed results and the confusion matrix using K=19 were shown below.  
 
@@ -730,11 +752,13 @@ Detailed results and the confusion matrix using K=19 were shown below.
   xkabledply(data.frame(KNN_Mode_1$overall['Accuracy']), title=paste("Total Accuracy of KNN Model 1"))
   xkabledply(data.frame(KNN_Mode_1$byClass), title=paste("Metrics of KNN Model 1"))
 ```  
- The overall performance is acceptable, but we still want to see whether remove `gender` and `bmi` can improve the modeling.  
+ The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling.  
 
-### KNN modeling using variables without `gender` and `bmi` (Model 2)  
-#### Train / Test split:  
-The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
+### Model 2: Selected Variables
+For this model we removed `gender` and `bmi` because...
+
+**Train / Test Split**  
+The dataframe was split into a training subset (70% of the total dataframe) and a testing subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
 ```{r}
 cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
 cardio_scale2
@@ -746,25 +770,11 @@ cardio_training_y2 <- cardio_scale2[cardio_sample2==1, 11]
 cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
 ```
 
-#### Looking for the best K value:  
-Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
->>>>>>> Stashed changes
+**Finding the Best K-Value** 
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values are shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+
 
 What do the results of the regression model tell us?
-
-### Logistic Model Evaluation
-
-**Confusion Matrix**  
-describe/explain results
-
-**ROC & AUC **  
-describe/explain results
-
-**McFadden Value**  
-describe/explain results
-
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
-
 
 
 ## KNN
