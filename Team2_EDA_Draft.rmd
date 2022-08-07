@@ -112,54 +112,125 @@ xkablesummary(subset(disease, select=c(age, gender, ap_hi, ap_lo, cholesterol, b
 Here we have picked out a few factors from the summary that have significant differences between factor levels. `r xkablesummary(subset(disease, select=c(age, gender, weight, ap_hi, ap_lo, cholesterol, bmi)), title="Heart Disease Patient Attributes")` In this data set, we see that all except a few heart disease patients are `above the age of 40`.  It would  make sense that most heart disease patients are older patients. Approximately two/thirds of heart disease patients are `women`. Most heart disease patients have `higher blood pressure` and `high cholesterol` levels. The average heard disease patient is also overweight, with a `bmi` > 25.0.
 
 ## Categorical Variables
-
+With vs. Without CVD (visuals)
 ```{r, results='markup'}
-library(ggpubr)
+require(patchwork)
 
-gender_1 <- ggplot(cardio_clean_final, aes(x=gender, fill=cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "Women", "2" = "Men")) +
-                   labs(title="gender", x="", y="Proportion") +
-                   theme(legend.position="top")
+#cholesterol
+cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Cholesterol", y = "", x = "",
+        fill = "Cholesterol Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
+  theme_minimal()
 
-cholesterol_1 <- ggplot(cardio_clean_final, aes(x=cholesterol, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="cholesterol", x="", y="Proportion") +
-                   theme(legend.position="top")
-gluc_1<- ggplot(cardio_clean_final, aes(x=gluc, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
-                   labs(title="gluc", x="", y="Proportion") +
-                   theme(legend.position="top")
+#Glucose
+gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Glucose", y = "", x = "",
+        fill = "Glucose Level") +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
+  theme_minimal()
 
-smoke_1<- ggplot(cardio_clean_final, aes(x=smoke, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No smoking", "1" = "Smoking")) +
-                   labs(title="smoke", x="", y="Proportion") +
-                   theme(legend.position="top")
+#Gender
+cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1", "Women", "Men"))
 
-alco_1<- ggplot(cardio_clean_final, aes(x=alco, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No alcohol intake", "1" = "Alcohol intake")) +
-                   labs(title="alco", x="", y="Proportion") +
-                   theme(legend.position="top")
+gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Gender",
+        y = "", x = "", fill = "") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
 
-active_1<- ggplot(cardio_clean_final, aes(x=active, fill= cardio)) +
-                   geom_bar(position="fill") +
-                   scale_fill_manual(values=c("pink3", "steelblue")) +
-                   scale_x_discrete(labels=c("0" = "No physical activity", "1" = "Physical activity" )) +
-                   labs(title="active", x="", y="Proportion") +
-                   theme(legend.position="top")
+#Smoke
+cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "Yes", "No"))
 
-ggarrange(gender_1, cholesterol_1,gluc_1, smoke_1, alco_1,active_1)
+smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#alcohol
+  cardio_clean_final$alco.yn<- as.factor(ifelse(cardio_clean_final$alco== "1", "Yes", "No"))
+
+alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal()
+
+#active
+cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1", "Yes", "No"))
+
+active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
+  scale_fill_manual(values=c("#0000da", "#990000")) +
+  theme_minimal() 
+
+gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 
 ```  
+With vs. Without CVD (Numbers)
+
+```{r}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+
+#Gender
+women.disease<- (sum(disease$gender==1)/nrow(disease)) * 100
+women.healthy<- (sum(healthy$gender==1)/nrow(healthy)) * 100
+
+women.disease - women.healthy
+
+#Cholesterol
+chol.disease<- (sum(disease$cholesterol!= "1")/nrow(disease)) * 100
+chol.healthy<- (sum(healthy$cholesterol!= "1")/nrow(healthy)) * 100
+
+chol.disease - chol.healthy
+
+#Glucose
+glu.disease<- (sum(disease$gluc!= "1")/nrow(disease)) * 100
+glu.healthy<- (sum(healthy$gluc!= "1")/nrow(healthy)) * 100
+
+glu.disease - glu.healthy
+
+#Smoke
+smo.disease<- (sum(disease$smoke==1)/nrow(disease)) * 100
+smo.healthy<- (sum(healthy$smoke==1)/nrow(healthy)) * 100
+
+smo.disease - smo.healthy
+
+#Alcohol
+alc.disease<- (sum(disease$alco==1)/nrow(disease)) * 100
+alc.healthy<- (sum(healthy$alco==1)/nrow(healthy)) * 100
+
+alc.disease - alc.healthy
+
+#Active
+act.disease<- (sum(disease$active==1)/nrow(disease)) * 100
+act.healthy<- (sum(healthy$active==1)/nrow(healthy)) * 100
+
+act.disease - act.healthy 
+  
+
+```
+
 
 **1. According to the plot above, we can draw the conclusion that**
 *It's close to half the female and male population have cardiovascular disease.
@@ -483,7 +554,8 @@ ap_hi_lo <- ggplot(cardio_clean_final, aes(x=ap_lo, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic vs Diastolic Blood Pressure", color='Has CVD') + 
   xlab("Diastolic BP ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept=c(120, 140, 160), linetype='dashed', color=c('green', 'orange', 'red'))
 ap_hi_lo
 
@@ -493,7 +565,8 @@ ap1_hi <- ggplot(cardio_clean_final,aes(x = cholesterol , y = ap_hi, fill = card
   labs(title = "Systolic Blood Pressure vs Cholesterol", fill='Has CVD') +
   xlab("Cholesterol") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap1_hi
 
@@ -501,7 +574,8 @@ ap2 <- ggplot(cardio_clean_final, aes(x=age, y=ap_hi, color=cardio)) +
   geom_point(size = 1.5, alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs Age", color="Has CVD") + 
   xlab("Age ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap2
 #ggMarginal(ap2, type = "density", groupFill = TRUE)
@@ -510,7 +584,8 @@ ap3 <- ggplot(cardio_clean_final, aes(x=bmi, y=ap_hi, color=cardio)) +
   geom_point(size=1.5,alpha=0.7) + 
   labs(title = "Systolic Blood Pressure vs BMI", color="Has CVD") + 
   xlab("BMI ") + ylab("Systolic BP") +
-  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"), labels = c("No", "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 ap3
 #ggMarginal(ap3, type = "density", groupFill = TRUE)
@@ -538,7 +613,8 @@ chol1 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = age, fill = cardio)
   labs(title = "Age vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 chol1
 
 chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)) + 
@@ -547,7 +623,8 @@ chol2 <- ggplot(cardio_clean_final,aes(x = cholesterol , y = bmi, fill = cardio)
   labs(title = "BMI vs Cholesterol", fill="Has CVD") +
   xlab("Cholesterol") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 chol2
 
 ```
@@ -557,7 +634,8 @@ age1 <- ggplot(cardio_clean_final, aes(x=age, y=bmi, color=cardio)) +
   geom_point(size=1,alpha=0.5) + 
   labs(title = "BMI vs Age", color="Has CVD") + 
   xlab("Age") + ylab("BMI") +
-  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))
+  scale_color_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  theme_minimal()
 age1
 #ggMarginal(age1, type = "density", groupFill = TRUE)
 ```
@@ -572,7 +650,8 @@ smoke1 <- ggplot(cardio_clean_final,aes(x = smoke , y = ap_hi, fill = cardio)) +
   labs(title = "Systolic Blood Pressure vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
   #geom_hline(yintercept = 120, linetype = 'dashed')
 smoke1
 
@@ -582,7 +661,8 @@ smoke2 <- ggplot(cardio_clean_final,aes(x = smoke , y = age, fill = cardio)) +
   labs(title = "Age vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 smoke2
 
 smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) + 
@@ -591,7 +671,8 @@ smoke3 <- ggplot(cardio_clean_final,aes(x = smoke , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Smoke", fill="Has CVD") +
   xlab("Smoke") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 smoke3
 
 ```
@@ -659,7 +740,8 @@ active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Activity", fill="Has CVD") +
   xlab("Activity") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 active3
 
 ```
@@ -673,7 +755,8 @@ gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
-  geom_hline(yintercept = 120, linetype = 'dashed')
+  geom_hline(yintercept = 120, linetype = 'dashed') +
+  theme_minimal()
 
 gluc1
 
@@ -692,7 +775,8 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
+  theme_minimal()
 gluc3
 ```
 
@@ -782,7 +866,8 @@ library(ggplot2)
 ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
   geom_line(color = "skyblue", size = 1.5) +
   geom_point(size = 3, color = "blue") + 
-  labs(title = "Total.Accuracy vs K")
+  labs(title = "Total Accuracy vs K") +
+  theme_minimal()
 ```  
 #### Modeling results with the best K value (K = 19)  
 
@@ -929,7 +1014,7 @@ Compared to the models that with or without `gender` and `bmi`, the model only u
 
 
 
-## Classification Tree  -----Chenxu Wang
+## Classification Tree 
 
 This model is Classification Tree model. We could use the classification tree model to predict the absence and presence of disease visually. It is very convenient. And we will discuss the performance of this model below.
 
@@ -961,7 +1046,7 @@ str(cardio_tree)
 
 ```
 
-Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choosed the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
+Then we did the feature selection by random forest. This is a fundamental outcome of the random forest and it shows, for each variable, how important it is in classifying the data.The mean decrease in Gini coefficient is a measure of how each variable contributes to the homogeneity of the nodes and leaves in the resulting random forest. The higher the value of mean decrease Gini score, the higher the importance of the variable in the model. And as we can see from the picture, we chose the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
 
 ```{r Classification Tree feature selection, results=TRUE}
 library(randomForest)
@@ -1005,6 +1090,8 @@ As we can see from the results,from the depths 4, the accuracy of different dept
 xkabledply(confusionMatrixResultDf, title="Cardio Classification Trees summary with varying MaxDepth")
 ```
 
+
+
 Then we built this classification tree model and plot it.
 ```{r , echo = T, fig.dim=c(6,4), results=TRUE}
 set.seed(1)
@@ -1020,10 +1107,17 @@ text(cardio_tree_fit, use.n=TRUE, all=TRUE, cex=.8)
 
 ```
 
+
+
+
 ```{r  }
 # create attractive postcript plot of tree 
 post(cardio_tree_fit, file = "cardiotreeTree2.ps", title = "Classification Tree for Cardio")
 ```
+
+
+
+
 
 ### Results and confusion matrix
 And these are the summary results of this model and its confusion matrix.
@@ -1037,9 +1131,18 @@ cm$byClass
 unloadPkg("caret")
 ```
 
+We can see the accuracy of classification tree is 0.695, precision is 0.673, recall is 0.773 and F1 scores is 0.72.
+
+
 ```{r Classification Tree, results="asis"}
 xkabledply(cm$table, "confusion matrix")
 ```
+
+24579 rows of data with outcome as 0 are correctly predicted by model(True Negative)
+19019 rows of data with outcome as 1 are correctly predicted by model(True Positive)
+11943 rows of data which has actual outcome of 0 are predicted wrongly as 1 by the model(False Positive)
+7207 rows of data which has actual outcome of 1 are predicted wrongly as 0 by the model(False Negative)
+
 
 ### Tree plot
 We also tried two other ways to plot the tree, with library `rpart.plot` and a "fancy" plot using the library `rattle` to make the tree plot more beautifully. 
@@ -1050,9 +1153,11 @@ loadPkg("rattle")
 fancyRpartPlot(cardio_tree_fit)
 ```
 
+Take a look at a plot of the tree, we can find that the leaf nodes predict the label (level of factor variable) .The tree selected contains 3 variables with 5 splits and displayed 6 terminal leaf nodes. 
+
 
 ### ROC curve
-Finally, we also checked the ROC and AUC of this classification tree model. As we can see, this model is kind of a good model.  
+Finally, we also checked the ROC and AUC of this classification tree model.   
 ```{R ROC curve of Classification Tree, results=TRUE}
 library(rpart)
 rp <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol, data = cardio_tree)
@@ -1065,4 +1170,9 @@ slot(auc, 'y.values')
 abline(0, 1, lty = 2)
 
 ```
+<<<<<<< HEAD
+>>>>>>> main
+=======
+
+The area-under-curve is 0.727 which is close to 0.8. Hence,this model is a good model.
 >>>>>>> main
