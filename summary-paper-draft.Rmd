@@ -49,11 +49,11 @@ cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
 ```
 # I. Background
 
-Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
+Cardiovascular disease is the leading cause of death globally, killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
-The World Health Organization asserts that an "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+The World Health Organization asserts that an unhealthy diet, physical inactivity, tobacco use and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to raised blood pressure, raised blood glucose... and obesity (World Health Organization).
 
-This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
+This research paper is an investigation of The World Health Organization's statements. The research team analyzed data on cardiovascular disease to determine the risk factors of the disease and recommend a model to predict cardiovascular disease in patients.
 
 ## SMART Questions
 Specifically, the research team answers the following Specific, Measurable, Achievable, Relevant, and Time-oriented (SMART) questions:  
@@ -61,20 +61,18 @@ Specifically, the research team answers the following Specific, Measurable, Achi
   1. How accurately can the model predict the probability that a patient has cardiovascular disease?
   2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?  
   3. Is there any association between an individual's sex and whether they have 
-cardiovascular disease ? Are men more prone to cardiovascular diseases as compared to
+cardiovascular disease? Are men more prone to cardiovascular diseases as compared to
 women?
-  4. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?  
 
 
 ## Dataset Description
 
-Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following variables:
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset).  We cleaned the data according to the following pre-processing steps: generated a `bmi` variable from `height` and `weight`, removed outliers for `bmi`, `ap_hi` and `ap_lo`, and converted variables to factors where appropriate. The final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following `r ncol(cardio_clean_final)` variables:
 
 ### Variables
 
 Variable | Type | Definition  
   :-     |  :-- |  :----
-`id`	 | Character | ID number
 `age`	 | Number | Age in years
 `gender` |Factor w/ 2 levels | Gender (1: women, 2: men)
 `height` | Number | Height in centimeters (cm)
@@ -94,25 +92,29 @@ Variable | Type | Definition
 
 ```{r cat.graphs, results='markup'}
 require(patchwork)
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
 
 #cholesterol
 cholesterol.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= cholesterol)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Cholesterol", y = "", x = "",
         fill = "Cholesterol Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
   theme_minimal()
 
 #Glucose
 gluc.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gluc)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Glucose", y = "", x = "",
         fill = "Glucose Level") +
-  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000")) +
+  scale_fill_manual(values=c("#f4cccc", "#e06666", "#990000"), 
+                    labels = c("Normal", "Above Normal", "Well Above Normal")) +
   theme_minimal()
 
 #Gender
@@ -120,7 +122,7 @@ cardio_clean_final$gender.yn<- as.factor(ifelse(cardio_clean_final$gender== "1",
 
 gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Gender",
         y = "", x = "", fill = "") +
@@ -132,7 +134,7 @@ cardio_clean_final$smoke.yn<- as.factor(ifelse(cardio_clean_final$smoke== "1", "
 
 smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -143,7 +145,7 @@ smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
 
 alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -154,7 +156,7 @@ cardio_clean_final$active.yn<- as.factor(ifelse(cardio_clean_final$active== "1",
 
 active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   geom_bar(position="fill") +
-  scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
+  scale_x_discrete(labels=c("1" = "Has CVD", "0" = "No CVD")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
   scale_fill_manual(values=c("#0000da", "#990000")) +
@@ -163,10 +165,16 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
 ```
 
-According to the graphs, how do CVD patients differ from non-CVD  patients with respect to the categorical variables? 
+By exploring the data, we found that the most noticeable differences between people with and without cardiovascular disease (CVD) were in cholesterol and glucose. `r sprintf("%.1f", (sum(disease$cholesterol!= "1")/nrow(disease)) * 100)`% of people with cardiovascular disease have above normal cholesterol levels, while only `r sprintf("%.1f", (sum(healthy$cholesterol!= "1")/nrow(disease)) * 100)`% of people *without* the disease have above normal cholesterol. Similarly, `r sprintf("%.1f", (sum(disease$gluc!="1")/nrow(disease)) * 100)`% of people with the disease have above normal glucose, while only `r sprintf("%.1f", (sum(healthy$gluc!="1")/nrow(disease)) * 100)`% of people *without* the disease have above normal glucose.
+
+The differences between the two groups (people with and without cardiovascular disease) are less noticeable when examining gender and lifestyle factors. The percentage of women in the "has CVD" group is nearly equal to the percentage of women in the "no CVD" group. Likewise, the percentage of alcohol drinkers is nearly the same in the "has CVD" group and the "no CVD" group.
+
+Unsurprisingly, there is a slightly higher percentage of physically active people in the "no CVD" group than in the "has CVD" group. However, it *is* surprising that there is a slightly higher percentage of smokers in the "*no CVD*" group" than in the "CVD" group. We found that xx% of people without CVD were smokers, while only xx% of people with CVD were smokers. This finding seems to contradict experts' assertions that tobacco use can cause cardiovascular disease (FDA).
+
+
 
 ## Chi-Squared Test
-What was the purpose of the chi-squared test?
+We performed chi-squared tests to further explore the data and determine the statistical significance of the differences we observed between the two groups.
 
 Categorical Variable | Chi-Square | P-Value | df  
   :-     |  :- |  :-| :-
@@ -177,6 +185,9 @@ Categorical Variable | Chi-Square | P-Value | df
   `alco` | 7 | 0.006 | 1
   `active` | 81 | <2e-16 | 1
 ```{r chi}
+disease <- subset(cardio_clean_final, cardio==1)
+healthy <- subset(cardio_clean_final, cardio==0)
+
 #Gender
 cardio_vs_gender = table(cardio_clean_final$cardio, cardio_clean_final$gender)
 chi_gender = chisq.test(cardio_vs_gender)
@@ -311,7 +322,7 @@ According to the graphs, how do CVD patients differ from non-CVD  patients with 
 ## Welch Two-Sample T-Test
 What is the purpose of the  t-test? 
 
-Continuous Variable | CVD Avg. | Healthy Avg. | t | p-value
+Continuous Variable | CVD Avg. | No CVD Avg. | t | p-value
 :- | :- | :- | :- | :-
 `age` | 55 | 51.8 | 61 | <2e-16
 `height` | 165 | 165 | -4 | 1e-04
@@ -369,7 +380,9 @@ What does the corrplot tell us?
 
 ** further exploration of correlations * *
 
-# III. Model Comparison
+# III. Statistical Models
+## Feature Selection
+
 ## Logistic Model
 How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
 
@@ -377,7 +390,7 @@ How did the EDA influence your choices when developing this model? (For example:
 
 What do the results of the regression model tell us?
 
-### Model Evaluation
+### Logistic Model Evaluation
 
 **Confusion Matrix**  
 describe/explain results
@@ -399,23 +412,183 @@ How did the EDA influence your choices when developing this model? (For example:
 
 What do the results tell us?
 
-### Model Evaluation
+### KNN Model Evaluation
 ...
 
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses? How does it compare to the logistic model?
+**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
 
 ## Classification Tree
-How did the EDA influence your choices when developing this model? (For example: Why is a classification tree appropriate for this data? What variables did you use and why?) What is the purpose of the model?
 
---insert graphic with results--
 
-What do the results tell us?
+This model is Classification Tree model. We could use the classification tree model to predict the absence and presence of disease visually. It is very convenient. And we will discuss the performance of this model below.
 
-### Model Evaluation
-...
+First step, cleaning the dataset for preparing to build the model. Ensure the variavles are all numerical variables. And delete the ID, which has no relationship to the results.
 
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses? How does it compare to the logistic and KNN models?
+```{r , results='markup'}
 
+
+
+#read in original data set
+cardio_tree_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
+
+#remove id column, convert age to years, add bmi col
+cardio_tree_new = cardio_tree_orig[-c(1)]
+cardio_tree_new$age = cardio_tree_new$age/365
+cardio_tree_new$bmi = cardio_tree_new$weight/(cardio_tree_new$height/100)**2
+
+#remove outliers from bmi, api_hi and api_lo
+cardio_clean_1 = outlierKD2(cardio_tree_new, bmi, TRUE, FALSE, FALSE, FALSE) 
+cardio_clean_2 = outlierKD2(cardio_clean_1, ap_hi, TRUE, FALSE, FALSE, FALSE) 
+cardio_clean_3 = outlierKD2(cardio_clean_2, ap_lo, TRUE, FALSE, FALSE, FALSE)
+
+#remove NA rows
+cardio_clean_3 = na.omit(cardio_clean_3)
+cardio_clean_tree_final <- transform(cardio_clean_3, cardio=as.factor(cardio))
+cardio_tree = cardio_clean_tree_final[,c(1,2,3,4,13,5,6,7,8,9,10,11,12)]
+str(cardio_tree)
+
+
+```
+
+Then we did the feature selection by random forest. This is a fundamental outcome of the random forest and it shows, for each variable, how important it is in classifying the data.The mean decrease in Gini coefficient is a measure of how each variable contributes to the homogeneity of the nodes and leaves in the resulting random forest. The higher the value of mean decrease Gini score, the higher the importance of the variable in the model. And as we can see from the picture, we chose the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
+
+```{r Classification Tree feature selection, results=TRUE}
+library(randomForest)
+fit_im = randomForest(cardio_tree$cardio~., data=cardio_tree)
+# Create an importance based on mean decreasing gini
+importance(fit_im)
+varImpPlot(fit_im)
+```
+
+
+
+Next, we try to find the best depths in this model. We tried different depths and summary the results
+```{r Classification Tree depths result}
+loadPkg("rpart")
+loadPkg("caret")
+
+
+
+# create an empty dataframe to store the results from confusion matrices
+confusionMatrixResultDf = data.frame( Depth=numeric(0), Accuracy= numeric(0), Sensitivity=numeric(0), Specificity=numeric(0), Pos.Pred.Value=numeric(0), Neg.Pred.Value=numeric(0), Precision=numeric(0), Recall=numeric(0), F1=numeric(0), Prevalence=numeric(0), Detection.Rate=numeric(0), Detection.Prevalence=numeric(0), Balanced.Accuracy=numeric(0), row.names = NULL )
+
+for (deep in 2:8) {
+  kfit <- rpart(cardio ~age+ap_lo+bmi+weight+height+cholesterol, data= cardio_tree, method="class", control = list(maxdepth = deep) )
+  # 
+  cm = confusionMatrix( predict(kfit, type = "class"), reference = cardio_tree[, "cardio"] ) # from caret library
+  # 
+  cmaccu = cm$overall['Accuracy']
+  # print( paste("Total Accuracy = ", cmaccu ) )
+  # 
+  cmt = data.frame(Depth=deep, Accuracy = cmaccu, row.names = NULL ) # initialize a row of the metrics 
+  cmt = cbind( cmt, data.frame( t(cm$byClass) ) ) # the dataframe of the transpose, with k valued added in front
+  confusionMatrixResultDf = rbind(confusionMatrixResultDf, cmt)
+  # print("Other metrics : ")
+}
+
+unloadPkg("caret")
+```
+
+As we can see from the results,from the depths 4, the accuracy of different depths is almost same. Therefore, we choosed the depths 6 to build the tree model.
+```{r , results="asis", results=TRUE}
+xkabledply(confusionMatrixResultDf, title="Cardio Classification Trees summary with varying MaxDepth")
+```
+
+
+
+Then we built this classification tree model and plot it.
+```{r , echo = T, fig.dim=c(6,4), results=TRUE}
+set.seed(1)
+cardio_tree_fit <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol , data= cardio_tree, method="class", control = list(maxdepth = 6) )
+
+printcp(cardio_tree_fit) # display the results 
+plotcp(cardio_tree_fit) # visualize cross-validation results 
+summary(cardio_tree_fit) # detailed summary of splits
+
+# plot tree 
+plot(cardio_tree_fit, uniform=TRUE, main="Classification Tree for Cardio")
+text(cardio_tree_fit, use.n=TRUE, all=TRUE, cex=.8)
+
+```
+
+
+
+
+```{r  }
+# create attractive postcript plot of tree 
+post(cardio_tree_fit, file = "cardiotreeTree2.ps", title = "Classification Tree for Cardio")
+```
+
+
+
+
+
+### Results and confusion matrix
+And these are the summary results of this model and its confusion matrix.
+```{r , include=T, results=TRUE}
+loadPkg("caret") 
+cm = confusionMatrix( predict(cardio_tree_fit, type = "class") , reference = cardio_tree[, "cardio"])
+print('Overall: ')
+cm$overall
+print('Class: ')
+cm$byClass
+unloadPkg("caret")
+```
+
+We can see the accuracy of classification tree is 0.695, precision is 0.673, recall is 0.773 and F1 scores is 0.72.
+
+
+```{r Classification Tree, results="asis"}
+xkabledply(cm$table, "confusion matrix")
+```
+
+24579 rows of data with outcome as 0 are correctly predicted by model(True Negative)
+19019 rows of data with outcome as 1 are correctly predicted by model(True Positive)
+11943 rows of data which has actual outcome of 0 are predicted wrongly as 1 by the model(False Positive)
+7207 rows of data which has actual outcome of 1 are predicted wrongly as 0 by the model(False Negative)
+
+
+### Tree plot
+We also tried two other ways to plot the tree, with library `rpart.plot` and a "fancy" plot using the library `rattle` to make the tree plot more beautifully. 
+```{r Classification Tree fancyplot, results=TRUE}
+loadPkg("rpart.plot")
+rpart.plot(cardio_tree_fit)
+loadPkg("rattle") 
+fancyRpartPlot(cardio_tree_fit)
+```
+
+Take a look at a plot of the tree, we can find that the leaf nodes predict the label (level of factor variable) .The tree selected contains 3 variables with 5 splits and displayed 6 terminal leaf nodes. 
+
+
+### ROC curve
+Finally, we also checked the ROC and AUC of this classification tree model.   
+```{R ROC curve of Classification Tree, results=TRUE}
+library(rpart)
+rp <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol, data = cardio_tree)
+library(ROCR)
+pred <- prediction(predict(cardio_tree_fit, type = "prob")[, 2], cardio_tree$cardio)
+tree.predict.prob <- predict(cardio_tree_fit, type = "prob")[, 2]
+plot(performance(pred, "tpr", "fpr"), main = "ROC Cardio")
+auc = performance(pred, 'auc')
+slot(auc, 'y.values')
+abline(0, 1, lty = 2)
+
+```
+
+The area-under-curve is 0.727 which is close to 0.8. Hence,this model is a good model.
+
+
+**Conclusion:** 
+According to the mean decrease in Gini, the top 3 risk factors are age, ap_hi and bmi.
+Although the accuracy of this model is 69.5%, the area-under-curve is 0.727 which is close to 0.8. 
+Hence, this model is kind of a good model. 
+
+
+## Model Comparison
+
+-- insert model comparison chart --
+
+Compare the strengths, weaknesses, and findings of each model.
 
 # IV. Conclusion
 **1. How accurately can the model predict the probability that a patient has cardiovascular disease?**  
@@ -433,13 +606,12 @@ Provide an answer. Use the results of our analysis to support the answer.
 Discuss the limitations of the dataset and our analysis. Discuss what can be done to improve research in this area.
 
 # References
-World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 Cleveland Clinic medical professional (Ed.). (2021, October 5). *Cardiovascular disease: Heart disease causes and symptoms.* Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
 
+FDA Center for Tobacco Products. (2021, November 9). *How smoking affects heart health*. U.S. Food and Drug Administration. Retrieved August 5, 2022, from https://www.fda.gov/tobacco-products/health-effects-tobacco-use/how-smoking-affects-heart-health#References 
 
-
-
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 
 
