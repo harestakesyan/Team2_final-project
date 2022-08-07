@@ -573,11 +573,20 @@ active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) +
 
 #Blood Glucose
 gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) + 
+<<<<<<< Updated upstream
   geom_violin(aes(linetype=NA)) + 
   labs(title = "Systolic Blood Pressure vs Blood Glucose") +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
+=======
+  geom_violin() + 
+  labs(title = "Systolic Blood Pressure vs Blood Glucose",
+       fill = "Has CVD") +
+  xlab("Blood Glucose") + ylab("Systolic BP") + 
+  scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal"))+
+>>>>>>> Stashed changes
   geom_hline(yintercept = 120, linetype = 'dashed') +
   theme_minimal()
 
@@ -587,7 +596,13 @@ gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) +
   labs(title = "Age vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
+<<<<<<< Updated upstream
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
+=======
+  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
+  theme_minimal()
+gluc2
+>>>>>>> Stashed changes
 
 gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5, aes(linetype=NA)) + 
@@ -605,7 +620,8 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
 # III. Statistical Models
 ## Feature selection  
 In the EDA, t-tests and $\chi^2$ tests were used to determine whether the independent variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` had effects on the response variable `cardio`. The p-values of the tests are shown in the table below:  
-```{r pval table, results='markup'}
+```{r pval table, eval=FALSE} 
+# results='markup'
 tab <- matrix(c( '<2e-16','0.6', '8e-07', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '1e-06', '0.006', '<2e-16', '<2e-16'), ncol=12, byrow = TRUE)
 rownames(tab) <- "p_value"
 colnames(tab) <- c("Age_year", "Gender", "Height","Weight","Systolic(ap_hi)", "Diastolic(ap_low)", "Cholesterol","Glucose","smoke", "Alcohol", "Physical_activity","BMI")
@@ -613,9 +629,10 @@ tab <- as.table(tab)
 xkabledply(tab, "p-value Comparison")  
 ```
 
-The p-values suggest that all the independent variables, except for `gender`, have a relationship with `cardio`. We used the `bestglm` function to further confirm this.
+The p-values suggest that all the independent variables, except for `gender`, have a relationship with `cardio`. We used the `bestglm` function to further confirm this. WHAT DOES THE BEST GLM FUNCTION DO??
 
-```{r bestglm, results='markup'}
+```{r bestglm, eval=FALSE}
+#results='markup'
 loadPkg("bestglm")
 loadPkg("leaps")
 loadPkg("ggplot2")
@@ -631,7 +648,7 @@ summary(res.bestglm$BestModels)
 unloadPkg("bestglm") 
 unloadPkg("leaps") 
 ```  
-`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three time, while `bmi` was only voted twice. So we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the valuables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefference values with `cardio`, we also performed the KNN modeling with these 5 valuables.   
+WHAT DO THE RESULTS OF THE BESSTGLM FUNCTION TELL US. HOW WILL THIS AFFECT THE MODELS?`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three time, while `bmi` was only voted twice. So we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the valuables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefference values with `cardio`, we also performed the KNN modeling with these 5 valuables.   
 
 ## Logistic Model
 How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
@@ -657,8 +674,8 @@ describe/explain results
 ## K-Nearest Neighbor (KNN)     
 ### Data Preperation 
 Before KNN modeling, all the predictor variables were converted to numeric, and were scaled and centered. The dataframe structure after the pre-modeling treatment is shown in the table below.
-```{r results='markup'}
-
+```{r, eval = FALSE}
+results='markup'
 #Data Prep
 #Scale and center data
 cardio_num <- cardio_clean_final_glm
@@ -673,7 +690,7 @@ str(cardio_scale)
 ### Model 1: All 13 variables  
 **Train/Test Split**  
 The dataframe was split into a training subset (70% of the total dataframe) and a test subset (30% of the total dataframe).  
-```{r}
+```{r, eval = FALSE}
 set.seed(42)
 cardio_sample <- sample(2, nrow(cardio_scale), replace=TRUE, prob=c(0.7, 0.3))
 cardio_training_x <- cardio_scale[cardio_sample==1, 1:12]
@@ -682,10 +699,10 @@ cardio_training_y <- cardio_scale[cardio_sample==1, 13]
 cardio_test_y <- cardio_scale[cardio_sample==2, 13]
 ```
 
-**Finding the Best K-Value**
-Odd numbers from 3 to 40 were tested one by one to get the best K value. The accuracy values from the model that used these K values are shown in the table and the line graph.
+**Finding the Best K-Value**  
+Odd numbers from 3 to 40 were tested one by one to get the best K value. The accuracy values from the model that used these K values are shown in the line graph.
 
-```{r}
+```{r, eval =FALSE}
 loadPkg("FNN")
 loadPkg("gmodels")
 loadPkg("caret")
@@ -704,17 +721,18 @@ for (k_v in K_test) {
 }
 ```
 
-```{r results='markup'}
+```{r, eval =FALSE}
 xkabledply(ResultDf, "Total Accuracy Summary for KNN Model 1")
 ```
 
-```{r}
+```{r, eval = FALSE}
 library(ggplot2)
 
 ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
   geom_line(color = "skyblue", size = 1.5) +
   geom_point(size = 3, color = "blue") + 
-  labs(title = "Total Accuracy vs K (Model 1)") +
+  labs(title = "Total Accuracy vs K (Model 1)",
+       x = "K", y = "Total Accuracy") +
   theme_minimal()
 ```  
 
@@ -724,21 +742,22 @@ According the results, K = 19 is the best K value for Model 1.
 
 Detailed results and the confusion matrix using K=19 were shown below.  
 
-```{r results='markup'}
+```{r, eval = FALSE}
+ #results='markup'
    cardio_pred_19 <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=19)
   KNN_Mode_1 = confusionMatrix(cardio_pred_19, reference = cardio_test_y)
   xkabledply(as.matrix(KNN_Mode_1), title = paste("Confusion Matrix for KNN Model 1") ) 
   xkabledply(data.frame(KNN_Mode_1$overall['Accuracy']), title=paste("Total Accuracy of KNN Model 1"))
   xkabledply(data.frame(KNN_Mode_1$byClass), title=paste("Metrics of KNN Model 1"))
 ```  
- The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling.  
+ **EXPLAIN THE RESULTS** The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling. ***YOU SAY THAT THE RESULTS ARE ACCEPTABLE, BUT CAN YOU ELABORATE? WHAT MAKES IT ACCEPTABLE*** 
 
 ### Model 2: Selected Variables
 For this model we removed `gender` and `bmi` because...
 
 **Train / Test Split**  
 The dataframe was split into a training subset (70% of the total dataframe) and a testing subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
-```{r}
+```{r, eval = FALSE}
 cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
 cardio_scale2
 set.seed(42)
@@ -752,25 +771,13 @@ cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
 **Finding the Best K-Value** 
 Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values are shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
 
+-- INSERT CODE FOR TABLE AND GRAPH--
 
-What do the results of the regression model tell us?
-
-
-## KNN
-How did the EDA influence your choices when developing this model? (For example: Why is a KNN model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
-
---insert graph and/or table with results--
-
-What do the results tell us?
-
-<<<<<<< Updated upstream
 ### KNN Model Evaluation
-...
+Summarizr the strengths and
 
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
-=======
 
->>>>>>> Stashed changes
+
 
 ## Classification Tree
 
