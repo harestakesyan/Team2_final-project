@@ -1012,7 +1012,7 @@ str(cardio_tree)
 
 ```
 
-Then we did the feature selection. We created a list of feature importance based on mean decreasing gini of all the features. And as we can see from the picture, we choose the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
+Then we did the feature selection by random forest. This is a fundamental outcome of the random forest and it shows, for each variable, how important it is in classifying the data.The mean decrease in Gini coefficient is a measure of how each variable contributes to the homogeneity of the nodes and leaves in the resulting random forest. The higher the value of mean decrease Gini score, the higher the importance of the variable in the model. And as we can see from the picture, we chose the top 6 features to build this classification tree model{ap_lo (the opposite of ap_hi) is highly correlated to ap_hi, so it doesn’t gain anything to use it together.}.
 
 ```{r Classification Tree feature selection, results=TRUE}
 library(randomForest)
@@ -1056,6 +1056,8 @@ As we can see from the results,from the depths 4, the accuracy of different dept
 xkabledply(confusionMatrixResultDf, title="Cardio Classification Trees summary with varying MaxDepth")
 ```
 
+
+
 Then we built this classification tree model and plot it.
 ```{r , echo = T, fig.dim=c(6,4), results=TRUE}
 set.seed(1)
@@ -1071,10 +1073,17 @@ text(cardio_tree_fit, use.n=TRUE, all=TRUE, cex=.8)
 
 ```
 
+
+
+
 ```{r  }
 # create attractive postcript plot of tree 
 post(cardio_tree_fit, file = "cardiotreeTree2.ps", title = "Classification Tree for Cardio")
 ```
+
+
+
+
 
 ### Results and confusion matrix
 And these are the summary results of this model and its confusion matrix.
@@ -1088,9 +1097,18 @@ cm$byClass
 unloadPkg("caret")
 ```
 
+We can see the accuracy of classification tree is 0.695, precision is 0.673, recall is 0.773 and F1 scores is 0.72.
+
+
 ```{r Classification Tree, results="asis"}
 xkabledply(cm$table, "confusion matrix")
 ```
+
+24579 rows of data with outcome as 0 are correctly predicted by model(True Negative)
+19019 rows of data with outcome as 1 are correctly predicted by model(True Positive)
+11943 rows of data which has actual outcome of 0 are predicted wrongly as 1 by the model(False Positive)
+7207 rows of data which has actual outcome of 1 are predicted wrongly as 0 by the model(False Negative)
+
 
 ### Tree plot
 We also tried two other ways to plot the tree, with library `rpart.plot` and a "fancy" plot using the library `rattle` to make the tree plot more beautifully. 
@@ -1101,9 +1119,11 @@ loadPkg("rattle")
 fancyRpartPlot(cardio_tree_fit)
 ```
 
+Take a look at a plot of the tree, we can find that the leaf nodes predict the label (level of factor variable) .The tree selected contains 3 variables with 5 splits and displayed 6 terminal leaf nodes. 
+
 
 ### ROC curve
-Finally, we also checked the ROC and AUC of this classification tree model. As we can see, this model is kind of a good model.  
+Finally, we also checked the ROC and AUC of this classification tree model.   
 ```{R ROC curve of Classification Tree, results=TRUE}
 library(rpart)
 rp <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol, data = cardio_tree)
@@ -1116,3 +1136,5 @@ slot(auc, 'y.values')
 abline(0, 1, lty = 2)
 
 ```
+
+The area-under-curve is 0.727 which is close to 0.8. Hence,this model is a good model.
