@@ -140,7 +140,11 @@ gender.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= gender.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Gender",
         y = "", x = "", fill = "") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal()
 
 #Smoke
@@ -151,7 +155,11 @@ smoke.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= smoke.yn)) +
   scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Tobacco Use", y = "", x = "", fill = "Smoker") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal()
 
 #alcohol
@@ -162,7 +170,11 @@ alco.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= alco.yn)) +
   scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Alcohol Use", y = "", x = "", fill = "Drinks Alcohol") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal()
 
 #active
@@ -173,7 +185,11 @@ active.1 <- ggplot(cardio_clean_final, aes(x=cardio, fill= active.yn)) +
   scale_x_discrete(labels=c("1" = "Heart Disease", "0" = "Healthy")) +
   scale_y_continuous(labels = scales::percent) +
   labs( title = "Physical Activity", y = "", x = "", fill = "Physically Active") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal()
 
 gender.1 + cholesterol.1 + gluc.1 + smoke.1 +  alco.1 + active.1 + plot_layout(ncol = 2)
@@ -261,8 +277,13 @@ Since p-value = `r format(chi_active$p.value, scientific=T)` < 0.05, we reject t
 
 **Conclusion:** *Based on the Chi-square tests we performed, we found `gender` does not contribute to the presence or absence of cardiovascular disease. `cholesterol`, `gluc`, `smoke`, `alco` and `active` are the variables that contribute to the presence or absence of cardiovascular disease.*
 
+<<<<<<< Updated upstream
 ## Numerical Variables
 A brief overview of the dataset tells us we have the following numerical variables: `age`, `height`, `weight`, `ap_hi`, `ap_lo`, plus the new `bmi` variable we added.
+=======
+## Continuous Variables
+A brief overview of the dataset tells us we have the following continuous variables: `age`, `height`, `weight`, `ap_hi`, `ap_lo`, plus the new `bmi` variable we added.
+>>>>>>> Stashed changes
 
 ### Graphics
 The following plots are stacked for better visualization of the distribution. CVD = Cardiovascular Disease.
@@ -279,7 +300,11 @@ age.kde <- ggplot(cardio_clean_final, aes(x = age, fill= cardio.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Age Distribution (Stacked)",
        fill = "Has CVD", x = "Age", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal() +
   annotate(geom = "text", x= 56, y =.015, label = "Mean Age of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
@@ -305,7 +330,11 @@ height.kde <- ggplot(cardio_clean_final, aes(x = height, fill= cardio.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Height Distribution (Stacked)",
        fill = "Has CVD", x = "Height (cm)", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal()
 
 height.kde
@@ -322,7 +351,11 @@ weight.kde <- ggplot(cardio_clean_final, aes(x = weight, fill= cardio.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "Weight Distribution (Stacked)",
        fill = "Has CVD", x = "Weight (kg)", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal() +
   annotate(geom = "text", x= 99, y =.02, label = "Mean Weight of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
@@ -348,7 +381,11 @@ ap_hi.kde <- ggplot(cardio_clean_final, aes(x = ap_hi, fill= cardio.yn)) +
   scale_x_continuous(breaks = c(seq(90,170,20))) +
   labs(title = "Systolic BP Distribution (Stacked)",
        fill = "Has CVD", x = "Systolic BP", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal() +
   annotate(geom = "text", x= 135, y =.11, label = "Mean SBP of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
@@ -374,7 +411,11 @@ ap_lo.kde <- ggplot(cardio_clean_final, aes(x = ap_lo, fill= cardio.yn)) +
   scale_x_continuous(breaks = c(seq(65,105,10))) +
   labs(title = "Diastolic BP Distribution (Stacked)",
        fill = "Has CVD", x = "Diastolic BP", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal() +
   annotate(geom = "text", x= 86, y =.25, label = "Mean DBP of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
@@ -399,7 +440,11 @@ bmi.kde <- ggplot(cardio_clean_final, aes(x = bmi, fill= cardio.yn)) +
   scale_y_continuous(labels = scales::percent) +
   labs(title = "BMI Distribution (Stacked)",
        fill = "Has CVD", x = "BMI", y = "Distribution") +
+<<<<<<< Updated upstream
   scale_fill_manual(values=c("#0000da", "#990000")) +
+=======
+  scale_fill_manual(values=c("#990000", "#0000da")) +
+>>>>>>> Stashed changes
   theme_minimal() +
   annotate(geom = "text", x= 30, y =.13, label = "Mean BMI of CVD", size = 4,
            hjust = 0, color = "steelblue", fontface = 2) +
@@ -417,7 +462,11 @@ The average body max index (BMI) of CVD patients is 2 units higher than the aver
 
 
 ### Statistical Tests  
+<<<<<<< Updated upstream
 We can use a two-sample t-test to determine if the differences in averages (for the numerical variables) are statistically significant.
+=======
+We can use a two-sample t-test to determine if the differences in averages (for the continuous variables) are statistically significant.
+>>>>>>> Stashed changes
 
 **Age**  
 - H0: cardio_pos and cardio_neg average ages are independent.    
@@ -486,7 +535,11 @@ ttest_bmi
 * The p-value is very low
 
 ## Interactions
+<<<<<<< Updated upstream
 ***OK WE'RE GONNA COME BACK TO THIS SECTION BC IDK WHATS GOING ON***
+=======
+
+>>>>>>> Stashed changes
 We want to see if any of the independent variables are correlated, and whether any two variables have a joint relationship with `cardio`. We add a new variable to the dataframe. `bp` (short for blood pressure) is the product of `ap_hi` and `ap_lo`. This makes it easier to see the correlation between blood pressure and other variables.
 
 ```{r}
@@ -499,8 +552,13 @@ corrplot(cardio.cor.1, order = "hclust", type="lower", addCoef.col="darkred", nu
 
 
 #Combining ap_hi and ap_lo
+<<<<<<< Updated upstream
 cardio_clean$bp = cardio_clean$ap_hi + cardio_clean$ap_lo
 cardio_clean_final$bp = cardio_clean_final$ap_hi + cardio_clean_final$ap_lo
+=======
+cardio_clean$bp = cardio_clean$ap_hi * cardio_clean$ap_lo
+cardio_clean_final$bp = cardio_clean_final$ap_hi * cardio_clean_final$ap_lo
+>>>>>>> Stashed changes
 
 no.ap_ <- select(cardio_clean, -c(ap_hi, ap_lo))
 
@@ -543,11 +601,19 @@ The ones in bold are true numeric variables. The ones in bold italics are worth 
 ```{r}
 
 kg.bp <- ggplot(cardio_clean_final, aes(x= weight, y= bp, color= cardio.yn)) +
+<<<<<<< Updated upstream
   geom_point(size = 1.5, alpha=0.7) +
   labs(x= "Weight (kg)", y = "Blood Pressure (SBP + DBP)",
        color = "Has CVD",
        title = "Blood Pressure v. Weight") +
   scale_color_manual(values = c("No"= "blue", "Yes" = "darkred")) +
+=======
+  geom_point() +
+  labs(x= "Weight (kg)", y = "Blood Pressure (SBP + DBP)",
+       color = "Has CVD",
+       title = "Blood Pressure v. Weight") +
+  scale_color_manual(values = c("No"= "darkred", "Yes" = "blue")) +
+>>>>>>> Stashed changes
   theme_minimal()
 kg.bp
 ```
@@ -556,12 +622,20 @@ The linear relationship between weight and blood pressure is weak. However, we c
 
 ```{r}
 bmi.bp <- ggplot(cardio_clean_final, aes(x=bmi, y=bp, color=cardio.yn)) +
+<<<<<<< Updated upstream
   geom_point(size = 1.5, alpha=0.7) +
+=======
+  geom_point() +
+>>>>>>> Stashed changes
   labs(title = "BMI v. Weight",
        x = "Body Mass Index (BMI)",
        y = "Blood Pressure (SBP + DBP)",
        color = "Has CVD") +
+<<<<<<< Updated upstream
   scale_color_manual(values = c("No"= "blue", "Yes" = "darkred")) +
+=======
+  scale_color_manual(values = c("No"= "darkred", "Yes" = "blue")) +
+>>>>>>> Stashed changes
   theme_minimal()
 bmi.bp
 ```
@@ -569,11 +643,19 @@ Again, the linear relationship between age and blood pressure is weak. However, 
 
 ```{r}
 age.bp <- ggplot(cardio_clean_final, aes(x=age, y=bp, color=cardio.yn)) +
+<<<<<<< Updated upstream
   geom_point(size = 1.5, alpha=0.7) +
   labs(x= "Age", y = "Blood Pressure (SBP + DBP)",
        color = "Has CVD",
        title = "Blood Pressure v. Age") +
   scale_color_manual(values = c("No"= "blue", "Yes" = "darkred")) +
+=======
+  geom_point() +
+  labs(x= "Age", y = "Blood Pressure (SBP + DBP)",
+       color = "Has CVD",
+       title = "Blood Pressure v. Age") +
+  scale_color_manual(values = c("No"= "darkred", "Yes" = "blue")) +
+>>>>>>> Stashed changes
   theme_minimal()
 age.bp
 

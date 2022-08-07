@@ -15,6 +15,7 @@ output:
 ---
 
 ```{r init, include=FALSE}
+<<<<<<< Updated upstream
 #RMD Settings
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
@@ -46,12 +47,25 @@ cardio_clean_final$smoke = as.factor(cardio_clean$smoke)
 cardio_clean_final$alco = as.factor(cardio_clean$alco)
 cardio_clean_final$active = as.factor(cardio_clean$active)
 cardio_clean_final$cardio = as.factor(cardio_clean$cardio)
+=======
+#library(ezids)
+#library(tidyverse)
+#library(tinytex)
+#require(rmarkdown)
+#knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+#options(scientific=T, digits = 3) 
+
+>>>>>>> Stashed changes
 ```
 # I. Background
 
 Cardiovascular disease is "the leading cause of death globally," killing an estimated 17.9 million people each year (World Health Organization). Cardiovascular disease (also known as heart disease) refers to any of a group of conditions affecting one's heart and blood vessels; these conditions can include heart failure, arrhythmia, aortic disease and more (Cleveland Clinic).
 
+<<<<<<< Updated upstream
 The World Health Organization asserts that an "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+=======
+The World Health Organization asserts that "unhealthy diet, physical inactivity, tobacco use" and alcohol abuse are the most important behavioral risk factors in developing heart disease. Engaging in such activities can often lead to "raised blood pressure, raised blood glucose... and obesity" (World Health Organization).
+>>>>>>> Stashed changes
 
 This research paper is an investigation of The World Health Organization's statements. The research team analyzes data on cardiovascular disease to determine the risk factors of the disease and offer recommendations to reduce risk.
 
@@ -68,7 +82,11 @@ women?
 
 ## Dataset Description
 
+<<<<<<< Updated upstream
 Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `cardio_clean_final`, has `r nrow(cardio_clean_final)` observations and the following variables:
+=======
+Data analysis was performed on the Cardiovascular Disease dataset from [Kaggle.com](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset). After some data cleaning, the final dataset, `Cardio`, had roughly 63,000 observations and the following variables:
+>>>>>>> Stashed changes
 
 ### Variables
 
@@ -89,6 +107,7 @@ Variable | Type | Definition
 `active` |Factor w/ 2 levels| Whether patient is physically active or not (0: no, 1: yes)
 `cardio` |Factor w/ 2 levels| Presence or absence of cardiovascular disease (0: absent, 1: present)
 
+<<<<<<< Updated upstream
 # II. Exploratory Data Analysis
 ## Categorical Variables
 
@@ -618,11 +637,60 @@ Provide an answer. Use the results of our analysis to support the answer.
 Provide an answer. Use the results of our analysis to support the answer.
 
 Discuss the limitations of the dataset and our analysis. Discuss what can be done to improve research in this area.
+=======
+# III. Exploratory Data Analysis
+## Categorical Variables
+How do CVD patients differ from non-CVD  patients with respect to the categorical variables?
+
+## Chi-Squared Test
+What do the chi-squared tests tell us?
+
+## Continuous Variables
+How do CVD patients differ from non-CVD  patients with respect to the continuous variables?
+
+## Statistical Tests
+What do the hypothesis tests tell us?
+
+
+## All Variables
+Summarize what we've learned from the EDA. How did this inform our choice in models?
+
+# IV. Model Comparison
+## Logistic Model
+...
+
+### Model Evaluation
+
+** ROC & AUC **
+** McFadden Value **
+
+### Limitations
+...
+
+## KNN
+...
+
+## Classification Tree
+
+## Discussion
+
+# V. Conclusion
+## Predictions
+
+## Risk Factors
+
+## Reccommendations
+
+>>>>>>> Stashed changes
 
 # References
 World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
+<<<<<<< Updated upstream
 Cleveland Clinic medical professional (Ed.). (2021, October 5). *Cardiovascular disease: Heart disease causes and symptoms.* Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
+=======
+Cleveland Clinic medical professional (Ed.). (2021, October 5). Cardiovascular disease: Heart disease causes and symptoms. Cleveland Clinic. Retrieved August 2, 2022, from https://my.clevelandclinic.org/health/diseases/21493-cardiovascular-disease#:~:text=Cardiovascular%20disease%20is%20the%20leading,women%20die%20from%20cardiovascular%20disease. 
+>>>>>>> Stashed changes
 
 
 
