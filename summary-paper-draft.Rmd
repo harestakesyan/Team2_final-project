@@ -623,7 +623,7 @@ Alcohol consumption also impacted systolic blood pressure. Blood pressure was hi
 # III. Statistical Models
 ## Feature selection  
 In the EDA, t-tests and $\chi^2$ tests were used to determine whether the independent variables `age`, `gender`, `height`, `weight`, `ap_hi`, `ap_lo`, `cholesterol`, `gluc`, `smoke`, `alco`, `active` and `bmi` had effects on the response variable `cardio`. The p-values of the tests are shown in the table below:  
-```{r pval table, eval=FALSE} 
+```{r pval table} 
 # results='markup'
 tab <- matrix(c( '<2e-16','0.6', '8e-07', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '<2e-16', '1e-06', '0.006', '<2e-16', '<2e-16'), ncol=12, byrow = TRUE)
 rownames(tab) <- "p_value"
@@ -632,9 +632,9 @@ tab <- as.table(tab)
 xkabledply(tab, "p-value Comparison")  
 ```
 
-The p-values suggest that all the independent variables, except for `gender`, have a relationship with `cardio`. We used the `bestglm` function to further confirm this. WHAT DOES THE BEST GLM FUNCTION DO??
+The p-values suggest that all the independent variables, except for `gender`, have a relationship with `cardio`. We used the `bestglm` function to further confirm this. 
 
-```{r bestglm, eval=FALSE}
+```{r bestglm}
 #results='markup'
 loadPkg("bestglm")
 loadPkg("leaps")
@@ -651,7 +651,7 @@ summary(res.bestglm$BestModels)
 unloadPkg("bestglm") 
 unloadPkg("leaps") 
 ```  
-WHAT DO THE RESULTS OF THE BESSTGLM FUNCTION TELL US. HOW WILL THIS AFFECT THE MODELS?`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two variables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three times, while `bmi` was only voted twice. So we are not confident in removing these two variables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the variables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefficient values with `cardio`, we also performed the KNN modeling with these 5 variables.   
+`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two variables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three times, while `bmi` was only voted twice. So we are not confident in removing these two variables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the variables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefficient values with `cardio`, we also performed the KNN modeling with these 5 variables.   
 
 
 ## K-Nearest Neighbor (KNN)     
@@ -733,7 +733,7 @@ Detailed results and the confusion matrix using K=19 were shown below.
   xkabledply(data.frame(KNN_Mode_1$overall['Accuracy']), title=paste("Total Accuracy of KNN Model 1"))
   xkabledply(data.frame(KNN_Mode_1$byClass), title=paste("Metrics of KNN Model 1"))
 ```  
- **EXPLAIN THE RESULTS** The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling. ***YOU SAY THAT THE RESULTS ARE ACCEPTABLE, BUT CAN YOU ELABORATE? WHAT MAKES IT ACCEPTABLE*** 
+The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling. 
 
 ### Model 2 (Excluding Gender & BMI)
 FOR THIS MODEL WE REMOVED `gender` and `bmi` BECAUSE...
@@ -866,7 +866,7 @@ One of the limitation of the KNN modeling is this model has difficulties in iden
 
 The second type of model we used for the disease prediction is logistic regression. Logistic regression models, also called logit models, are used to model dichotomous outcome variables. In a logit model the log odds of the outcome are modeled as a linear combination of the predictor variables. 
 
-WHAT?? The data set has 13 variables. In contrast to KNN modeling, here we used logistic regression to remove variables one by one. The alpha value was set equal to 0.1. This means that p-values greater than 0.1 will be removed.
+The data set has 13 variables. In contrast to KNN modeling, here we used logistic regression to remove variables one by one. The alpha value was set equal to 0.1. This means that p-values greater than 0.1 will be removed.
 
 For consistency between models used in this study we used 70% of data set as training data set, and the remaining 30% as testing data set. The seed point was set to 42.
 
@@ -890,7 +890,7 @@ nrow(data)
 #make this example reproducible
 set.seed(42)
 
-#Use 30% of dataset as training set and remaining 70% as testing set
+#Use 70% of dataset as training set and remaining 30% as testing set
 sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7 , 0.3))
 train <- data[sample, ]
 test <- data[!sample, ]
@@ -920,11 +920,11 @@ summary(logit_reg_model_ALL)
 
 ```
 
-According to the first model, `gender`, `bmi`, `height`, `weight` and `gluc` do not have significant affect. HOW DO WE KNOW THIS?
+According to the first model, `gender`, `bmi`, `height`, `weight` and `gluc` do not have significant affect.
 
 **Logistic Regression Model 2**
 
-For the second model we included all variables but gender. WHY?
+For the second model we included all variables but gender.
 
 ```{r}
 #Fit the logistic regression model excluding gender
@@ -939,11 +939,11 @@ summary(logit_reg_model_wogender)
 
 ```
 
-The results showed that the bmi, height, weight and gluc are still remaining not detrimental for the disease prediction. WHAT?? DO YOU MEAN THEY DON'T HAVE AN IMPACT ON CARDIO?
+The results showed that the bmi, height, weight and gluc are still remaining not detrimental for the disease prediction.
 
 **Logistic Regression Model 3**
 
-Next we excluded gender and bmi to build the third model.  WHY?
+Next we excluded gender and bmi to build the third model.  
 
 ```{r}
 #Fit the logistic regression model excluding gender and bmi
@@ -958,11 +958,11 @@ summary(logit_reg_model_wogenderbmi)
 
 ```
 
-Interestingly, when we removed the `bmi` variable from the model, `height` and `weight` started to show significant impact on disease prediction. However, gluc2 is still not significant. HOW DO YOU KNOW THIS?
+Interestingly, when we removed the `bmi` variable from the model, `height` and `weight` started to show significant impact on disease prediction. However, gluc2 is still not significant. 
 
 **Logistic Regression Model 4**
 
-For the last model we excluded the `gluc2` variable from our dataset. WHY? ALSO, DO YOU MEAN GLUC (NOT GLUC2)?
+For the last model we excluded the `gluc` variable from our dataset. 
 
 ```{r}
 #Remove gender, bmi and gluc from the modeling because they do not any effect on cardio
