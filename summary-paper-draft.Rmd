@@ -645,11 +645,14 @@ cardio_clean_final_glm <- cardio_clean_final_glm[c("age", "gender", "height", "w
 
 res.bestglm <- bestglm(Xy = cardio_clean_final_glm, family = binomial,
             IC = "AIC", method = "exhaustive")
-summary(res.bestglm)
+```  
+
+```{r results='markup'}
+#summary(res.bestglm)
 res.bestglm$BestModels
-summary(res.bestglm$BestModels)
+#summary(res.bestglm$BestModels)
 unloadPkg("bestglm") 
-unloadPkg("leaps") 
+unloadPkg("leaps")  
 ```  
 `gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two variables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three times, while `bmi` was only voted twice. So we are not confident in removing these two variables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the variables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefficient values with `cardio`, we also performed the KNN modeling with these 5 variables.   
 
@@ -685,7 +688,7 @@ cardio_test_y <- cardio_scale[cardio_sample==2, 13]
 **Finding the Best K-Value**  
 Odd numbers from 3 to 40 were tested one by one to get the best K value. The accuracy values from the model that used these K values are shown in the line graph.
 
-```{r, eval =FALSE}
+```{r}
 loadPkg("FNN")
 loadPkg("gmodels")
 loadPkg("caret")
@@ -704,11 +707,11 @@ for (k_v in K_test) {
 }
 ```
 
-```{r, eval =FALSE}
+```{r}
 xkabledply(ResultDf, "Total Accuracy Summary for KNN Model 1")
 ```
 
-```{r, eval = FALSE}
+```{r}
 library(ggplot2)
 
 ggplot(ResultDf, aes(x=k, y=Total.Accuracy)) +
@@ -725,7 +728,7 @@ According the results, K = 19 is the best K value for Model 1.
 
 Detailed results and the confusion matrix using K=19 were shown below.  
 
-```{r, eval = FALSE}
+```{r}
  #results='markup'
    cardio_pred_19 <- knn(train = cardio_training_x, test = cardio_test_x, cl=cardio_training_y, k=19)
   KNN_Mode_1 = confusionMatrix(cardio_pred_19, reference = cardio_test_y)
@@ -736,11 +739,10 @@ Detailed results and the confusion matrix using K=19 were shown below.
 The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling. 
 
 ### Model 2 (Excluding Gender & BMI)
-FOR THIS MODEL WE REMOVED `gender` and `bmi` BECAUSE...
 
 **Train / Test Split**  
 The dataframe was split into a training subset (70% of the total dataframe) and a testing subset (30% of the total dataframe). The variables `gender` and `bmi` were excluded from the train/test split.
-```{r, eval = FALSE}
+```{r}
 cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
 cardio_scale2
 set.seed(42)
@@ -858,9 +860,7 @@ The confusion matrix of model 3 using k = 31 were shown below.
 ```
 
 The total accuracy and other metrics of the three models were listed in the above tables. For summary, all three models have an acceptable performance, but not outstanding. More specifically, model 2 has a overall better performance comparing to model 1. But model 2 and model 3 have their own strength and weaknesses. The accuracy and recall value of model 2 are higher than model 3, while the precision value is higher in model 3. Recall value is more related to false negative rate and the precision value is used to represent to the false positive rate. It's hard to say which model is the best one, but we should choose the proper model according to our aims. If minimizing false positives is our focus, model 3 might be a good option, and model 2 is more suitable is we want to minimize  false negative rate.   
-One of the limitation of the KNN modeling is this model has difficulties in identifying feature importance. So from here we can't answer the question that which are the top 3 factors that affect the onset of cardiovascular diseases. Our following modeling using logistic regression and classification tree will answer the question.
-
-
+One of the limitation of the KNN modeling is this model has difficulties in identifying feature importance. So from here we can't answer the question that which are the top 3 factors that affect the onset of cardiovascular diseases. Our following modeling using logistic regression and classification tree will answer the question.  
 
 ## Logistic Regression Model
 
@@ -907,7 +907,7 @@ summary(train)
 
 For the 1st model we use all 13 variables.
 
-```{r}
+```{r results='markup'}
 #Fit the logistic regression model including all variables
 
 logit_reg_model_ALL <- glm(cardio ~ gender + age + bmi + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
@@ -916,7 +916,8 @@ logit_reg_model_ALL <- glm(cardio ~ gender + age + bmi + height + weight + ap_hi
 options(scipen = 999)
 
 #view model summary
-summary(logit_reg_model_ALL)
+#summary(logit_reg_model_ALL)
+xkabledply(logit_reg_model_ALL, title = "logit_reg_model_ALL")
 
 ```
 
@@ -926,7 +927,7 @@ According to the first model, `gender`, `bmi`, `height`, `weight` and `gluc` do 
 
 For the second model we included all variables but gender.
 
-```{r}
+```{r results='markup'}
 #Fit the logistic regression model excluding gender
 
 logit_reg_model_wogender <- glm(cardio ~ age + bmi + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
@@ -935,7 +936,8 @@ logit_reg_model_wogender <- glm(cardio ~ age + bmi + height + weight + ap_hi + a
 options(scipen = 999)
 
 #view model summary
-summary(logit_reg_model_wogender)
+#summary(logit_reg_model_wogender)
+xkabledply(logit_reg_model_wogender, title = "logit_reg_model_wogender")
 
 ```
 
@@ -945,7 +947,7 @@ The results showed that the bmi, height, weight and gluc are still remaining not
 
 Next we excluded gender and bmi to build the third model.  
 
-```{r}
+```{r results='markup'}
 #Fit the logistic regression model excluding gender and bmi
 
 logit_reg_model_wogenderbmi <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, family="binomial", data=cardio_clean_final)
@@ -954,7 +956,9 @@ logit_reg_model_wogenderbmi <- glm(cardio ~ age + height + weight + ap_hi + ap_l
 options(scipen = 999)
 
 #view model summary
-summary(logit_reg_model_wogenderbmi)
+#summary(logit_reg_model_wogenderbmi)
+xkabledply(logit_reg_model_wogenderbmi, title = "logit_reg_model_wogenderbmi")
+
 
 ```
 
@@ -964,7 +968,7 @@ Interestingly, when we removed the `bmi` variable from the model, `height` and `
 
 For the last model we excluded the `gluc` variable from our dataset. 
 
-```{r}
+```{r results='markup'}
 #Remove gender, bmi and gluc from the modeling because they do not any effect on cardio
 
 logit_reg_model_cleaned <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, family="binomial", data=cardio_clean_final)
@@ -973,7 +977,9 @@ logit_reg_model_cleaned <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + 
 options(scipen = 999)
 
 #view model summary
-summary(logit_reg_model_cleaned)
+#summary(logit_reg_model_cleaned)
+xkabledply(logit_reg_model_cleaned, title = "logit_reg_model_cleaned")
+
 ```
 
 As we can see from the above presented outcome of the Model 4, all remaining 10 variables have an significant effect on disease prediction. Therefore for the further evaluation we will use Model 4.
@@ -986,7 +992,7 @@ To confirm which variable have positive or negative impact on disease prediction
 
 ```{r exp, results=T}
 expcoeff1 = exp(coef(logit_reg_model_cleaned))
-summary(expcoeff1)
+#summary(expcoeff1)
 xkabledply( as.table(expcoeff1), title = "Exponential of coefficients in cardio" )
 
 ```
@@ -997,7 +1003,7 @@ For exponential of coefficients, there are five variables having positive effect
 Confusion matrix is a table that will categorize the predictions against the actual values. It includes two dimensions, among them one will indicate the predicted values and another one will represent the actual values.
 ```{r confusionMatrix, results='markup'}
 loadPkg("regclass")
-confusion_matrix(logit_reg_model_cleaned)
+#confusion_matrix(logit_reg_model_cleaned)
 xkabledply( confusion_matrix(logit_reg_model_cleaned), title = "Confusion matrix from Logit Model" )
 unloadPkg("regclass")
 ```
@@ -1036,7 +1042,7 @@ From confusion matrix, we can conclude that
 
 The Area Under the ROC Curve (AUC) is an aggregated metric that evaluates how well a logistic regression model classifies positive and negative outcomes at all possible cutoffs. It can range from 0.5 to 1, and the larger is the number it is better. AUC represents the probability that a random positive example is positioned to the right of a random negative example. A model whose predictions are 100% wrong has an AUC of 0.0; one whose predictions are 100% correct has an AUC of 1.0.
 
-```{r roc_auc, results=T}
+```{r roc_auc}
 loadPkg("pROC") 
 prob=predict(logit_reg_model_cleaned, type = "response" )
 logit_reg_model_cleaned$prob=prob
@@ -1050,7 +1056,7 @@ We have here the area-under-curve of `r auc(h)`, which is greater than 0.5. This
 
 In typical linear regression, we use R-squared as a way to assess how well a model fits the data. this number ranges from 0 to 1, with higher values indicating better model fit. However, there is no such R-squared value for logistic regression. Instead, we can compute a metric known as McFadden's R-squared or pseudo-R-squared, which ranges from 0 to just under 1. Values close to 0 indicate that the model fits the data very well.
 
-```{r McFadden, results=T}
+```{r McFadden}
 loadPkg("pscl")
 cardio_logit_reg = pR2(logit_reg_model_cleaned)
 cardio_logit_reg
@@ -1070,7 +1076,7 @@ This model is Classification Tree model. We could use the classification tree mo
 
 First step, cleaning the dataset for preparing to build the model. Ensure the variables are all numerical variables. And delete the ID, which has no relationship to the results.
 
-```{r , results='markup', message=FALSE}
+```{r , message=FALSE}
 
 #read in original data set
 cardio_tree_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
@@ -1100,7 +1106,7 @@ Then we did the feature selection by random forest. This is a fundamental outcom
 library(randomForest)
 fit_im = randomForest(cardio_tree$cardio~., data=cardio_tree)
 # Create an importance based on mean decreasing gini
-importance(fit_im)
+#importance(fit_im)
 varImpPlot(fit_im)
 ```
 
@@ -1143,9 +1149,9 @@ Then we built this classification tree model and plot it.
 set.seed(1)
 cardio_tree_fit <- rpart(cardio ~ age+ap_lo+bmi+weight+height+cholesterol , data= cardio_tree, method="class", control = list(maxdepth = 6) )
 
-printcp(cardio_tree_fit) # display the results 
+#printcp(cardio_tree_fit) # display the results 
 plotcp(cardio_tree_fit) # visualize cross-validation results 
-summary(cardio_tree_fit) # detailed summary of splits
+#summary(cardio_tree_fit) # detailed summary of splits
 
 # plot tree 
 plot(cardio_tree_fit, uniform=TRUE, main="Classification Tree for Cardio")
@@ -1166,10 +1172,10 @@ And these are the summary results of this model and its confusion matrix.
 ```{r , include=T, results=TRUE}
 loadPkg("caret") 
 cm = confusionMatrix( predict(cardio_tree_fit, type = "class") , reference = cardio_tree[, "cardio"])
-print('Overall: ')
-cm$overall
-print('Class: ')
-cm$byClass
+#print('Overall: ')
+#cm$overall
+#print('Class: ')
+xkabledply(data.frame(cm$byClass), title="Tree Metrics")
 unloadPkg("caret")
 ```
 
@@ -1208,7 +1214,7 @@ pred <- prediction(predict(cardio_tree_fit, type = "prob")[, 2], cardio_tree$car
 tree.predict.prob <- predict(cardio_tree_fit, type = "prob")[, 2]
 plot(performance(pred, "tpr", "fpr"), main = "ROC Cardio")
 auc = performance(pred, 'auc')
-slot(auc, 'y.values')
+#slot(auc, 'y.values')
 abline(0, 1, lty = 2)
 
 ```
@@ -1224,12 +1230,12 @@ Hence, this model is kind of a good model.
 
 ## Model Comparison
 
-         | KNN | Logistic | Tree 
+Metric    | KNN | Logistic | Tree 
   :---     |  :-- |  :-- |  :--
-*Accuracy* | 0.722  | 0.695 | 0.723
-*Precision* | 0.740 |0.679 |  0.752
-*Recall* | 0.676 | 0.773 | 0.656 
-*F1 Score* | 0.753 | 0.72 | 0.7
+Accuracy | 0.722  | 0.695 | 0.723
+Precision | 0.740 |0.679 |  0.752
+Recall | 0.676 | 0.773 | 0.656 
+F1 Score | 0.753 | 0.72 | 0.7
 
 
 # IV. Conclusion
@@ -1251,8 +1257,4 @@ FDA Center for Tobacco Products. (2021, November 9). *How smoking affects heart 
 
 National Institute of Health. *High Blood Pressure and Older Adults.* Retrieved August 7, 2022 from https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults
 
-World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
-
-
-
-
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1
