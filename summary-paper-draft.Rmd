@@ -526,7 +526,8 @@ alco1 <- ggplot(cardio_clean_final,aes(x = alco , y = ap_hi, fill = cardio)) +
   labs(title = "Systolic BP vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 
 alco2 <- ggplot(cardio_clean_final,aes(x = alco , y = age, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5, aes(linetype=NA)) + 
@@ -542,7 +543,8 @@ alco3 <- ggplot(cardio_clean_final,aes(x = alco , y = bmi, fill = cardio)) +
   labs(title = "BMI vs Alcohol", fill="Has CVD") +
   xlab("Alcohol") + ylab("BMI") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-  scale_x_discrete(labels=c("0" = "No", "1" = "Yes"))
+  scale_x_discrete(labels=c("0" = "No", "1" = "Yes")) +
+  theme_minimal()
 
 
 #Physical activity
@@ -574,20 +576,18 @@ active3 <- ggplot(cardio_clean_final,aes(x = active , y = bmi, fill = cardio)) +
 
 #Blood Glucose
 gluc1 <- ggplot(cardio_clean_final,aes(x = gluc , y = ap_hi, fill = cardio)) + 
-<<<<<<< Updated upstream
   geom_violin(aes(linetype=NA)) + 
   labs(title = "Systolic Blood Pressure vs Blood Glucose") +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("pink3", "steelblue"),labels=c("Absent", "Present")) +
   scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))+
-=======
+
   geom_violin() + 
   labs(title = "Systolic Blood Pressure vs Blood Glucose",
        fill = "Has CVD") +
   xlab("Blood Glucose") + ylab("Systolic BP") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes")) +
   scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal"))+
->>>>>>> Stashed changes
   geom_hline(yintercept = 120, linetype = 'dashed') +
   theme_minimal()
 
@@ -597,13 +597,10 @@ gluc2 <- ggplot(cardio_clean_final,aes(x = gluc , y = age, fill = cardio)) +
   labs(title = "Age vs Blood Glucose", fill="Has CVD") +
   xlab("Blood Glucose") + ylab("Age") + 
   scale_fill_manual(values=c("#0000da", "#990000"),labels=c("No", "Yes"))+
-<<<<<<< Updated upstream
-  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal"))
-=======
-  scale_x_discrete(labels=c("1" = "Normal", "2" = "Above Normal","3" = "Well Above Normal")) +
+  scale_x_discrete(labels=c("1" = "normal", "2" = "above normal","3" = "well above normal")) +
   theme_minimal()
 gluc2
->>>>>>> Stashed changes
+
 
 gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) + 
   geom_violin(width=1, alpha=0.5, aes(linetype=NA)) + 
@@ -618,6 +615,7 @@ gluc3 <- ggplot(cardio_clean_final,aes(x = gluc , y = bmi, fill = cardio)) +
 
 (smoke3 + theme(legend.position = "none")) + (gluc3 + theme(legend.position = "none")) + (alco3 + theme(legend.position = "none")) + alco1 + plot_layout(guides = 'collect')
 ```  
+
 Lastly, we looked at lifestyle choices to assess their relationship with other variables in the presence or absence of cardiovascular disease. The main measurement that was impacted by lifestyle is `bmi.`  BMI tends to decrease with smoking, but increase with blood glucose and alcohol. Because BMI is correlated with cardiovascular disease, it appears that diet and alcohol may help to predict CVD as well.  
 
 Alcohol consumption also impacted systolic blood pressure. Blood pressure was higher among people who consume alcohol, and the difference between CVD and non-CVD patients was more dramatic in alcohol drinkers. This indicates tht alcohol may also impact the presence of CVD.
@@ -653,33 +651,13 @@ summary(res.bestglm$BestModels)
 unloadPkg("bestglm") 
 unloadPkg("leaps") 
 ```  
-WHAT DO THE RESULTS OF THE BESSTGLM FUNCTION TELL US. HOW WILL THIS AFFECT THE MODELS?`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two valuables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three time, while `bmi` was only voted twice. So we are not confidence in removing these two valuables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the valuables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefference values with `cardio`, we also performed the KNN modeling with these 5 valuables.   
-
-## Logistic Model
-How did the EDA influence your choices when developing this model? (For example: Why is a logistic model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
-
---insert logistic model table--
-
-What do the results of the regression model tell us?
-
-### Logistic Model Evaluation
-
-**Confusion Matrix**  
-describe/explain results
-
-**ROC & AUC **  
-describe/explain results
-
-**McFadden Value**  
-describe/explain results
-
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
+WHAT DO THE RESULTS OF THE BESSTGLM FUNCTION TELL US. HOW WILL THIS AFFECT THE MODELS?`gender` and `bmi` were excluded from the model that has lowest criterion value, indicating these two variables may not have strong effects on `cardio`. But among the 5 models the function generated, the criterion values are very close, and `gender` was voted as `FALSE` three times, while `bmi` was only voted twice. So we are not confident in removing these two variables from the following modeling steps. In the KNN modeling, we compare whether these two variables can affect the model performances. Also, since the correlations matrix showed the variables `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` had relatively high coefficient values with `cardio`, we also performed the KNN modeling with these 5 variables.   
 
 
 ## K-Nearest Neighbor (KNN)     
-### Data Preperation 
+
 Before KNN modeling, all the predictor variables were converted to numeric, and were scaled and centered. The dataframe structure after the pre-modeling treatment is shown in the table below.
-```{r, eval = FALSE}
+```{r}
 results='markup'
 #Data Prep
 #Scale and center data
@@ -692,10 +670,10 @@ str(cardio_scale)
 ```  
 
 
-### Model 1: All 13 variables  
+### Model 1 (All 13 variables)  
 **Train/Test Split**  
 The dataframe was split into a training subset (70% of the total dataframe) and a test subset (30% of the total dataframe).  
-```{r, eval = FALSE}
+```{r}
 set.seed(42)
 cardio_sample <- sample(2, nrow(cardio_scale), replace=TRUE, prob=c(0.7, 0.3))
 cardio_training_x <- cardio_scale[cardio_sample==1, 1:12]
@@ -757,11 +735,11 @@ Detailed results and the confusion matrix using K=19 were shown below.
 ```  
  **EXPLAIN THE RESULTS** The overall performance is acceptable, but we still want to see whether removing `gender` and `bmi` will improve the modeling. ***YOU SAY THAT THE RESULTS ARE ACCEPTABLE, BUT CAN YOU ELABORATE? WHAT MAKES IT ACCEPTABLE*** 
 
-### Model 2: Selected Variables
-For this model we removed `gender` and `bmi` because...
+### Model 2 (Excluding Gender & BMI)
+FOR THIS MODEL WE REMOVED `gender` and `bmi` BECAUSE...
 
 **Train / Test Split**  
-The dataframe was split into a training subset (70% of the total dataframe) and a testing subset (30% of the total dataframe). The valuables `gender` and `bmi` were excluded from the train/test split.
+The dataframe was split into a training subset (70% of the total dataframe) and a testing subset (30% of the total dataframe). The variables `gender` and `bmi` were excluded from the train/test split.
 ```{r, eval = FALSE}
 cardio_scale2 <- cardio_scale[c(1, 3:11, 13)]
 cardio_scale2
@@ -773,21 +751,127 @@ cardio_training_y2 <- cardio_scale2[cardio_sample2==1, 11]
 cardio_test_y2 <- cardio_scale2[cardio_sample2==2, 11]
 ```
 
-<<<<<<< Updated upstream
-**Finding the Best K-Value** 
-Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values are shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
-=======
-#### Looking for the best K value:  
-Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
->>>>>>> Stashed changes
 
-What do the results of the regression model tell us?
+**Finding the Best K-Value**   
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values are shown in the table and the line graph. According the results, K = 29 is the best K value for the KNN modeling without `gender` and `bmi`.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf2 = data.frame()
+for (k_v in K_test) {
+  cardio_pred2 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=k_v)
+  
+  cm2 = confusionMatrix(cardio_pred2, reference = cardio_test_y2 )
+  
+  cmaccu2 = cm2$overall['Accuracy']
+
+  cmt2 = data.frame(k=k_v, Total.Accuracy = cmaccu2, row.names = NULL ) 
+  
+  ResultDf2 = rbind(ResultDf2, cmt2)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf2, "Total Accuracy Summary for KNN Model 2")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf2, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K (Model 2)")
+```  
+**Modeling Results with the Best K Value (K = 29)** 
+
+Detailed results and the confusion matrix of model 2 using k = 29 were shown below. Removing `gender` and `bmi` slightly improved the performance. 
+
+```{r results='markup'}
+  cardio_pred_29 <- knn(train = cardio_training_x2, test = cardio_test_x2, cl=cardio_training_y2, k=29)
+  KNN_Mode_2 = confusionMatrix(cardio_pred_29, reference = cardio_test_y2)
+  xkabledply(as.matrix(KNN_Mode_2), title = paste("Confusion Matrix for KNN Model 2") ) 
+  xkabledply(data.frame(KNN_Mode_2$overall['Accuracy']), title=paste("Total Accuracy of KNN Model 2"))
+  xkabledply(data.frame(KNN_Mode_2$byClass), title=paste("Metrics of KNN Model 2"))
+```  
+
+Next, we want to check whether only using the 5 variables  provided by the correlation matrix will make a better model.  
+
+### Model 3 (Selected Variables)
+This KNN model only use `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo`.
+
+**Train / Test Split**  
+The dataframe was split into training subset (70% of the total dataframe) and test subset (30% of the total dataframe). Only `age`, `cholesterol`, `bmi`, `ap_hi` and `ap_lo` were used for the modeling. 
+```{r}
+cardio_scale3 <- cardio_scale[c(1, 5:7, 12:13)]
+cardio_scale3
+set.seed(42)
+cardio_sample3 <- sample(2, nrow(cardio_scale3), replace=TRUE, prob=c(0.7, 0.3))
+cardio_training_x3 <- cardio_scale3[cardio_sample3==1, 1:5]
+cardio_test_x3 <- cardio_scale3[cardio_sample3==2, 1:5]
+cardio_training_y3 <- cardio_scale3[cardio_sample3==1, 6]
+cardio_test_y3 <- cardio_scale3[cardio_sample3==2, 6]
+```
+
+**Looking for the best K value** 
+Odd numbers from 3 to 40 were used for the test. The accuracy values from the model that used these K values were shown in the table and the line graph. According the results, K = 31 is the best K value for the KNN modeling.
+
+```{r}
+K_test <- seq(3, 40, by = 2)
+ResultDf3 = data.frame()
+for (k_v in K_test) {
+  cardio_pred3 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=k_v)
+  
+  cm3 = confusionMatrix(cardio_pred3, reference = cardio_test_y3 )
+  
+  cmaccu3 = cm3$overall['Accuracy']
+
+  cmt3 = data.frame(k=k_v, Total.Accuracy = cmaccu3, row.names = NULL ) 
+  
+  ResultDf3 = rbind(ResultDf3, cmt3)
+}
+```
+```{r results='markup'}
+xkabledply(ResultDf3, "Total Accuracy Summary")
+```
+
+```{r}
+library(ggplot2)
+ggplot(ResultDf3, aes(x=k, y=Total.Accuracy)) +
+  geom_line(color = "skyblue", size = 1.5) +
+  geom_point(size = 3, color = "blue") + 
+  labs(title = "Total.Accuracy vs K")
+```  
+
+**Modeling results with the best K value (Model 3, K = 31)**  
+
+The confusion matrix of model 3 using k = 31 were shown below. 
+
+```{r results='markup'}
+  cardio_pred_31 <- knn(train = cardio_training_x3, test = cardio_test_x3, cl=cardio_training_y3, k=31)
+  KNN_Mode_3 = confusionMatrix(cardio_pred_31, reference = cardio_test_y3 )
+  xkabledply(as.matrix(KNN_Mode_3), title = paste("Confusion Matrix for KNN Model 3") )
+```  
+
+```{r results='markup'}
+ xkabledply(data.frame(KNN_Mode_1$overall['Accuracy'], KNN_Mode_2$overall['Accuracy'], KNN_Mode_3$overall['Accuracy']), title=paste("Total Accuracy Comparision of the Three KNN Models"))
+
+ xkabledply(data.frame(KNN_Mode_1$byClass, KNN_Mode_2$byClass, KNN_Mode_3$byClass), title=paste("Metrics Comparision of KNN the Three KNN Models"))
+```
+
+The total accuracy and other metrics of the three models were listed in the above tables. For summary, all three models have an acceptable performance, but not outstanding. More specifically, model 2 has a overall better performance comparing to model 1. But model 2 and model 3 have their own strength and weaknesses. The accuracy and recall value of model 2 are higher than model 3, while the precision value is higher in model 3. Recall value is more related to false negative rate and the precision value is used to represent to the false positive rate. It's hard to say which model is the best one, but we should choose the proper model according to our aims. If minimizing false positives is our focus, model 3 might be a good option, and model 2 is more suitable is we want to minimize  false negative rate.   
+One of the limitation of the KNN modeling is this model has difficulties in identifying feature importance. So from here we can't answer the question that which are the top 3 factors that affect the onset of cardiovascular diseases. Our following modeling using logistic regression and classification tree will answer the question.
+
+
 
 ## Logistic Regression Model
 
-The second model we used for the disease prediction is logistic regression. Logistic regression , aslo called a logit model, is used to model dichotomous outcome variables. In the logut model the log odds of the outcome is modeled as a linear combination of the predictor variables. The data set has 13 variables. In contrast to KNN modeling, here we used logistic regression to remove variables one by one. The alpha value was set equal to 0.1. This means that p-values greater than 0.1 will be removed.
+The second type of model we used for the disease prediction is logistic regression. Logistic regression models, also called logit models, are used to model dichotomous outcome variables. In a logit model the log odds of the outcome are modeled as a linear combination of the predictor variables. 
 
-```{r results='markup'}
+WHAT?? The data set has 13 variables. In contrast to KNN modeling, here we used logistic regression to remove variables one by one. The alpha value was set equal to 0.1. This means that p-values greater than 0.1 will be removed.
+
+For consistency between models used in this study we used 70% of data set as training data set, and the remaining 30% as testing data set. The seed point was set to 42.
+
+In this study we built 4 logistic regression models based on the variables that have significant affect on the prediction.
+```{r}
 #load dataset
 data <- cardio_clean_final
 
@@ -799,11 +883,7 @@ nrow(data)
 
 ```
 
-### Data Splitting
-
-For consistency between models used in this study we used 70% of data set as training data set, and the remaining 30% as testing data set. The seed point was set to 42.
-
-```{r results='markup'}
+```{r}
 
 #Create Training and Test Samples
 
@@ -821,11 +901,9 @@ summary(train)
 ```
 
 
-### Logistic Regression Modeling
+### Modeling
 
-In this study we built 4 logistic regression models based on the variables that have significant affect on the prediction.
-
-#### Logistic Regression Model 1
+**Logistic Regression Model 1**
 
 For the 1st model we use all 13 variables.
 
@@ -842,11 +920,11 @@ summary(logit_reg_model_ALL)
 
 ```
 
-According to the first model variables such as gender, bmi, height, weight and gluc do not have significant affect.
+According to the first model, `gender`, `bmi`, `height`, `weight` and `gluc` do not have significant affect. HOW DO WE KNOW THIS?
 
-#### Logistic Regression Model 2
+**Logistic Regression Model 2**
 
-For the second model we included all variables but gender
+For the second model we included all variables but gender. WHY?
 
 ```{r}
 #Fit the logistic regression model excluding gender
@@ -861,11 +939,11 @@ summary(logit_reg_model_wogender)
 
 ```
 
-The results showed that the bmi, height, weight and gluc are still remaining not detrimental for the disease prediction.
+The results showed that the bmi, height, weight and gluc are still remaining not detrimental for the disease prediction. WHAT?? DO YOU MEAN THEY DON'T HAVE AN IMPACT ON CARDIO?
 
-#### Logistic Regression Model 3
+**Logistic Regression Model 3**
 
-Next we excluded gender and bmi to build the third model.
+Next we excluded gender and bmi to build the third model.  WHY?
 
 ```{r}
 #Fit the logistic regression model excluding gender and bmi
@@ -880,11 +958,11 @@ summary(logit_reg_model_wogenderbmi)
 
 ```
 
-Interestingly when we removed bmi variable from the model height and weight started to show significant impact on disease prediction, however gluc2 is still not significant.
+Interestingly, when we removed the `bmi` variable from the model, `height` and `weight` started to show significant impact on disease prediction. However, gluc2 is still not significant. HOW DO YOU KNOW THIS?
 
-#### Logistic Regression Model 4
+**Logistic Regression Model 4**
 
-For the last model we excluded gluc2 variable from our dataset.
+For the last model we excluded the `gluc2` variable from our dataset. WHY? ALSO, DO YOU MEAN GLUC (NOT GLUC2)?
 
 ```{r}
 #Remove gender, bmi and gluc from the modeling because they do not any effect on cardio
@@ -900,7 +978,9 @@ summary(logit_reg_model_cleaned)
 
 As we can see from the above presented outcome of the Model 4, all remaining 10 variables have an significant effect on disease prediction. Therefore for the further evaluation we will use Model 4.
 
-### Coefficient Exponential 
+### Evaluation
+
+**Coefficient Exponential** 
 
 To confirm which variable have positive or negative impact on disease prediction we calculated the coefficient exponential for all variables from Model 4.
 
@@ -912,7 +992,7 @@ xkabledply( as.table(expcoeff1), title = "Exponential of coefficients in cardio"
 ```
 For exponential of coefficients, there are five variables having positive effect on dependent variables `cardio`, and four having negative effect. For example, if person smoke, they will have more possibility to develop cardiovascular diseases.
 
-### Confusion matrix
+**Confusion matrix**
 
 Confusion matrix is a table that will categorize the predictions against the actual values. It includes two dimensions, among them one will indicate the predicted values and another one will represent the actual values.
 ```{r confusionMatrix, results='markup'}
@@ -952,9 +1032,9 @@ From confusion matrix, we can conclude that
  Specificity is a measure of how many negative predictions made are correct (true negatives). The value for our model is 78.9%.
  F1-Score is a measure combining both precision and recall. It is generally described as the harmonic mean of the two. Harmonic mean is just another way to calculate an "average" of values, geneerally described as more suitable for ratios (such as precision and recall) than the traditional arithmetic mean. F1-Score for our model is 0.7 which is 70% and pretty high number.
 
-### ROC and AUC
+**ROC and AUC**
 
-The Are Under the ROC Curve (AUC) is an aggregated metric that evaluates how well a logistic regression model classifies positive and negative outcomes at all possible cutoffs. It can range from 0.5 to 1, and the larger is the number it is better. AUC represents the probability that a random positive example is positioned to the right of a random negative example. A model whose predictions are 100% wrong has an AUC of 0.0; one whose predictions are 100% correct has an AUC of 1.0.
+The Area Under the ROC Curve (AUC) is an aggregated metric that evaluates how well a logistic regression model classifies positive and negative outcomes at all possible cutoffs. It can range from 0.5 to 1, and the larger is the number it is better. AUC represents the probability that a random positive example is positioned to the right of a random negative example. A model whose predictions are 100% wrong has an AUC of 0.0; one whose predictions are 100% correct has an AUC of 1.0.
 
 ```{r roc_auc, results=T}
 loadPkg("pROC") 
@@ -966,7 +1046,7 @@ plot(h)
 ```
 We have here the area-under-curve of `r auc(h)`, which is greater than 0.5. This means that the proposed model (Model 4) is considered a good fit.
 
-### McFadden
+**McFadden**
 
 In typical linear regression, we use R-squared as a way to assess how well a model fits the data. this number ranges from 0 to 1, with higher values indicating better model fit. However, there is no such R-squared value for logistic regression. Instead, we can compute a metric known as McFadden's R-squared or pseudo-R-squared, which ranges from 0 to just under 1. Values close to 0 indicate that the model fits the data very well.
 
@@ -978,33 +1058,19 @@ unloadPkg("pscl")
 ```
 With the McFadden value of 0.189, which is analogous to the coefficient of determination $R^2$, only about 18.9% of the variations in y is explained by the explanatory variables in the model.
 
-**Conclusion:** Is this a good model? Why or why not? What are its strengths and weaknesses?
+**Conclusion:** 
 
 Overall the Logistic Regression Model 4 is considered a good model. The model has correctly predicted 72.3% for the given data. precision of the model is 75.2%. Specificity of correct negative predictions is 78.9%, with the F1-Score of 70%. The only limitation of the model is relatively low McFadden value (0.189)
-
-
-## KNN
-How did the EDA influence your choices when developing this model? (For example: Why is a KNN model appropriate for this data? What variables did you use and why?) What is the purpose of the model?
->>>>>>> Stashed changes
-
--- INSERT CODE FOR TABLE AND GRAPH--
-
-### KNN Model Evaluation
-Summarizr the strengths and
-
 
 
 
 ## Classification Tree
 
-
 This model is Classification Tree model. We could use the classification tree model to predict the absence and presence of disease visually. It is very convenient. And we will discuss the performance of this model below.
 
-First step, cleaning the dataset for preparing to build the model. Ensure the variavles are all numerical variables. And delete the ID, which has no relationship to the results.
+First step, cleaning the dataset for preparing to build the model. Ensure the variables are all numerical variables. And delete the ID, which has no relationship to the results.
 
-```{r , results='markup'}
-
-
+```{r , results='markup', message=FALSE}
 
 #read in original data set
 cardio_tree_orig = data.frame(read.csv("cardio_train.csv", header = TRUE, sep=';'))
@@ -1037,8 +1103,6 @@ fit_im = randomForest(cardio_tree$cardio~., data=cardio_tree)
 importance(fit_im)
 varImpPlot(fit_im)
 ```
-
-
 
 Next, we try to find the best depths in this model. We tried different depths and summary the results
 ```{r Classification Tree depths result}
@@ -1090,14 +1154,10 @@ text(cardio_tree_fit, use.n=TRUE, all=TRUE, cex=.8)
 ```
 
 
-
-
 ```{r  }
 # create attractive postcript plot of tree 
 post(cardio_tree_fit, file = "cardiotreeTree2.ps", title = "Classification Tree for Cardio")
 ```
-
-
 
 
 
@@ -1164,24 +1224,24 @@ Hence, this model is kind of a good model.
 
 ## Model Comparison
 
--- insert model comparison chart --
+         | KNN | Logistic | Tree 
+  :---     |  :-- |  :-- |  :--
+*Accuracy* | 0.722  | 0.695 | 0.723
+*Precision* | 0.740 |0.679 |  0.752
+*Recall* | 0.676 | 0.773 | 0.656 
+*F1 Score* | 0.753 | 0.72 | 0.7
 
-Compare the strengths, weaknesses, and findings of each model.
 
 # IV. Conclusion
 **1. How accurately can the model predict the probability that a patient has cardiovascular disease?**  
-Provide an answer. Use the results of our analysis to support the answer.
+The logistic model had the highest accuracy in predicting cardiovascular disease. It's accuracy rate is 72.3%.
   
 **2. What are the top three factors associated with cardiovascular disease? Does this corroborate the risk factors observed by the World Health Organization?**  
-Provide an answer. Use the results of our analysis to support the answer.
+According to the classification tree, the top 3 risk factors are age, diastolic blood pressure and cholesterol.
 
 **3. Is there an association between and individual's sex and whether they have cardiovascular disease?**  
-Provide an answer. Use the results of our analysis to support the answer.
+The data does not support the idea that gender influences the presence of cardiovascular disease.
 
-**4. What recommendations can be made to reduce cardiovascular risk and prevent heart attacks and strokes?**  
-Provide an answer. Use the results of our analysis to support the answer.
-
-Discuss the limitations of the dataset and our analysis. Discuss what can be done to improve research in this area.
 
 # References
 
@@ -1189,10 +1249,9 @@ Cleveland Clinic medical professional (Ed.). (2021, October 5). *Cardiovascular 
 
 FDA Center for Tobacco Products. (2021, November 9). *How smoking affects heart health*. U.S. Food and Drug Administration. Retrieved August 5, 2022, from https://www.fda.gov/tobacco-products/health-effects-tobacco-use/how-smoking-affects-heart-health#References 
 
-World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
-
 National Institute of Health. *High Blood Pressure and Older Adults.* Retrieved August 7, 2022 from https://www.nia.nih.gov/health/high-blood-pressure-and-older-adults
 
+World Health Organization. (n.d.). *Cardiovascular diseases*. World Health Organization. Retrieved August 2, 2022, from https://www.who.int/health-topics/cardiovascular-diseases#tab=tab_1 
 
 
 
